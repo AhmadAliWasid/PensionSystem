@@ -1,0 +1,57 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.PhysicalVerificationVM
+@if (Model != null)
+{
+    <div id="list-pensioners">
+        <table id="data-table" class="table table-bordered my-custom-scrollbar table-wrapper-scroll-y">
+            <thead>
+                <tr>
+                    <th>PPO</th>
+                    <th>Claimant</th>
+                    <th>Ex.Desig.</th>
+                    <th>CNIC</th>
+                    <th>Mobile</th>
+                    <th>Address</th>
+                    <th>Thumb/Sig</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Pensioner != null && Model.Pensioner.Count() > 0)
+                {
+                    @foreach (var item in Model.Pensioner)
+                    {
+                        <tr>
+                            <td>@item.PPOSystem</td>
+                            <td>
+                                @item.Claimant
+                                @if (item.Relation != null)
+                                {
+                                    <span>@item.Relation.Short</span>
+                                }
+
+                                @if (item.Relation != null && (item.Relation.Short == "S/O" || item.Relation.Short == "D/O"))
+                                {
+                                    <span>@item.FatherName</span>
+                                }
+                                else
+                                {
+                                    <span>@item.Spouse</span>
+                                }
+                            </td>
+                            <td>@item.Designation</td>
+                            <td>@item.ClaimantCNIC</td>
+                            <td>@UserFormat.GetMobilePK(item.Mobile)</td>
+                            <td>@item.Address</td>
+                            <td></td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">No Pensioner Found!</div>
+}

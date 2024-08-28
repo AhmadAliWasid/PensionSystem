@@ -1,0 +1,152 @@
+﻿@model IEnumerable<PensionSystem.Entities.Models.Pensioner>
+@{
+    ViewData["Title"] = "Proforma";
+    ViewData["SubTitle"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@if (Model != null)
+{
+    <link href="~/css/print.css" type="text/css" rel="stylesheet" media="print" />
+    <div class="card">
+        <div class="card-title">
+            Pensioners List Proforma
+        </div>
+        <div class="card-body">
+            <table class="table" id="data-table">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.PPOSystem)</th>
+                        <th>@Html.DisplayNameFor(model => model.Claimant)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.PPOSystem</td>
+                            <td>@item.Claimant </td>
+                            <td>
+                                <button onclick="getAliveCertificate(@item.Id)" class="btn bg-gradient-primary btn-sm"><i class="fas fa-print"></i> Alive</button>
+
+                                <button onclick="getPage(@item.Id)" class="btn bg-gradient-primary btn-sm "><i class="fas fa-print"></i> Page</button>
+                                <button onclick="getProforma(@item.Id,false)" class="btn bg-gradient-primary btn-sm"><i class="fas fa-print"></i> Form</button>
+                                <button onclick="getProforma(@item.Id,true)" class="btn bg-gradient-primary btn-sm"><i class="fas fa-print"></i> Bill</button>
+                                <button onclick="getACO(@item.Id)" class="btn bg-gradient-primary btn-sm"><i class="fas fa-print"></i> ACO</button>
+                                <a asp-action="PageSlip" class="btn bg-gradient-info" asp-route-id="@item.Id"><i class="fas fa-print"></i> Slip</a>
+                                <button><i class="fas fa-print"></i> Life</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="form">
+    </div>
+
+    <script src="~/lib/print/print.min.js" type="text/javascript"></script>
+    <script>
+        $(document).ready(function () {
+            $('#data-table').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+            });
+        });
+        function getPage(id) {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Page")",
+                data: { "id": id },
+                success: function (response) {
+                    $("#form").html(response);
+                    printProforma();
+                },
+                failure: function (response) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+        function getAliveCertificate(id) {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetAliveCertificate")",
+                data: { "id": id },
+                success: function (response) {
+                    $("#form").html(response);
+                    printProforma();
+                },
+                failure: function (response) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+        function getACO(id) {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetACO")",
+                data: { "id": id },
+                success: function (response) {
+                    $("#form").html(response);
+                    printProforma();
+                },
+                failure: function (response) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                },
+                error: function (xhr, status, error) {
+                    var err = eval("(" + xhr.responseText + ")");
+                    alert(err.Message);
+                }
+            });
+        }
+        function getProforma(id, isBlanck) {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Print")",
+                data: { "id": id, blank: isBlanck },
+                success: function (response) {
+                    $("#form").html(response);
+                    printProforma();
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+        function printProforma() {
+            printJS({
+                printable: 'form',
+                type: 'html',
+                header: null,
+                targetStyles: ['*'],
+                maxWidth: '595px',
+                css: '~/css/print.css'
+            });
+        }
+    </script>
+}
+else
+{
+    <div class="alert alert-danger">No Pensioner Found!</div>
+}
+
+
+

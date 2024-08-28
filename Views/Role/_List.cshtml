@@ -1,0 +1,33 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model List<IdentityRole>
+@{
+    Layout = null;
+    int number = 1;
+}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>Short</th>
+            <th>Full Name</th>
+            <th>Limit</th>
+     @*       <th>Action</th>*@
+        </tr>
+
+    </thead>
+    <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@number</td>
+                    <td>@item.Name</td>
+                    <td>@item.NormalizedName</td>
+            @*        <td>
+                     <button class="btn btn-flat btn-warning" onclick="AddOrUpdate(@item.Id)"><i class="fa fa-edit"></i> Edit</button>
+                        <button class="btn btn-flat btn-danger" onclick="Delete(@item.Id)"><i class="fa fa-trash"></i> Delete</button>
+                    </td>*@
+                </tr>
+                number++;
+           }
+    </tbody>
+</table>

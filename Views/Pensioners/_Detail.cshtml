@@ -1,0 +1,233 @@
+﻿@model PensionSystem.ViewModels.PensionerModel
+
+@{
+	ViewData["Title"] = "Detail Information";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (Model != null)
+{
+	<div class="card-primary">
+		<div class="card-header">
+			Pensioner Form
+		</div>
+		<div class="card card-body">
+			<form asp-action="Save">
+				<input type="hidden" asp-for="Id" value="@Model.Id" />
+				<div class="row">
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="PageNumber" class="control-label"></label>
+							<input asp-for="PageNumber" class="form-control" />
+							<span asp-validation-for="PageNumber" class="text-danger" value="@Model.Id"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="Name" class="control-label"></label>
+							<input asp-for="Name" class="form-control" value="@Model.Name" />
+							<span asp-validation-for="Name" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="Designation" class="control-label"></label>
+							<input asp-for="Designation" class="form-control" value="@Model.Designation" />
+							<span asp-validation-for="Designation" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="CompanyId" class="control-label"></label>
+							<select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+							<span asp-validation-for="CompanyId" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="Claimant" class="control-label"></label>
+							<input asp-for="Claimant" class="form-control" value="@Model.Claimant" />
+							<span asp-validation-for="Claimant" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="FatherName" class="control-label"></label>
+							<input asp-for="FatherName" class="form-control" value="@Model.FatherName" />
+							<span asp-validation-for="FatherName" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4 ">
+						<div class="form-group">
+							<label asp-for="Spouse" class="control-label"></label>
+							<input asp-for="Spouse" class="form-control" value="@Model.Spouse" />
+							<span asp-validation-for="Spouse" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4 ">
+						<div class="form-group">
+							<label asp-for="DOB" class="control-label"></label>
+							<input asp-for="DOB" type="date" class="form-control" value="@Model.DOB.ToString("yyyy-MM-dd")" />
+							<span asp-validation-for="DOB" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+
+				<div class="row mb-4">
+					<div class="col-md-3 mb-4 ">
+						<div class="form-group">
+							<label asp-for="CNIC" class="control-label"></label>
+							<input asp-for="CNIC" class="form-control" value="@Model.CNIC" />
+							<span asp-validation-for="CNIC" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="Mobile" class="control-label"></label>
+							<input asp-for="Mobile" class="form-control" value="@Model.Mobile" />
+							<span asp-validation-for="Mobile" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="AccountNumber" class="control-label"></label>
+							<input asp-for="AccountNumber" class="form-control" value="@Model.AccountNumber" />
+							<span asp-validation-for="AccountNumber" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4 ">
+						<div class="form-group">
+							<label asp-for="DateOfRetirement" class="control-label"></label>
+							<input asp-for="DateOfRetirement" type="date" class="form-control" value="@Model.DateOfRetirement.ToString("yyyy-MM-dd")" />
+							<span asp-validation-for="DateOfRetirement" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+				<div class="row mb-4">
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="PPONumber" class="control-label"></label>
+							<input asp-for="PPONumber" class="form-control" value="@Model.PPONumber" />
+							<span asp-validation-for="PPONumber" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="PPOSystem" class="control-label"></label>
+							<input asp-for="PPOSystem" class="form-control" value="@Model.PPOSystem" />
+							<span asp-validation-for="PPOSystem" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="SanctionNumber" class="control-label"></label>
+							<input asp-for="SanctionNumber"  class="form-control" value="@Model.SanctionNumber" />
+							<span asp-validation-for="SanctionNumber" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="SanctionDate" class="control-label"></label>
+							<input asp-for="SanctionDate" type="date" class="form-control" value="@Model.SanctionDate.ToString("yyyy-MM-dd")" />
+							<span asp-validation-for="SanctionDate" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="MonthlyPension" class="control-label"></label>
+							<input asp-for="MonthlyPension" class="form-control" onchange="calculateTotal()" value="@Model.MonthlyPension" />
+							<span asp-validation-for="MonthlyPension" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="CMA" class="control-label"></label>
+							<input asp-for="CMA" class="form-control" onchange="calculateTotal()" value="@Model.CMA" />
+							<span asp-validation-for="CMA" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="OrderelyAllowence" class="control-label"></label>
+							<input asp-for="OrderelyAllowence" class="form-control" onchange="calculateTotal()" value="@Model.OrderelyAllowence" />
+							<span asp-validation-for="OrderelyAllowence" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="Total" class="control-label"></label>
+							<input asp-for="Total" class="form-control" value="@Model.Total" />
+							<span asp-validation-for="Total" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-3 mb-4">
+						<div class="form-group">
+							<label asp-for="MonthlyRecovery" class="control-label"></label>
+							<input asp-for="MonthlyRecovery" class="form-control" value="@Model.MonthlyRecovery" />
+							<span asp-validation-for="MonthlyRecovery" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-4 mb-4">
+						<label asp-for="Address" class="control-label"></label>
+						<input asp-for="Address" class="form-control" value="@Model.Address" />
+						<span asp-validation-for="Address" class="text-danger"></span>
+					</div>
+					<div class="col-md-4 mb-4">
+						<div class="form-group">
+							<label class="control-label" asp-for="ClaimantCNIC"></label>
+							<input asp-for="ClaimantCNIC" class="form-control" />
+							<span asp-validation-for="ClaimantCNIC" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-2 mb-4">
+						<div class="form-group">
+							<label class="control-label" asp-for="IsActiveClaimant">Status</label>
+							<input asp-for="IsActiveClaimant" id="IsActiveClaimant" style="height:50px; width:50px;" name="IsActiveClaimant" type="checkbox" onclick="$(this).val(this.checked ? true : false)" />
+							<span asp-validation-for="IsActiveClaimant" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-2 mb-4">
+						<div class="form-group">
+							<label class="control-label" asp-for="Gender"></label>
+							<input type="radio" value="M" asp-for="Gender" />Male
+							<input type="radio" value="F" asp-for="Gender" />Female
+							<span asp-validation-for="Gender" class="text-danger"></span>
+						</div>
+					</div>
+					<div class="col-md-8 mb-4">
+						<div class="form-group">
+							<label class="control-label" asp-for="Remarks"></label>
+							<textarea asp-for="Remarks" class="form-control"></textarea>
+							<span asp-validation-for="Remarks" class="text-danger"></span>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="card-footer">
+			<a asp-action="Index">Back to List</a>
+		</div>
+	</div>
+
+	@section Scripts {
+    @{
+	await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
+}
+else
+{
+	<div class="alert alert-danger alert-dismissible">
+		<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+		<h5><i class="icon fas fa-ban"></i> Alert!</h5>
+		Unable to Get Pensioner
+	</div>
+}

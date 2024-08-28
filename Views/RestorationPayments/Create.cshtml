@@ -1,0 +1,232 @@
+﻿@model PensionSystem.Entities.Models.RestorationPayment
+
+@{
+	ViewData["Title"] = "Restoration";
+	ViewData["SubTitle"] = "Create";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card">
+	<div class="card-header">
+		<div class="card-title">Restoration</div>
+	</div>
+	<div class="card-body">
+		<form asp-action="Create" id="UserForm">
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<div class="row">
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="RestorationDemandId" class="control-label"></label>
+						<select asp-for="RestorationDemandId" class="form-control" asp-items="ViewBag.RestorationDemandId"></select>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="Month" class="control-label"></label>
+						<input asp-for="Month" type="month" value="@DateTime.Now.ToString("yyyy-MM")" class="form-control" />
+						<span asp-validation-for="Month" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="Description" class="control-label"></label>
+						<input asp-for="Description" class="form-control" />
+						<span asp-validation-for="Description" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="PensionerId" class="control-label"></label>
+						<select asp-for="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="MP" class="control-label"></label>
+						<input asp-for="MP" class="form-control" />
+						<span asp-validation-for="MP" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="CMA" class="control-label"></label>
+						<input asp-for="CMA" class="form-control" />
+						<span asp-validation-for="CMA" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+
+					<div class="form-group">
+						<label asp-for="Orderly" class="control-label"></label>
+						<input asp-for="Orderly" class="form-control" />
+						<span asp-validation-for="Orderly" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="NetPension" class="control-label"></label>
+						<input asp-for="NetPension" class="form-control" />
+						<span asp-validation-for="NetPension" class="text-danger"></span>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="FromMonth" class="control-label"></label>
+						<input asp-for="FromMonth" value="@DateTime.Now.ToString("yyyy-MM-dd")" onchange="CalucateTotal()" class="form-control" />
+						<span asp-validation-for="FromMonth" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="ToMonth" class="control-label"></label>
+						<input asp-for="ToMonth" value="@DateTime.Now.ToString("yyyy-MM-dd")" onchange="CalucateTotal()" class="form-control" />
+						<span asp-validation-for="ToMonth" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="NumberOfMonths" class="control-label"></label>
+						<input asp-for="NumberOfMonths" class="form-control" />
+						<span asp-validation-for="NumberOfMonths" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="form-group">
+						<label asp-for="Total" class="control-label"></label>
+						<input asp-for="Total" class="form-control" />
+						<span asp-validation-for="Total" class="text-danger"></span>
+					</div>
+				</div>
+			</div>
+
+		</form>
+		<div class="form-group">
+			<button id="btnSubmit" value="Create" class="btn btn-primary">Save</button>
+		</div>
+	</div>
+	<div class="card-footer">
+		<a asp-action="Index">Back to List</a>
+	</div>
+</div>
+<div id="demandList">
+</div>
+<script>
+	$(document).ready(function(e){
+		$("#PensionerId").change(function(e){
+				var pensionerId = $(this).val();
+				if(pensionerId != null){
+					$.ajax({
+							type: "POST",
+							url: "@Url.Action("GetInfo","ArrearsPayments")",
+							data: { "id": pensionerId },
+							success: function (response) {
+								if(response != null){
+									$("#MP").val(response.monthlyPension);
+									$("#CMA").val(response.cma);
+									$("#Orderly").val(response.orderelyAllowence);
+									$("#NetPension").val(response.total);
+									CalucateTotal();
+								}
+							},
+							failure: function (response) {
+								alert(response.responseText);
+							},
+							error: function (response) {
+								alert(response.responseText);
+						   }
+						});
+				}
+		});
+		// for form submission
+		 $('#btnSubmit').click(function () {
+				 if ($("#UserForm").valid()) { //check if form is valid using model annotation
+					 submitForm();
+				 }
+				 else {
+					 return false;
+				 }
+			 });
+		$("#RestorationDemandId").on('change', function (e){
+						getDemand();
+					});
+	});
+	function submitForm(){
+				 $('#btnSubmit').attr('disabled', 'disabled');
+				 var url = $("#UserForm").attr("action");
+				 var formData = $("#UserForm").serialize();
+				 $.ajax({
+					 url: url,
+					 type: "POST",
+					 data: formData,
+					 dataType: "json",
+					 success: function (response) {
+						  if(response.rCode == 1){
+							  getDemand();
+						  }
+					 },
+					 error: function (response) {
+						 alert('Error!');
+					 },
+					 complete: function () {
+						 $('#btnSubmit').removeAttr('disabled');
+					 }
+				 })
+	}
+	function getDemand(){
+			var ArrearsDemandId = $("#RestorationDemandId").val();
+			if(ArrearsDemandId != ""){
+								awaitHtmlElement("#demandList");
+								$.ajax({
+									type: "GET",
+									url: "@Url.Action("GetDemandList")",
+									data: { demandId: ArrearsDemandId},
+									dataType: "text",
+									success: function (msg) {
+										$("#demandList").html(msg)	;
+									},
+									error: function (req, status, error) {
+										$("#demandList").html("<div class='alert alert-danger'>res: " + req + " status :" + status + " error : " +error  + "</div>");
+									}
+								});
+						}
+	}
+	function CalucateTotal(){
+		var From = $("#FromMonth").val();
+		var To = $("#ToMonth").val();
+		if(From != "" && To != ""){
+		 $.ajax({
+			type: "POST",
+			url: "@Url.Action("CalculateMonths","WWFBill")",
+			data: {StartingMonth: From , EndingMonth: To},
+			dataType: "text",
+			success: function (msg) {
+				$("#NumberOfMonths").val(msg);
+				CalculateAmount();
+			},
+			error: function (req, status, error) {
+				console.log(msg);
+			}
+			});
+			}
+			else{
+			  //$('#btnSubmit').prop('disabled', true);
+			}
+	}
+
+	function CalculateAmount(){
+		var Months = $("#NumberOfMonths").val();
+		var NetAmount = $("#NetPension").val();
+		Months = parseInt(Months);
+		NetAmount = parseInt(NetAmount);
+		var Total = Months * NetAmount;
+		$("#Total").val(Total);
+	}
+</script>
+@section Scripts {
+    @{
+	await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}

@@ -1,0 +1,68 @@
+﻿@using Pension.Entities.Helpers
+@model List<PensionSystem.Entities.Models.Pensioner>
+@if (Model != null)
+{
+    string guardianName = string.Empty;
+    <h2 class="text-center">SMS Service Activation</h2>
+    <div id="list-pensioners">
+        <table id="data-table" class="table">
+            <thead>
+                <tr>
+                    <th>PPO#</th>
+                    <th>Claimant</th>
+                    <th>Rel</th>
+                    <th>Name</th>
+                    <th>Address</th>
+                    <th>Mobile</th>
+                    <th>SMS Service
+                    <th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    guardianName = item.Relation.Short == "Self" ? @item.FatherName : @item.Name;
+                    <tr>
+                        <td>@item.PPOSystem</td>
+                        <td>@item.Claimant</td>
+                        <td>@item.Relation.Short</td>
+                        <td>@guardianName</td>
+                        <td>@item.Address</td>
+                        <td>@UserFormat.GetMobile(item.Mobile)</td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" id="sms-service-checkbox-@item.Id" onchange="ChangeSMSService(@item.Id,this)" type="checkbox" @(item.IsServiceActive ? "checked" : "")>
+                                <label class="form-check-label" for="sms-service-checkbox-@item.Id">SMS</label>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function ChangeSMSService(pensionerId, element) {
+            var isChecked = $(element).is(':checked');
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("UpdateSMSServiceStatus")',
+                data: { PensionerId: pensionerId, Status: isChecked },
+                dataType: "text",
+                success: function (data) {
+                    if (data === "true") {
+                        // Set the checkbox as checked
+                        $(element).prop('checked', true);
+                    } else {
+                        // Set the checkbox as unchecked
+                        $(element).prop('checked', false);
+                    }
+                }
+            });
+        }
+    </script>
+}
+else
+{
+    <div class="alert alert-danger">No Pensioner Found!</div>
+}

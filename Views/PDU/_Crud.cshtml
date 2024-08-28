@@ -1,0 +1,57 @@
+﻿@model PensionSystem.ViewModels.PDUVM
+@{
+    Layout = null;
+}
+<form id="CreateUpdate">
+    <input asp-for="@Model.Id" type="hidden" />
+    <div class="row ">
+        <div class="col-md-12 text-danger text-bold" id="ErrorDiv">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.Name"></label>
+                <input asp-for="@Model.Name" class="form-control" />
+                <span asp-validation-for="@Model.Name"></span>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.ShortName"></label>
+                <input asp-for="@Model.ShortName" class="form-control" />
+                <span asp-validation-for="@Model.ShortName"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.AMStamp"></label>
+                <input asp-for="@Model.AMStamp" class="form-control" />
+                <span asp-validation-for="@Model.AMStamp"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.DMStamp"></label>
+                <input asp-for="@Model.DMStamp" class="form-control" />
+                <span asp-validation-for="@Model.DMStamp"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.BaseStamp"></label>
+                <input asp-for="@Model.BaseStamp" class="form-control" />
+                <span asp-validation-for="@Model.BaseStamp"></span>
+            </div>
+        </div>
+    </div>
+</form>

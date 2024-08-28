@@ -1,0 +1,49 @@
+﻿@model PensionSystem.ViewModels.CashBookCreateVM
+@{
+    Layout = null;
+}
+<form id="CreateUpdate">
+    <div class="row ">
+        <div class="col-md-12 text-danger text-bold" id="ErrorDiv">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.Particulars"></label>
+                <input asp-for="@Model.Particulars" class="form-control" />
+                <span asp-validation-for="@Model.Particulars"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.Month"></label>
+                <input asp-for="@Model.Month" class="form-control" />
+                <span asp-validation-for="@Model.Month"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.TransactionType"></label>
+                <select asp-for="@Model.TransactionType" class="form-control">
+                    <option value="@TransactionType.Credit">@TransactionType.Credit</option>
+                    <option value="@TransactionType.Debit">@TransactionType.Debit</option>
+                </select>
+                <span asp-validation-for="@Model.TransactionType"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.Amount"></label>
+                <input asp-for="@Model.Amount" class="form-control" />
+                <span asp-validation-for="@Model.Amount"></span>
+            </div>
+        </div>
+    </div>
+</form>

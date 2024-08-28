@@ -1,0 +1,120 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.HBLPaymentPensionerHistoryVM
+<!-- /.col-md-6 -->
+<div class="col-lg-12">
+    <div class="card card-primary">
+        <div class="">
+            @if (Model.Pensioner != null)
+            {
+                @*table header*@
+                <div id="table-header-office">
+                    <h3 class="text-center">PESHAWAR ELECTRIC SUPPLY COMPANY LIMITED</h3>
+                    <h4 class="text-center">XEN SS&TL Division PESCO Mardan</h4>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Company : @Model.Pensioner.Company.ShortName</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">PPONumber : @Model.Pensioner.PPOSystem</label>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label">Name : @Model.Pensioner.Claimant</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12 table-wrapper-scroll-y my-custom-scrollbar">
+                    <table class="table table-bordered" id="HBL">
+                        <thead>
+                            <tr class="bg-info"><th colspan="9">Bank  History</th></tr>
+                            <tr class="bg-info">
+                                <th>Cheque#</th>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Branch</th>
+                                <th>Account Number</th>
+                                <th>MP</th>
+                                <th>CMA</th>
+                                <th>Orderly</th>
+                                <th>Deduction</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.HBLPayments != null && Model.HBLPayments.Count > 0)
+                            {
+                                foreach (var item in Model.HBLPayments)
+                                {
+                                    <tr>
+                                        <td>@item.ChequeNo</td>
+                                        <td>@UserFormat.GetMonthYear(item.Date)</td>
+                                        <td>@item.Description</td>
+                                        <td>@item.Branch</td>
+                                        <td>@UserFormat.GetAccount(item.AccountNumber)</td>
+                                        <td>@UserFormat.GetAmount(item.MP)</td>
+                                        <td>@UserFormat.GetAmount(item.CMA)</td>
+                                        <td>@UserFormat.GetAmount(item.Orderly)</td>
+                                        <td>@UserFormat.GetAmount(item.Deduction)</td>
+                                        <td>@UserFormat.GetAmount(item.Total)</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @* <div class="row">
+            <div class="col-md-12 table-wrapper-scroll-y my-custom-scrollbar">
+            <table class="table table-bordered" id="demand">
+            <thead>
+            <tr class="bg-info"><th colspan="8">Demand History</th></tr>
+            <tr class="bg-info">
+            <th>Demand#</th>
+            <th>Date</th>
+            <th>Description</th>
+            <th>MP</th>
+            <th>CMA</th>
+            <th>Orderly</th>
+            <th>Deduction</th>
+            <th>Total</th>
+            </tr>
+            </thead>
+            <tbody>
+            @if (Model.PensionerPayments != null && Model.PensionerPayments.Count > 0)
+            {
+            foreach (var item in Model.PensionerPayments)
+            {
+            <tr>
+            <td>@item.DemandNo</td>
+            <td>@UserFormat.GetMonthYear(item.DemandDate)</td>
+            <td>@item.Description</td>
+            <td>@UserFormat.GetAmount(item.MP)</td>
+            <td>@UserFormat.GetAmount(item.CMA)</td>
+            <td>@UserFormat.GetAmount(item.Orderly)</td>
+            <td>@UserFormat.GetAmount(item.Deduction)</td>
+            <td>@UserFormat.GetAmount(item.Total)</td>
+            </tr>
+            }
+            }
+            </tbody>
+            </table>
+            </div>
+            </div> *@
+
+            @*table header*@
+            <div id="table-footer">
+                <p class="text-center">Note: This page is generated from 08-2021 and up to date.</p>
+            </div>
+        </div>
+    </div>
+</div>
+

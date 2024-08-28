@@ -1,0 +1,173 @@
+﻿@using Pension.Entities.Helpers;
+@model PensionSystem.ViewModels.CashBookVM
+@{
+    Layout = null;
+    int totalCompanies = 0;
+    if (Model.CashBookCompanyVMs != null)
+    {
+        totalCompanies = Model.CashBookCompanyVMs.Max(x => x.CompanyID);
+        decimal TotalcompanyMP = 0;
+        decimal TotalcompanyCMA = 0;
+        decimal TotalcompanyOrderly = 0;
+        decimal Totalcommutation = 0;
+        decimal Total = 0;
+        <div>
+            <div id="table-header">
+                <h3 class="text-center text-bold">PESHAWAR ELECTRIC SUPPLY COMPANY LTD.</h3>
+                <h4 class="text-center text-bold">@Model.Session.BaseStamp</h4>
+                <h5 class="text-center text-bold">Total Number of Pensioners MP &amp; CMA  of WAPDA and Other Companies for the month of of @UserFormat.GetMonthYear(Model.Month)</h5>
+            </div>
+            <table class="table table-bordered" id="data-table">
+                <thead>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Company</th>
+                        <th>MP </th>
+                        <th>CMA</th>
+                        <th>Orderly </th>
+                        <th>Commut. </th>
+                        <th>P. Contri </th>
+                        <th>Bank Charge</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.CashBookCompanyVMs != null && Model.CashBookCompanyVMs.Count > 0)
+                    {
+                        int serialNumber
+                        = 1;
+                        decimal TotalCompany = 0;
+                        decimal companyMP = 0;
+                        decimal companyCMA = 0;
+                        decimal companyOrderly = 0;
+                        decimal commutation = 0;
+                        foreach (var c in Model.CashBookCompanyVMs)
+                        {
+                            var CompanyDetail = Model.CashBookCompanyVMs.Where(x => x.CompanyID == c.CompanyID);
+
+                            companyMP = CompanyDetail.Sum(x => x.SelfMP) + CompanyDetail.Sum(x => x.SelfArrearsMP)
+                            + CompanyDetail.Sum(x => x.FamiliyMP) + CompanyDetail.Sum(x => x.FamilyArrearsMP);
+                            companyMP -= (CompanyDetail.Sum(x => x.SelfRecovery) + CompanyDetail.Sum(x => x.FamilyRecovery));
+                            companyCMA = CompanyDetail.Sum(x => x.SelfCMA) + CompanyDetail.Sum(x => x.FamilyCMA);
+                            companyOrderly = CompanyDetail.Sum(x => x.Orderly);
+                            commutation = CompanyDetail.Sum(x => x.Commutation);
+                            TotalCompany = companyMP + companyCMA + companyOrderly + commutation;
+                            if (TotalCompany > 0)
+                            {
+                                <tr>
+                                    <td>@serialNumber</td>
+                                    <td>@c.Name</td>
+                                    <td>@UserFormat.GetAmount(companyMP)</td>
+                                    <td>@UserFormat.GetAmount(companyCMA)</td>
+                                    <td>@UserFormat.GetAmount(companyOrderly)</td>
+                                    <td>@UserFormat.GetAmount(commutation)</td>
+                                    <td>-</td>
+                                    <td>-</td>
+                                    <td>@UserFormat.GetAmount(TotalCompany)</td>
+                                </tr>
+                                serialNumber
+                                ++;
+                            }
+                            // aggregation
+                            TotalcompanyMP += companyMP;
+                            TotalcompanyCMA += companyCMA;
+                            TotalcompanyOrderly += companyOrderly;
+                            Totalcommutation += Totalcommutation;
+                            Total += TotalCompany;
+                            // aggregation ends
+                            TotalCompany = 0;
+                            companyMP = 0;
+                            companyCMA = 0;
+                            companyOrderly = 0;
+                            commutation = 0;
+                        }
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        @if (Model.CashBookCompanyVMs != null)
+                        {
+                            <th colspan="2">Total</th>
+                            <th>@UserFormat.GetAmount(TotalcompanyMP)</th>
+                            <th>@UserFormat.GetAmount(TotalcompanyCMA) </th>
+                            <th>@UserFormat.GetAmount(TotalcompanyOrderly) </th>
+                            <th>@UserFormat.GetAmount(Totalcommutation) </th>
+                            <th>-</th>
+                            <th>-</th>
+                            <th>@UserFormat.GetAmount(Total)</th>
+                        }
+                        else
+                        {
+                            <th colspan="7"></th>
+                        }
+                    </tr>
+                </tfoot>
+            </table>
+            <div id="table-footer">
+                <div class="container" style="margin-top: 200px;">
+                    <div class="row">
+                        @if (Model.Session != null)
+                        {
+                            <div class="col-6">
+                                <p class="text-center">@Model.Session.AMStamp</p>
+                                <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                            </div>
+                            <div class="col-6">
+                                <div>
+                                    <p class="text-center">@Model.Session.DMStamp</p>
+                                    <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                var dataTable = $("#data-table").DataTable({
+                    "responsive": true,
+                    "sorting": false,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                    buttons: [
+                        {
+                            extend: 'print',
+                            customize: function (win) {
+                                $(win.document.body).prepend($('#table-header').html()); // before table
+                                $(win.document.body).append($("#table-footer").html()); //after the table
+                                $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                                var last = null;
+                                var current = null;
+                                var bod = [];
+                                var css = '@@page { size: landscape; }', head = win.document.head || win.document.getElementsByTagName('head')[0], style = win.document.createElement('style');
+                                style.type = 'text/css';
+                                style.media = 'print';
+                                if (style.styleSheet) {
+                                    style.styleSheet.cssText = css;
+                                }
+                                else {
+                                    style.appendChild(win.document.createTextNode(css));
+                                }
+                                head.appendChild(style);
+                            },
+                            title: '',
+                            message: '<div class="text-center">Cash Book</div>',
+                        },
+                        'excel',
+                        'copy',
+                        'csv',
+                        'pdf'
+                    ],
+                });
+                dataTable.buttons().container().appendTo('#data-table_wrapper .col-md-6:eq(0)');
+            });
+        </script>
+
+    }
+    else
+    {
+        <div class="alert alert-danger">No Companies Found in DB</div>
+    }
+}
+

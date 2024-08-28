@@ -1,0 +1,36 @@
+﻿@model List<PensionSystem.Entities.Models.Branch>
+@{
+    Layout = null;
+}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>Bank</th>
+            <th>Branch</th>
+            <th>Code</th>
+            <th>Action</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Count > 0)
+        {
+            int number = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@number</td>
+                    <td>@item.Bank.ShortName</td>
+                    <td>@item.Name</td>
+                    <td>@item.Code</td>
+                    <td>
+                        <button class="btn btn-flat btn-warning" onclick="AddOrUpdate(@item.Id)"><i class="fa fa-edit"></i> Edit</button>
+                        <button class="btn btn-flat btn-danger" onclick="Delete(@item.Id)" disabled><i class="fa fa-trash" ></i> Delete</button>
+                    </td>
+                </tr>
+                number++;
+            }
+        }
+    </tbody>
+</table>

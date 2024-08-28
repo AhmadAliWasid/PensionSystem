@@ -1,0 +1,188 @@
+﻿@model PensionSystem.Entities.Models.HBLArrears
+
+@{
+    ViewData["Title"] = "Manual HBL";
+    ViewData["SubTitle"] = "Add";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">HBL Arrears Manual Addition</div>
+    </div>
+    <div class="card-body" id="completeForm">
+        <form asp-action="Create" id="UserForm">
+            <div id="errorMessage">
+            </div>
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="ChequeId" class="control-label"></label>
+                        <select asp-for="ChequeId" class="form-control" asp-items="ViewBag.ChequeId"></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="FromMonth" class="control-label"></label>
+                        <input asp-for="FromMonth" value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                        <span asp-validation-for="FromMonth" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="ToMonth" class="control-label"></label>
+                        <input asp-for="ToMonth" value="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                        <span asp-validation-for="ToMonth" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Month" class="control-label"></label>
+                        <input asp-for="Month" type="month" value="@DateTime.Now.ToString("yyyy-MM")" class="form-control" />
+                        <span asp-validation-for="Month" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="PensionerId" class="control-label"></label>
+                        <select asp-for="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="BranchId" class="control-label"></label>
+                        <select asp-for="BranchId" class="form-control" asp-items="ViewBag.BranchId"></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="AccountNumber" class="control-label"></label>
+                        <input asp-for="AccountNumber" class="form-control" />
+                        <span asp-validation-for="AccountNumber" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Amount" class="control-label"></label>
+                        <input asp-for="Amount" class="form-control" />
+                        <span asp-validation-for="Amount" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="form-group">
+                <button type="button" id="btnSubmit" value="Create" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Index" class="btn btn-info">Back To List</a>
+    </div>
+</div>
+<div id="content">
+</div>
+<script>
+    function submitForm() {
+        awaitHtmlElement("#content");
+        $('#btnSubmit').attr('disabled', 'disabled');
+        var url = $("#UserForm").attr("action");
+        var formData = $("#UserForm").serialize();
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: formData,
+            dataType: "json",
+            success: function (response) {
+                if (response.RCode == 1) {
+                    $("#Amount").val(0);
+                    $("#AccountNumber").val("");
+                    $("#PensionerId").focus();
+                    getCheque();
+                }
+                else {
+                    $("#content").html(response.RText);
+                }
+            },
+            error: function (response) {
+                alert('Error!');
+            },
+            complete: function () {
+                $('#btnSubmit').removeAttr('disabled');
+            }
+        })
+    }
+    function getCheque() {
+        var chequeId = $("#ChequeId").val();
+        if (chequeId != null) {
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("GetCheque","HBLArrears")",
+                data: { "chequeId": chequeId },
+                success: function (response) {
+                    $("#content").html(response);
+                },
+                failure: function (response) {
+                    alert(response.responseText);
+                },
+                error: function (response) {
+                    alert(response.responseText);
+                }
+            });
+        }
+    }
+    $(document).ready(function (e) {
+        // for form submission
+        $('#btnSubmit').click(function () {
+            if ($("#UserForm").valid()) { //check if form is valid using model annotation
+                submitForm();
+            }
+            else {
+                return false;
+            }
+        });
+        $("#PensionerId").change(function (e) {
+            var pensionerId = $(this).val();
+            if (pensionerId != null) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetInfo","ArrearsPayments")",
+                    data: { "id": pensionerId },
+                    success: function (response) {
+                        if (response != null) {
+                            $("#BranchId").val(response.BranchId);
+                            $("#AccountNumber").val(response.AccountNumber);
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+        $("#ChequeId").on('change', function (e) {
+            // get the cheque detail
+            getCheque();
+        });
+    });
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

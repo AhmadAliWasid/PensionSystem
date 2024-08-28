@@ -1,0 +1,258 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.MPDVMPrint
+
+@if (Model.MonthlyPensionDemand != null)
+{
+    decimal TotalLastPESCO = 0;
+    decimal TotalLastNTDC = 0;
+    decimal TotalLastTESCO = 0;
+    decimal TotalLastGENCO = 0;
+    decimal TotalOtherDISCO = 0;
+    decimal NetExpenditureInLastMonth = 0;
+    decimal MonthlyLastPESCO = 0;
+    decimal MonthlyLastNTDC = 0;
+    decimal MonthlyLastTESCO = 0;
+    decimal MonthlyLastGENCO = 0;
+    decimal MonthlTotalOtherDISCOs = 0;
+    decimal MonthlyTotal = 0;
+    decimal DemandAmount = 0;
+    DateTime LastMonth = UserFormat.GetLastMonth(Model.MonthlyPensionDemand.Date);
+    if (Model.PensionerPayments != null)
+    {
+        DemandAmount = Model.PensionerPayments.Where(c => c.CertificateVerified == true).Sum(x => x.Total);
+    }
+
+    if (Model.HBLPayments != null)
+    {
+        MonthlyLastPESCO = Model.HBLPayments.Where(c => c.Pensioner.Company.ShortName == "PESCO"
+        && c.Month.Month == LastMonth.Month && c.Month.Year == LastMonth.Year).Sum(x => x.Total);
+        MonthlyLastNTDC = Model.HBLPayments.Where(c => c.Pensioner.Company.ShortName == "NTDC"
+        && c.Month.Month == LastMonth.Month && c.Month.Year == LastMonth.Year).Sum(x => x.Total);
+        MonthlyLastGENCO = Model.HBLPayments.Where(c => c.Pensioner.Company.ShortName == "GENCO-III"
+        && c.Month.Month == LastMonth.Month && c.Month.Year == LastMonth.Year).Sum(x => x.Total);
+        MonthlyLastTESCO = Model.HBLPayments.Where(c => c.Pensioner.Company.ShortName == "TESCO"
+        && c.Month.Month == LastMonth.Month && c.Month.Year == LastMonth.Year).Sum(x => x.Total);
+        MonthlTotalOtherDISCOs = MonthlyLastNTDC + MonthlyLastGENCO + MonthlyLastTESCO;
+        MonthlyTotal = MonthlyLastPESCO + MonthlyLastGENCO + MonthlyLastTESCO + MonthlyLastNTDC;
+    }
+    /// arrears
+    decimal ArrearsLastPESCO = 0;
+    decimal ArrearsLastNTDC = 0;
+    decimal ArrearsLastTESCO = 0;
+    decimal ArrearsLastGENCO = 0;
+    decimal TotalArrears = 0;
+    if (Model.HBLArrears != null)
+    {
+        ArrearsLastPESCO = Model.HBLArrears.Where(c => c.Pensioner.Company.ShortName == "PESCO").Sum(x => x.Amount);
+        ArrearsLastNTDC = Model.HBLArrears.Where(c => c.Pensioner.Company.ShortName == "NTDC").Sum(x => x.Amount);
+        ArrearsLastGENCO = Model.HBLArrears.Where(c => c.Pensioner.Company.ShortName == "GENCO-III").Sum(x => x.Amount);
+        ArrearsLastTESCO = Model.HBLArrears.Where(c => c.Pensioner.Company.ShortName == "TESCO").Sum(x => x.Amount);
+        TotalArrears = ArrearsLastPESCO + ArrearsLastNTDC + ArrearsLastGENCO + ArrearsLastTESCO;
+    }
+
+    /// commutations
+    decimal CommutationsLastPESCO = 0;
+    decimal CommutationsLastNTDC = 0;
+    decimal CommutationsLastTESCO = 0;
+    decimal CommutationsLastGENCO = 0;
+    decimal TotalCommutations = 0;
+    if (Model.Commutations != null)
+    {
+        CommutationsLastPESCO = Model.Commutations.Where(c => c.Pensioner.Company.ShortName == "PESCO").Sum(x => x.Amount);
+        CommutationsLastNTDC = Model.Commutations.Where(c => c.Pensioner.Company.ShortName == "NTDC").Sum(x => x.Amount);
+        CommutationsLastGENCO = Model.Commutations.Where(c => c.Pensioner.Company.ShortName == "GENCO-III").Sum(x => x.Amount);
+        CommutationsLastTESCO = Model.Commutations.Where(c => c.Pensioner.Company.ShortName == "TESCO").Sum(x => x.Amount);
+        TotalCommutations = CommutationsLastGENCO + CommutationsLastNTDC + CommutationsLastTESCO + CommutationsLastPESCO;
+    }
+    // total
+    TotalLastPESCO = MonthlyLastPESCO + ArrearsLastPESCO + CommutationsLastPESCO;
+    TotalLastNTDC = MonthlyLastNTDC + ArrearsLastNTDC + CommutationsLastNTDC;
+    TotalLastTESCO = MonthlyLastTESCO + ArrearsLastTESCO + CommutationsLastTESCO;
+    TotalLastGENCO = MonthlyLastGENCO + ArrearsLastGENCO + CommutationsLastGENCO;
+    TotalOtherDISCO = TotalLastNTDC + TotalLastGENCO + TotalLastTESCO;
+    NetExpenditureInLastMonth = MonthlyTotal + TotalCommutations + TotalArrears;
+    @*<link type="text/css" href="~/css/LegalLandscape.css" rel="stylesheet" media="All" />*@
+    <link href="~/css/print.css" type="text/css" rel="stylesheet" media="All" />
+    <style>
+        table {
+            width: 100%
+        }
+
+        .custom-table {
+            font-size: 12px;
+            border-spacing: 0px;
+            table-layout: fixed;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+            .custom-table > thead > tr > th {
+                border: 1px solid black;
+                word-wrap: break-word;
+                text-align: center;
+            }
+
+            .custom-table > tbody > tr > td {
+                border: 1px solid black;
+                word-wrap: break-word;
+                text-align: center;
+            }
+    </style>
+    <div class="card">
+        <div id="printDiv">
+            <div class="row">
+
+                <h3 class="text-center text-bold">PESHAWAR ELECTRIC SUPPLY COMPANY</h3>
+            </div>
+            <div class="row">
+                <table class="table" style="width:100%;">
+                    <thead>
+                        <tr>
+                            <th>PENSION FUND DEMAND</th>
+                            <th>Demand No. <u>@Model.MonthlyPensionDemand.Number</u></th>
+                            <th>Dated  <u>@UserFormat.GetDate(Model.MonthlyPensionDemand.Date)</u></th>
+                        </tr>
+                    </thead>
+                </table>
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th>NAME OF OFFICE</th>
+                            <th>PURPOSE OF DEMAND</th>
+                            <th>ACCOUNT CODE</th>
+                            <th>AMOUNT DEMANDED (Rs)</th>
+                            <th>EXP. AS PER PENSION CASH BOOK OF @UserFormat.GetMonthYear(Model.MonthlyPensionDemand.Date) (Rupees)</th>
+                            <th>CLOSING BALANCE AS PER PENSION CASH BOOK OF @UserFormat.GetMonthYear(Model.MonthlyPensionDemand.Date) (Rupees)</th>
+                            <th>REMARKS (IF ANY)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>SS &amp; TL Division PESCO Mardan</td>
+                            <td>Pension Demand for @UserFormat.GetMonthYear(Model.MonthlyPensionDemand.Date)</td>
+                            <td>520502</td>
+                            <td>
+                                @if (Model.PensionerPayments != null)
+                                {
+                                    <span>@UserFormat.GetAmount(DemandAmount)</span>
+                                }
+                            </td>
+                            <td>@UserFormat.GetAmount(NetExpenditureInLastMonth)</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Detail of Exp During @UserFormat.GetMonthYear(UserFormat.GetLastMonth(Model.MonthlyPensionDemand.Date)) </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PESCO</td>
+                                <td>@UserFormat.GetAmount(TotalLastPESCO)</td>
+                            </tr>
+                            <tr>
+                                <td>WAPDA</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>O.DISCOs</td>
+                                <td>@UserFormat.GetAmount(TotalOtherDISCO)</td>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td>@UserFormat.GetAmount(NetExpenditureInLastMonth)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+
+                                <th colspan="7"> Break Up of Payment Made During @UserFormat.GetMonthYear(UserFormat.GetLastMonth(Model.MonthlyPensionDemand.Date))</th>
+                            </tr>
+                            <tr>
+                                <th>Company</th>
+                                <th>Commuatation</th>
+                                <th>Monthly Pension</th>
+                                <th>Restoration (A)</th>
+                                <th>Conversion (A)</th>
+                                <th>Revision (A)</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>PESCO</td>
+                                <td>@UserFormat.GetAmount(CommutationsLastPESCO)</td>
+                                <td>@UserFormat.GetAmount(MonthlyLastPESCO)</td>
+                                <td></td>
+                                <td></td>
+                                <td>@UserFormat.GetAmount(ArrearsLastPESCO)</td>
+                                <td>@UserFormat.GetAmount(TotalLastPESCO)</td>
+                            </tr>
+
+                            <tr>
+                                <td>WAPDA</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>DISCOS</td>
+                                <td>@UserFormat.GetAmount(CommutationsLastNTDC)</td>
+                                <td>@UserFormat.GetAmount(MonthlTotalOtherDISCOs)</td>
+                                <td></td>
+                                <td></td>
+                                <td>@UserFormat.GetAmount((ArrearsLastNTDC + ArrearsLastTESCO + ArrearsLastGENCO))</td>
+                                <td>@UserFormat.GetAmount(TotalOtherDISCO)</td>
+                            </tr>
+                            <tr>
+                                <td>Total</td>
+                                <td>@UserFormat.GetAmount(TotalCommutations)</td>
+                                <td>@UserFormat.GetAmount(MonthlyTotal)</td>
+                                <td></td>
+                                <td></td>
+                                <td>@UserFormat.GetAmount(TotalArrears)</td>
+                                <td>@UserFormat.GetAmount(NetExpenditureInLastMonth)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/print/print.min.js" type="text/javascript"></script>
+    <script>
+        function printProforma() {
+            printJS({
+                printable: 'printDiv',
+                type: 'html',
+                header: null,
+                targetStyles: ['*'],
+                scanStyles: true,,
+                maxWidth:
+                    css: ['css/print.css', 'dist/css/adminlte.css', 'css/LegalLandscape.css'],
+                documentTitle: "Monthly Demand"
+            });
+        }
+        $(document).ready(function (e) {
+            printProforma();
+        });
+    </script>
+}
+else
+{
+    <div class="alert alert-danger">No Demand found !</div>
+}

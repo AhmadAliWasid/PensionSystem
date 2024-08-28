@@ -1,0 +1,31 @@
+﻿@model List<PensionSystem.Entities.Models.UserPDU>
+@{
+    Layout = null;
+}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>S#</th>
+            <th>User</th>
+            <th>PDU</th>
+            <th>Action</th>
+        </tr>
+
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            int number = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@number</td>
+                    <td>@item.User.UserName</td>
+                    <td>@item.PDU.ShortName</td>
+                    <td><button class="btn"></button></td>
+                </tr>
+                number++;
+            }
+        }
+    </tbody>
+</table>

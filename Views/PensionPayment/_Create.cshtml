@@ -1,0 +1,115 @@
+﻿@model PensionSystem.Entities.Models.PensionerPayment
+@{
+	ViewData["Title"] = "Demand List";
+	ViewData["SubTitle"] = "Add";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card-primary">
+	<div class="card-header">
+		<div class="card-title">
+			Pensioner Payment
+		</div>
+	</div>
+	<div class="card card-body">
+		<form asp-action="Save">
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<div class="row">
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="MonthlyPensionDemandId" class="control-label"></label>
+						<select asp-for="MonthlyPensionDemandId" class="form-control" asp-items="ViewBag.MonthlyPensionDemandId"></select>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="form-group">
+						<label asp-for="PensionerId" class="control-label"></label>
+						<select asp-for="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 mb-4">
+					<div class="form-group">
+						<label asp-for="MonthlyPension" class="control-label"></label>
+						<input asp-for="MonthlyPension" class="form-control" />
+						<span asp-validation-for="MonthlyPension" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3 mb-4">
+					<div class="form-group">
+						<label asp-for="CMA" class="control-label"></label>
+						<input asp-for="CMA" class="form-control" />
+						<span asp-validation-for="CMA" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3 mb-4">
+					<div class="form-group">
+						<label asp-for="OrderelyAllowence" class="control-label"></label>
+						<input asp-for="OrderelyAllowence" class="form-control" />
+						<span asp-validation-for="OrderelyAllowence" class="text-danger"></span>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 mb-4">
+					<div class="form-group">
+						<label asp-for="Deduction" class="control-label"></label>
+						<input asp-for="Deduction" class="form-control" />
+						<span asp-validation-for="Deduction" class="text-danger"></span>
+					</div>
+				</div>
+				<div class="col-md-3 mb-4">
+					<div class="form-group">
+						<label asp-for="NetPension" class="control-label"></label>
+						<input asp-for="NetPension" class="form-control" />
+						<span asp-validation-for="NetPension" class="text-danger"></span>
+					</div>
+				</div>
+
+			</div>
+			<div class="row mb-4">
+				<div class="form-group">
+					<input type="submit" value="Save" class="btn btn-primary" />
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="card-footer">
+		<a asp-action="Index">Back to List</a>
+	</div>
+</div>
+<script>
+		$(document).ready(function(e){
+		$("#PensionerId").change(function(e){
+				var pensionerId = $(this).val();
+				if(pensionerId != null){
+					$.ajax({
+							type: "POST",
+							url: "@Url.Action("GetInfo","ArrearsPayments")",
+							data: { "id": pensionerId },
+							success: function (response) {
+								if(response != null){
+									$("#MonthlyPension").val(response.MonthlyPension);
+									$("#CMA").val(response.CMA);
+									$("#OrderelyAllowence").val(response.OrderelyAllowence);
+									$("#Deduction").val(response.Deduction);
+									$("#NetPension").val(response.Total);
+								}
+							},
+							failure: function (response) {
+								alert(response.responseText);
+							},
+							error: function (response) {
+								alert(response.responseText);
+						   }
+					});
+				}
+		});
+
+	});
+</script>
+@section Scripts {
+    @{
+	await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}

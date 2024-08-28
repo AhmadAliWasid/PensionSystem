@@ -1,0 +1,62 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.ArrearsDemandViewModel
+@{
+    Layout = null;
+}
+@if (Model != null)
+{
+
+    @if (Model.ArrearsDemands != null)
+    {
+        <table class="table" id="tableId">
+            <thead>
+                <tr>
+                    <th>Demand#</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ArrearsDemands)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Number)</td>
+                        <td>@item.Description</td>
+                        <td>@UserFormat.GetDate(item.Date)</td>
+                        @if (Model.ArrearsPayments != null)
+                        {
+                            <td>@UserFormat.GetAmount(Model.ArrearsPayments.Where(x => x.ArrearsDemandId == item.Id).Sum(z => z.Total))</td>
+                        }
+                        else
+                        {
+                            <td>No Payments</td>
+                        }
+                        @if (item.IsPaid)
+                        {
+                            <td><a asp-action="Print" asp-route-id="@item.Id" class="btn btn-warning"><i class="fa fa-print"></i></a></td>
+                        }
+                        else
+                        {
+                            <td>
+                                <button class="btn btn-success" onclick="MarkItPaid(@item.Id,this)"><i class="fa fa-check"></i>Pay</button>|
+                                <button onclick="AddOrUpdate(@item.Id)" class="btn btn-warning"><i class="fa fa-edit"></i></button>|
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                            </td>
+                        }
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <script>
+            $(document).ready(function (e) {
+                $("#tableId").dataTable({
+                    "ordering": false
+                });
+            });
+
+        </script>
+    }
+}

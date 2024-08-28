@@ -1,0 +1,105 @@
+﻿@model PensionSystem.Entities.Models.HBLArrears
+
+@{
+    ViewData["Title"] = "HBL Arrears";
+    ViewData["SubTitle"] = "Update";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@if (Model != null)
+{
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Update HBL Arrears</div>
+        </div>
+        <div class="card-body">
+            <form asp-action="Edit">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="ChequeId" class="control-label"></label>
+                            <select asp-for="ChequeId" class="form-control" asp-items="ViewBag.ChequeId"></select>
+                            <span asp-validation-for="ChequeId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="PensionerId" class="control-label"></label>
+                            <select asp-for="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
+                            <span asp-validation-for="PensionerId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="AccountNumber" class="control-label"></label>
+                            <input asp-for="AccountNumber" class="form-control" />
+                            <span asp-validation-for="AccountNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="Month" class="control-label"></label>
+                            <input asp-for="Month" type="month" class="form-control" />
+                            <span asp-validation-for="Month" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="BranchId" class="control-label"></label>
+                            <select asp-for="BranchId" class="form-control" asp-items="ViewBag.BranchId"></select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <input asp-for="Description" class="form-control" />
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="FromMonth" class="control-label"></label>
+                            <input asp-for="FromMonth" class="form-control" />
+                            <span asp-validation-for="FromMonth" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="ToMonth" class="control-label"></label>
+                            <input asp-for="ToMonth" class="form-control" />
+                            <span asp-validation-for="ToMonth" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label asp-for="Amount" class="control-label"></label>
+                            <input asp-for="Amount" class="form-control" />
+                            <span asp-validation-for="Amount" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Update" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+        <div class="card-footer">
+            <a asp-action="Index" class="btn btn-info">Back to List</a>
+        </div>
+    </div>
+    @section Scripts {
+    @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+}
+else
+{
+    <div class="alert alert-danger">Unable To Find Record</div>
+}
+

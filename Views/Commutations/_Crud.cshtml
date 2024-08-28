@@ -1,0 +1,37 @@
+﻿@model PensionSystem.Entities.Models.Commutation
+@{
+    Layout = null;
+}
+<form  id="CreateUpdate">
+    <input asp-for="Id" type="hidden" />
+    <div class="row ">
+        <div class="col-md-12 text-danger text-bold" id="ErrorDiv">
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label asp-for="ChequeId" class="control-label"></label>
+            <select asp-for="ChequeId" class="form-control" asp-items="ViewBag.ChequeId"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label asp-for="PensionerId" class="control-label"></label>
+            <select asp-for="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label asp-for="Month" class="control-label"></label>
+            <input asp-for="Month" type="month" class="form-control" />
+            <span asp-validation-for="Month" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group">
+            <label asp-for="Amount" class="control-label"></label>
+            <input asp-for="Amount" class="form-control" />
+            <span asp-validation-for="Amount" class="text-danger"></span>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,175 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.HBLArrearsViewModel
+@if (Model != null)
+{
+    @if (Model.Cheque != null && Model.HBLArrears != null)
+    {
+        decimal Total = Model.HBLArrears.Sum(x => x.Amount);
+        <div class="card">
+            @*table header*@
+            <div id="table-header-office">
+                <h3 class="text-center">PESHAWAR ELECTRIC SUPPLY COMPANY LIMITED</h3>
+                <div class="row">
+                    <div class="col-md-6 text-start">No.___________/G3</div>
+                    <div class="col-md-6 text-end">Dated: @UserFormat.GetDate(DateTime.Now)</div>
+                </div>
+                <div class="row"><div class="col-md-12">@Model.Cheque.Name</div></div>
+                <div class="row"><div class="col-md-12">SUBJECT: <u><b>CROSS CHEQUE</b></u></div></div>
+                @if (Model.Cheque.Number != 0)
+                {
+                    <div class="row">
+                        <div class="col-md-12">
+                            Appended please find herewith a cross cheque bearing No.<u><b>@UserFormat.GetChequeNumber(Model.Cheque.Number)</b></u>
+                            Dated:<u><b>@UserFormat.GetDate(Model.Cheque.Date)</b></u> Amounting to Rs. =<u><b>@UserFormat.GetAmount(Model.Cheque.Amount)</b></u>/-
+                            in respect of the following officials.
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    @*now we will print a sample*@
+                    <div class="row">
+                        <div class="col-md-12">
+                            Appended please find herewith a cross cheque bearing No.<u><b>__________________</b></u>Dated:<u><b>____________________</b></u>amounting to Rs. =<u><b>__________________</b></u>/-  in respect of the following officials.
+                        </div>
+                    </div>
+                }
+            </div>
+            @*list of pensioner for demand*@
+            <div class="card-body">
+                <table class="table" id="tableId">
+                    <thead>
+                        <tr>
+                            <th>PPO</th>
+                            <th>Claimant</th>
+                            <th>Description</th>
+                            <th>CNIC</th>
+                            <th>Branch</th>
+                            <th>Acc#</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Amount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HBLArrears)
+                        {
+                            <tr>
+                                @if (item.Pensioner != null)
+                                {
+                                    <td>@item.Pensioner.PPOSystem</td>
+                                    <td>@item.Pensioner.Claimant</td>
+                                }
+                                else
+                                {
+                                    <td colspan="2">N/A</td>
+                                }
+                                <td>@item.Description</td>
+                                <td>@UserFormat.GetCNIC(item.Pensioner.ClaimantCNIC)</td>
+                                <td>@item.Branch.Bank.ShortName @item.Branch.Code</td>
+                                <td>@UserFormat.GetAccount(item.AccountNumber)</td>
+                                <td>@UserFormat.GetDate(item.FromMonth)</td>
+                                <td>@UserFormat.GetDate(item.ToMonth)</td>
+                                <td>@UserFormat.GetAmount(item.Amount)</td>
+                                <td>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning"><i class="fa fa-edit"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                @*footer*@
+                <div id="table-footer">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                @if (Model.HBLArrears != null)
+                                {
+                                    <th colspan="2">Rupees In Words : @Calculation.Convert((long)Total) Only</th>
+                                    <th class="text-end">Total Amount : @UserFormat.GetAmount(Total)</th>
+                                }
+                            </tr>
+                        </thead>
+                    </table>
+                    @if (Model.Session != null)
+                    {
+                        <div class="container" style="margin-top: 200px;">
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="text-center">@Model.Session.AMStamp</p>
+                                    <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                                </div>
+                                <div class="col-6">
+                                    <div>
+                                        <p class="text-center">@Model.Session.DMStamp</p>
+                                        <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+                    // bank list
+        <div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#tableId').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'print',
+                            customize: function (win) {
+                                $(win.document.body).prepend($('#table-header-office').html()); // before table
+                                $(win.document.body).append($("#table-footer").html()); //after the table
+                                $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                                var last = null;
+                                var current = null;
+                                var bod = [];
+                                var css = '@@page { size: landscape; }', head = win.document.head || win.document.getElementsByTagName('head')[0], style = win.document.createElement('style');
+                                style.type = 'text/css';
+                                style.media = 'print';
+                                if (style.styleSheet) {
+                                    style.styleSheet.cssText = css;
+                                }
+                                else {
+                                    style.appendChild(win.document.createTextNode(css));
+                                }
+                                head.appendChild(style);
+                            },
+                            title: '',
+                            message: '<div class="text-center"></div>',
+                            exportOptions: {
+                                columns: [1, 2, 3, 4, 5, 6, 7, 8]
+                            }
+                        },
+                        'copyHtml5',
+                        'excelHtml5',
+                        'csvHtml5',
+                        'pdfHtml5'
+                    ],
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": false,
+                    "info": true,
+                });
+            });
+        </script>
+    }
+    else
+    {
+        <div class="alert alert-danger"><strong>Error!</strong>Unable to Find Cheque or HBL Arrears</div>
+    }
+
+}
+else
+{
+    <div></div>
+}

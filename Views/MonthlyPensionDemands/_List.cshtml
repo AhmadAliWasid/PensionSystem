@@ -1,0 +1,46 @@
+﻿@using Pension.Entities.Helpers
+@using PensionSystem.Entities.DTOs
+@model List<MPDemandDTO>
+
+@{
+    Layout = null;
+}
+
+@if (Model != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Number</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Description</td>
+                    <td>@item.Number</td>
+                    <td>@UserFormat.GetDate(item.Date)</td>
+                    <td>
+                        -
+                    </td>
+                    <td>
+                        <button onclick="Print(@item.Id)" class="btn btn-info btn-flat btn-sm"><i class="fa fa-print"></i> Print</button>
+                        @if (!(item.Date > DateTime.Now.Date.AddDays(2)))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn-warning btn btn-flat"> Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-info btn btn-flat"> Details </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn-danger btn btn-flat"> Delete </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+

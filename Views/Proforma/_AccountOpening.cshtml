@@ -1,0 +1,92 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.Entities.Models.Pensioner
+
+@if (Model != null)
+{
+
+    <link href="/lib/print/print.min.css" rel="stylesheet" />
+    <style>
+        .row-hight {
+            line-height: 17pt;
+            font-size: 14pt;
+        }
+    </style>
+    <div id="printDiv" style="width: 700px;max-width: 700px;padding:5px; font-size:12px;">
+        @if (Model != null)
+        {
+            <div id="page first-page">
+                <div class="row" style="margin-top:10px;">
+                    <div>
+                        <img src="~/img/letter_head.jpg" alt="header" style="width:100%">
+                    </div>
+                </div>
+                <div class="row" style="margin-top:20px;">
+                    <div class="col-md-6">
+                        <h4 class="text-start">No. ___________________/Account</h4>
+                    </div>
+                    <div class="col-md-6 ">
+                        <h4 class="text-end">Dated: __________________</h4>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 20px">
+                    To
+                </div>
+                <div class="row" style="margin-left:40px;">
+                    <p>
+                        Branch Manager <br>
+                        <u style="margin-top:10px;">_________________________</u><br>
+                        <u style="margin-top:10px;">_________________________</u>
+                    </p>
+                </div>
+                <div class="row" style="margin-top:30px">
+                    <h3><b><u>SUBJECT : </u></b> &nbsp;&nbsp;&nbsp; <b><u>OPENING OF PENSION ACCOUNT</u></b></h3>
+                </div>
+                <div class="row" style="margin-top:25px; margin-left:30px;">
+                    <p>
+                        <ol>
+                            <li class="row-hight">
+                                It is intimated that Mr/Mst/Miss. <b>@Model.Claimant </b> @Model.Relation.Short  Of
+                                @if (Model.Relation.Id == 1)
+                                {
+                                    <b>@Model.FatherName</b>
+                                }
+                                else
+                                {
+                                    <b>@Model.Name</b>
+                                }
+                                Ex. <b>@Model.Designation </b> having CNIC# <b>@Model.ClaimantCNIC</b> PPO # <b>@Model.PPONumber</b>  drawing pension Rs.<b>
+                                    @UserFormat.GetAmount(Model.Total) /-
+                                    (@Calculation.ConvertAmount((double)Model.Total)
+                                </b>  (per Month) is a pensioner in SS&TL Division PESCO Mardan (WAPDA).He/She
+                                is requesting
+                                for opening of "Account" in your Branch for pension purpose.
+                            </li>
+                            <li class="row-hight">
+                                Foregoing in view, it is requested that account as per the requirment of the above named indivisual may be opened in your branch for his/her convenience.
+                                Relevant documents are attached.
+                            </li>
+                            <li class="row-hight">
+                                Your cooperation in this regard will be highley appreciated, Please.
+                            </li>
+                        </ol>
+                    </p>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                    </div>
+                    <div class="col-md-6">
+                        <div id="higher_signature_section" style="margin-top: 130px">
+                            <p style="margin-bottom: 0px;" class="text-center">  Divisional Accounts Officer  </p>
+                            <p class="text-center">SS & TL Division PESCO Mardan</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">No Pensioner Found</div>
+}

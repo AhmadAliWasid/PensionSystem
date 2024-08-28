@@ -1,0 +1,40 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.HBLPaymentPensionerHistoryVM
+@if (Model != null)
+{
+    <div class="row">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>MP</th>
+                    <th>CMA</th>
+                    <th>Orderly</th>
+                    <th>Ded.</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.HBLPayments != null && Model.HBLPayments.Count > 0)
+                {
+                    foreach (var item in Model.HBLPayments)
+                    {
+                        <tr>
+                            <td>@UserFormat.GetMonthYear(item.Date)</td>
+                            <td>@item.Description</td>
+                            <td>@UserFormat.GetAmount(item.MP)</td>
+                            <td>@UserFormat.GetAmount(item.CMA)</td>
+                            <td>@UserFormat.GetAmount(item.Orderly)</td>
+                            <td>@UserFormat.GetAmount(item.Deduction)</td>
+                            <td>@UserFormat.GetAmount(item.Total)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">No Pensioner Found!</div>
+}

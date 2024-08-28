@@ -1,0 +1,58 @@
+﻿@model PensionSystem.ViewModels.PensionerPaymentViewModel
+@{
+    Layout = "~/views/shared/_layout.cshtml";
+    ViewData["Title"] = "Company Wise List";
+    DateTime dateTime = DateTime.Now;
+
+    if (dateTime.Date.Day <= 15)
+    {
+        dateTime = dateTime.AddMonths(-1);
+    }
+    string sDateTime = dateTime.ToString("yyyy-MM");
+}
+<!-- /.col-md-6 -->
+<div class="col-lg-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Month</label>
+                            <input type="month" class="form-control" id="month" name="month" min="2021-08" value="@sDateTime" max="@DateTime.Today.Date.ToString("yyyy-mm")">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="control-label">Month</label>
+                            <button type="button" class="btn btn-block bg-gradient-primary" id="button-get-list">Get List</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-body" id="content">
+        </div>
+    </div>
+</div>
+<script>
+    $("#button-get-list").click(function (e) {
+        var date = $("#month").val();
+        if (date != "") {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetList")",
+                data: { month: date },
+                dataType: "text",
+                success: function (msg) {
+                    $("#content").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+    });
+</script>	

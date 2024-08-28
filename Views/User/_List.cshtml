@@ -1,0 +1,66 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model List<IdentityUser>
+@{
+    Layout = null;
+}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <td>Action</td>
+            <td>UserName</td>
+            <td>NormalizedUserName</td>
+            <td>Email</td>
+            <td>NormalizedEmail</td>
+            <td>EmailConfirmed</td>
+            <td>PhoneNumber</td>
+            <td>PhoneNumberConfirmed</td>
+            <td>AccessFailedCount</td>
+            <td>ConcurrencyStamp</td>
+            <td>TwoFactorEnabled</td>
+            <td>LockoutEnabled</td>
+            <td>LockoutEnd</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (item.Email != "ahmadonlineg@gmail.com")
+                    {
+                        <button class="btn btn-danger btn-block" onclick="DeleteUser('@item.UserName',this)"><i class="fa fa-trash"></i> Delete</button>
+                    }
+                </td>
+                <td>@item.UserName</td>
+                <td>@item.NormalizedUserName</td>
+                <td>@item.Email</td>
+                <td>@item.NormalizedEmail</td>
+                <td>@item.EmailConfirmed</td>
+                <td>@item.PhoneNumber</td>
+                <td>@item.PhoneNumberConfirmed</td>
+                <td>@item.AccessFailedCount</td>
+                <td>@item.ConcurrencyStamp</td>
+                <td>@item.TwoFactorEnabled</td>
+                <td>@item.LockoutEnabled</td>
+                <td>@item.LockoutEnd</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    function DeleteUser(UserName, element) {
+        var result = confirm('Are you sure you want to Delete' + UserName + ' \n make sure he is not assigned any role?');
+        if (result) {
+            var dataToSend = {
+                UserName: UserName
+            };
+            $.post('@Url.Action("Delete")', dataToSend, function (response) {
+                var row = $(element).closest('tr'); // Find the closest parent row
+                row.remove(); //
+            })
+                .fail(function () {
+                    alert('POST request failed.');
+                });
+        }
+    }
+</script>

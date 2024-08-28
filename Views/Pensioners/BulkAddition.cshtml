@@ -1,0 +1,275 @@
+﻿@{
+    ViewData["Title"] = "Bulk Addition";
+    ViewData["SubTitle"] = "Pensioner";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card ">
+    <div class="card-header">
+
+        <div class="row form-group" id="responseMessageDiv">
+        </div>
+        <div class="row form-group">
+            <div class="col-md-3">
+                <form enctype="multipart/form-data" class="form">
+                    <label class="control-lable" for="file">CSV File</label>
+                    <input type="file" id="pensioner-file" name="pensioner-file" multiple size="1" class="form-control" />
+                </form>
+            </div>
+            <div>
+                <p>
+                    Upload CSV  file in the given format
+                </p>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-2">
+                <button class="btn btn-info btn-block" id="btnUploadCsvPensionerFile">Upload Pensioners</button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>P ID</td>
+                            <td>PPO No.</td>
+                            <td>Name</td>
+                            <td>Designation </td>
+                            <td>BPS</td>
+                            <td>Claimant </td>
+                            <td>Claimant CNIC#</td>
+                            <td>Company</td>
+                            <td>Bank</td>
+                            <td>Br.Code</td>
+                            <td>AC#</td>
+                            <td>Monthly Pension</td>
+                            <td>CMA Allow.</td>
+                            <td>Orderly Allow.</td>
+                            <td>Total</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>2</td>
+                            <td>162</td>
+                            <td>ABDUL AKBAR</td>
+                            <td>LM-I</td>
+                            <td>11</td>
+                            <td>RAWASIYA</td>
+                            <td>16101-0353916-2</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>1275</td>
+                            <td>7900910403</td>
+                            <td>28727</td>
+                            <td>1863</td>
+                            <td>0</td>
+                            <td>30590</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>252</td>
+                            <td>SYED NASEER AHMAD</td>
+                            <td>SENIOR CLERK</td>
+                            <td>7</td>
+                            <td>SELF</td>
+                            <td>16101-1228318-7</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0219</td>
+                            <td>24266-8</td>
+                            <td>18946</td>
+                            <td>2048</td>
+                            <td>0</td>
+                            <td>20994</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>413</td>
+                            <td>FAZAL SATTAR</td>
+                            <td>LM-I</td>
+                            <td>9</td>
+                            <td>YASMEEN BEGUM</td>
+                            <td>16101-1110637-5</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0219</td>
+                            <td>24357801</td>
+                            <td>16255</td>
+                            <td>1757</td>
+                            <td>0</td>
+                            <td>18012</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>424</td>
+                            <td>KABALY KHAN</td>
+                            <td>SUPERVISOR(DC</td>
+                            <td>12</td>
+                            <td>SELF</td>
+                            <td>16101-3366503-1</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0441</td>
+                            <td>4410006305801</td>
+                            <td>40439</td>
+                            <td>2623</td>
+                            <td>0</td>
+                            <td>43062</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>444</td>
+                            <td>NAZAR CHAND</td>
+                            <td>SWEEPER</td>
+                            <td>1</td>
+                            <td>SELF</td>
+                            <td>16101-4845422-1</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0219</td>
+                            <td>23713801</td>
+                            <td>13915</td>
+                            <td>1350</td>
+                            <td>0</td>
+                            <td>15265</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>448</td>
+                            <td>MAIN RASOOL</td>
+                            <td>COMMERCIAL SUPERINTENDENT</td>
+                            <td>15</td>
+                            <td>NAHEEDABEGUM</td>
+                            <td>16101-6006741-7</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0289</td>
+                            <td>7900567303</td>
+                            <td>42965</td>
+                            <td>2787</td>
+                            <td>0</td>
+                            <td>45752</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>587</td>
+                            <td>MUHAMMAD JAVID</td>
+                            <td>LM-I</td>
+                            <td>9</td>
+                            <td>FOZIA</td>
+                            <td>16101-9669005-2</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0219</td>
+                            <td>7900659203</td>
+                            <td>12161</td>
+                            <td>1315</td>
+                            <td>0</td>
+                            <td>13476</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>840</td>
+                            <td>LATE MUSHTAQ HUSSAIN</td>
+                            <td>COMMERCIAL ASSISTANT</td>
+                            <td>11</td>
+                            <td>MST. RIFAT MUSHTAQ</td>
+                            <td>16101-8821013-2</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0219</td>
+                            <td>27996903</td>
+                            <td>24896</td>
+                            <td>2691</td>
+                            <td>0</td>
+                            <td>27587</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>892</td>
+                            <td>BAKHAT JAMAL</td>
+                            <td>NAIB QASID</td>
+                            <td>1</td>
+                            <td>KAUSAR BIBI</td>
+                            <td>16101-9947359-4</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0563</td>
+                            <td>900276403</td>
+                            <td>14332</td>
+                            <td>871</td>
+                            <td>0</td>
+                            <td>15203</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>1016</td>
+                            <td>MUHAMMAD ZARIN</td>
+                            <td>LM-II</td>
+                            <td>7</td>
+                            <td>SELF</td>
+                            <td>16101-1168491-7</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0219</td>
+                            <td>26344703</td>
+                            <td>17696</td>
+                            <td>1913</td>
+                            <td>0</td>
+                            <td>19609</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>1059</td>
+                            <td>GHULAM BAHADAR</td>
+                            <td>LM-I</td>
+                            <td>9</td>
+                            <td> </td>
+                            <td>16101-0266141-9</td>
+                            <td>PESCO</td>
+                            <td>HBL</td>
+                            <td>0219</td>
+                            <td>7900747803</td>
+                            <td>17923</td>
+                            <td>1937</td>
+                            <td>0</td>
+                            <td>19860</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#btnUploadCsvPensionerFile").click(function (e) {
+            awaitHtmlElement("#responseMessageDiv");
+            var input = document.getElementById("pensioner-file");
+            var file = input.files[0]; // Get the first selected file
+            var formData = new FormData();
+            formData.append("file", file); // Append the single file
+            $.ajax(
+                {
+                    url: '@Url.Action("UploadFileOfBulkAdditionOfPensioner")',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    type: "POST",
+                    success: function (data) {
+                        $("#responseMessageDiv").html(data.RText);
+                    },
+                    error: function (data) {
+                        alert(data);
+                    }
+                }
+            );
+        });
+    });
+</script>
+

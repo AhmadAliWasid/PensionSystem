@@ -1,0 +1,131 @@
+﻿@model PensionSystem.ViewModels.PensionerPaymentViewModel
+@{
+    Layout = "~/views/shared/_layout.cshtml";
+    ViewData["Title"] = "Pension Payment";
+    ViewData["SubTitle"] = "Home";
+}
+<!-- /.col-md-6 -->
+<div class="col-lg-12">
+    <div id="form-div">
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-md-2">
+                    <form id="monthForm">
+                        <div class="form-group">
+                            <label class="control-label">Month</label>
+                            <input type="month" class="form-control" id="month" name="month" min="2021-07" value="@DateTime.Now.ToString("yyyy-MM")" max="@DateTime.Now.ToString("yyyy-MM")">
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label">Monthly Payments</label>
+                        <button type="button" class="btn btn-block  bg-gradient-primary" id="button-get-list">Get List</button>
+                    </div>
+                </div>
+                <div class="col-md-3">         
+                </div>
+                <div class="col-md-3 text-end">
+                    <div class="form-group">
+                        <a asp-action="Create" class="btn btn-warning"><i class="fa fa-plus"></i> Add New</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" id="content">
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+	await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}
+<script>
+    $(document).ready(function(e){
+            $("#button-get-list").click(function(e){
+        $("#monthForm").validate();
+        if($("#monthForm").valid()){
+            getList();
+        }
+    });
+    });
+
+    function getList(){
+                var date = $("#month").val();
+        if(date != ""){
+            $("#content").html('<div class="alert alert-warning"><strong>Wait!</strong>Please wait we are generating... list</div>')	;
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("GetList")",
+            data: { month: date},
+            dataType: "text",
+            success: function (msg) {
+                    $("#content").html(msg)	;
+            },
+            error: function (req, status, error) {
+                $("#content").html(error);
+            }
+        });
+        }
+    }
+    function Save(){
+                 if ($("#UserForm").valid()) { //check if form is valid using model annotation
+                     submitForm();
+                 }
+                 else {
+                     return false;
+                 }
+    }
+         function submitForm(){
+                 $('#btnSubmit').attr('disabled', 'disabled');
+                 var url = $("#UserForm").attr("action");
+                 var formData = $("#UserForm").serialize();
+                 $.ajax({
+                     url: url,
+                     type: "POST",
+                     data: formData,
+                     dataType: "json",
+                     success: function (response) {
+                          if(response.rCode == 1){
+                              $("#form-div").html("");
+                          }
+                     },
+                     error: function (response) {
+                         alert('Error!');
+                     },
+                     complete: function () {
+                         $('#btnSubmit').removeAttr('disabled');
+                     }
+                 });
+                 }
+                    function calculateTotal(){
+            var MonthlyPension = parseFloat($("#MonthlyPension").val());
+            var CMA = parseFloat($("#CMA").val());
+            var OrderelyAllowence = parseFloat($("#OrderelyAllowence").val());
+            var Deduction = parseFloat($("#Deduction").val());
+            var Total = (MonthlyPension  + CMA + OrderelyAllowence) - (Deduction);
+            $("#NetPension").val(Total);
+        }
+            function getUpdate(Id){
+            if(Id != ""){
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("Edit")",
+                    data: { id: Id},
+                    dataType: "text",
+                    success: function (msg) {
+                            $("#form-div").html(msg);
+                    },
+                    error: function (req, status, error) {
+                        alert(error);
+                    }
+                });
+                }
+                else{
+                    alert("no record selected")
+                }
+            }
+</script>	

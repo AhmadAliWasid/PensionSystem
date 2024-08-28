@@ -1,0 +1,80 @@
+﻿@using Pension.Entities.Helpers
+
+@{
+    ViewData["Title"] = "HBL Arrears";
+    ViewData["SubTitle"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">Arrears</div>
+        <div class="row">
+            <a asp-action="Create">Create</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row form-group">
+            <div class="col-md-3">
+                <label class="control-label">Demand</label>
+                <select class="form-control" id="ArrearsDemandId" name="ArrearsDemandId" asp-items="ViewBag.ArrearsDemandId"></select>
+            </div>
+            <div class="col-md-3">
+                <label>Bank</label>
+                <select class="form-control" id="BankId" name="BankId" asp-items="ViewBag.BankId"></select>
+            </div>
+            <div class="col-md-3">
+                <label>Month</label>
+                <input type="month" value="@DateTime.Now.ToString("yyyy-MM")"
+                       max="@DateTime.Now.ToString("yyyy-MM")" min="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM")"
+                       class="form-control" id="Month" name="Month" />
+            </div>
+            <div class="col-md-3">
+                <label class="control-label">Cheque</label>
+                <select class="form-control" id="ChequeId" name="ChequeId" asp-items="ViewBag.ChequeId"></select>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-2">
+                <button class="btn btn-flat btn-primary btn-block" onclick="PayArrearDemand()"><i class="fa fa-cash"></i> Pay Now</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function PayArrearDemand() {
+            var ArrearDemandId = $("#ArrearsDemandId").val();
+            var BankId = $("#BankId").val();
+            var ChequeId = $("#ChequeId").val();
+            var Month = $("#Month").val();
+            if (ArrearDemandId != "" || BankId != "" || ChequeId != "" || Month != "") {
+                awaitHtmlElement("#content");
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("PayArrearDemand")",
+                    data: {
+                        ArrearDemandId: ArrearDemandId,
+                        BankId: BankId,
+                        ChequeId: ChequeId,
+                        Month: Month
+                    },
+                    dataType: "text",
+                    success: function (msg) {
+                        $("#content").html(msg.RText);
+                    },
+                    error: function (req, status, error) {
+                        alert(error);
+                    }
+                });
+            }
+            else {
+                alert("Arrear, Bank, Cheque & Month are required Field");
+            }
+        }
+    </script>
+</div>
+<div class="card">
+    <div cite="card-body" id="content">
+    </div>
+
+</div>
+
+

@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = " Cases";
+}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">@ViewData["Title"]</h3>
+        <div class="card-tools">
+            <!-- Collapse Button -->
+            <table>
+                <thead>
+                    <tr>
+                        <th><button type="button" class="btn btn-block bg-gradient-primary btn-flat" onclick="AddOrUpdate(0)"><i class="fa fa-plus"></i> Add</button></th>
+                        <th><button type="button" class="btn btn-block bg-gradient-info btn-flat" onclick="LoadList()"><i class="fa fa-list"></i> Reload List</button></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+    <div class="card-body" id="content">
+    </div>
+</div>
+<div class="modal fade" id="modal-default" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-xl" id="modal-body">
+    </div>
+</div>
+<script>
+</script>

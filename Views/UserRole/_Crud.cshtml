@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model IdentityUserRole<string>
+@{
+    Layout = null;
+}
+<form id="CreateUpdate">
+    <div class="row ">
+        <div class="col-md-12 text-danger text-bold" id="ErrorDiv">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="UserId"></label>
+                <select asp-for=UserId asp-items="ViewBag.UserId" class="form-control"></select>
+                <span asp-validation-for="UserId"></span>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="RoleId"></label>
+                <select asp-for=RoleId asp-items="ViewBag.RoleId" class="form-control"></select>
+                <span asp-validation-for="RoleId"></span>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,93 @@
+﻿<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PESCO | Pensioner</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="~/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="~/css/site.css" type="text/css">
+</head>
+<body>
+    <div class="login-page" style="min-height: 496.781px;">
+        <div class="login-box">
+            <div class="login-logo">
+                <a href="">Pension History</a>
+            </div>
+            <!-- /.login-logo -->
+            <div class="card">
+                <div class="card-body login-card-body">
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <label>PPO # (written on your ppo book)</label>
+                            <input type="number" name="PPONumber" id="PPONumber" class="form-control" aria-required="true" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 form-group">
+                            <label class="">CNIC (ex. 00000-0000000-0)</label>
+                            <input type="text" class="form-control" id="CNIC" name="CNIC" aria-required="true" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- /.col -->
+                        <div class="col-12 form-group">
+                            <button id="login-submit" type="submit" class="btn btn-primary btn-block">ShowHistory</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </div>
+                <!-- /.login-card-body -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="~/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/dist/js/adminlte.min.js"></script>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="content">
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<script>
+    $("#login-submit").click(function (e) {
+        var PPONumber = $("#PPONumber").val();
+        var CNIC = $("#CNIC").val();
+        if (PPONumber != "" && CNIC != "") {
+            $("#content").html("<div class='text-warning text-bold'>Please wait! Getting Data from Database</div>");
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetClaimantHistory")",
+                data: {
+                    PPONumber: PPONumber,
+                    CNIC: CNIC
+                },
+                dataType: "text",
+                success: function (msg) {
+                    $("#content").html(msg);
+                },
+                error: function (req, status, error) {
+                    $("#content").html(error);
+                }
+            });
+        }
+        else {
+            alert("Starting Month and Ending Months are required!");
+        }
+    });
+</script>

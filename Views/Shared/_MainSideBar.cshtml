@@ -1,0 +1,459 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Http
+
+
+
+@inject UserManager<IdentityUser> userManager
+<!-- Main Sidebar Container -->
+@{
+    string UserName = string.Empty;
+    string RoleName = string.Empty;
+    if (User.Identity != null && User.Identity.Name != null)
+    {
+        UserName = User.Identity.Name.Split('@')[0];
+    }
+    var loggedInPDU = ViewContext.HttpContext.Session.GetString("LoggedInPDU");
+    // Access session properties or set values
+}
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="../../index3.html" class="brand-link elevation-4">
+        <img src="~/dist/img/AdminLTELogo.png"
+             alt="AdminLTE Logo"
+             class="brand-image img-circle elevation-3"
+             style="opacity: .8">
+        <span class="brand-text font-weight-light">
+            @if (User.Identity != null)
+            {
+                <i>@loggedInPDU  @RoleName</i>
+            }
+        </span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar user (optional) -->
+        <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="image">
+                <img src="~/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+            </div>
+            <div class="info">
+                <a href="#" class="d-block">
+                    @if (User.Identity != null)
+                    {
+                        <i>@UserName</i>
+                    }
+                </a>
+            </div>
+        </div>
+
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Dashboard
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                </li>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-money-check-alt"></i>
+                            <p>
+                                Users
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="User" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-user nav-icon"></i>
+                                    <p>User</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="Role" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-print nav-icon"></i>
+                                    <p>Roles</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="UserRole" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-print nav-icon"></i>
+                                    <p>User Role</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="PDU" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-print nav-icon"></i>
+                                    <p>PDU</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="UserPDU" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-print nav-icon"></i>
+                                    <p>User PDU</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-university"></i>
+                            <p>
+                                Banks
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="Bank" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-university nav-icon"></i>
+                                    <p>List</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="Branches" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-university nav-icon"></i>
+                                    <p>Branches</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-user"></i>
+                        <p>
+                            Pensioners
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="Companies" asp-action="Index" class="nav-link">
+                                    <i class="far fa-building nav-icon"></i>
+                                    <p>Companies</p>
+                                </a>
+                            </li>
+                            <li>
+                                <a asp-area="" asp-controller="Relations" asp-action="Index" class="nav-link">
+                                    <i class="far fa-user nav-icon"></i>
+                                    <p>Relations</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="Pensioners" asp-action="BulkAddition" class="nav-link">
+                                    <i class="fas fa-print nav-icon"></i>
+                                    <p>Bulk Addition</p>
+                                </a>
+                            </li>
+                        }
+
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="Pensioners" asp-action="Index" class="nav-link">
+                                <i class="far fa-user nav-icon"></i>
+                                <p>Info</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="Proforma" asp-action="Index" class="nav-link">
+                                <i class="fas fa-print nav-icon"></i>
+                                <p>Form &amp; Slip</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="Pensioners" asp-action="Increase" class="nav-link">
+                                <i class="fas fa-print nav-icon"></i>
+                                <p>Increase</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-money-check-alt"></i>
+                        <p>
+                            Demands
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="MonthlyPensionDemands" asp-action="Index" class="nav-link">
+                                <i class="fas fa-print nav-icon"></i>
+                                <p>Monthly</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="ArrearsDemands" asp-action="Index" class="nav-link">
+                                <i class="fas fa-print nav-icon"></i>
+                                <p>Short Fall</p>
+                            </a>
+
+                        </li>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="RestorationDemands" asp-action="Index" class="nav-link">
+                                    <i class="far fa-building nav-icon"></i>
+                                    <p>Restoration</p>
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-money-check-alt"></i>
+                        <p>
+                            Payments
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="PensionPayment" asp-action="Home" class="nav-link">
+                                <i class="fas fa-print nav-icon"></i>
+                                <p>Monthly</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="ArrearsPayments" asp-action="Index" class="nav-link">
+                                <i class="fas fa-print nav-icon"></i>
+                                <p>Arrears</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="PensionPayment" asp-action="Ledger" class="nav-link">
+                                <i class="fas fa-print nav-icon"></i>
+                                <p>Ledger</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="ArrearsPayments" asp-action="BulkUpload" class="nav-link">
+                                <i class="fas fa-print nav-icon"></i>
+                                <p>Bulk Arrear Payments</p>
+                            </a>
+                        </li>
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="RestorationPayments" asp-action="Index" class="nav-link">
+                                    <i class="fas fa-print nav-icon"></i>
+                                    <p>Restoration</p>
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-university"></i>
+                        <p>
+                            Bank
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="HBLPayment" asp-action="Index" class="nav-link">
+                                <i class="fas fa-university nav-icon"></i>
+                                <p>Monthly</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="HBLArrears" asp-action="Index" class="nav-link">
+                                <i class="fas fa-university nav-icon"></i>
+                                <p>Arears</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="Commutations" asp-action="Index" class="nav-link">
+                                <i class="fas fa-university nav-icon"></i>
+                                <p>Commutations</p>
+                            </a>
+                        </li>
+
+
+                    </ul>
+                </li>
+
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-money-check-alt"></i>
+                        <p>
+                            Cheque
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="ChequeCategories" asp-action="Index" class="nav-link">
+                                    <i class="far fa-building nav-icon"></i>
+                                    <p>Categories</p>
+                                </a>
+                            </li>
+                        }
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="Cheques" asp-action="Index" class="nav-link">
+                                <i class="fas fa-money-check nav-icon"></i>
+                                <p>Issue Cheque</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item has-treeview">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-print"></i>
+                        <p>
+                            Reports
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="HBLPayment" asp-action="Consolidated" class="nav-link">
+                                <i class="fas fa-university nav-icon"></i>
+                                <p>Consolidated</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="CompanyWisePensioner" asp-action="Index" class="nav-link">
+                                <i class="fas fa-print nav-icon"></i>
+                                <p>Company Wise</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="" asp-controller="CashBook" asp-action="Index" class="nav-link">
+                                <i class="fas fa-university nav-icon"></i>
+                                <p>Cash Book</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                @if (User.IsInRole("Administrator"))
+                {
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                WWF
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="WWFBill" asp-action="Index" class="nav-link">
+                                    <i class="far fa-building nav-icon"></i>
+                                    <p>Bills</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="WWFDemands" asp-action="Index" class="nav-link">
+                                    <i class="far fa-user nav-icon"></i>
+                                    <p>Demands</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="WWFPayments" asp-action="Index" class="nav-link">
+                                    <i class="far fa-user nav-icon"></i>
+                                    <p>Payments</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Marriage Grant
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="MarriageGrantBill" asp-action="Index" class="nav-link">
+                                    <i class="far fa-building nav-icon"></i>
+                                    <p>Bills</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="MarriageGrantDemand" asp-action="Index" class="nav-link">
+                                    <i class="far fa-user nav-icon"></i>
+                                    <p>Demands</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                Conversion Case
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="ConversionCases" asp-action="Index" class="nav-link">
+                                    <i class="far fa-building nav-icon"></i>
+                                    <p>Dispatch</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="ConversionCases" asp-action="FullCase" class="nav-link">
+                                    <i class="far fa-building nav-icon"></i>
+                                    <p>Full Case</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a asp-area="Claimant" asp-controller="PaymentHistory" asp-action="Index" class="nav-link">
+                                    <i class="far fa-building nav-icon"></i>
+                                    <p>Claimant </p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                SMS
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a asp-area="" asp-controller="SMS" asp-action="Index" class="nav-link">
+                                    <i class="far fa-building nav-icon"></i>
+                                    <p>SMS</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                }
+
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

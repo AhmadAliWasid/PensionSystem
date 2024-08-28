@@ -1,0 +1,59 @@
+﻿@model PensionSystem.ViewModels.PensionerPaymentViewModel
+@{
+	Layout = "~/views/shared/_layout.cshtml";
+	ViewData["Title"] = "HBL History";
+}
+<!-- /.col-md-6 -->
+<div class="col-lg-12">
+	<div class="card card-primary">
+		<div class="card-header">
+			<h3 class="card-title">Upload History From Excel File</h3>
+		</div>
+		<!-- /.card-header -->
+		<!-- form start -->
+		<form role="form" asp-action="ImportExcelFile" enctype="multipart/form-data" method="post">
+			<div class="card-body">
+				<label for="exampleInputFile">Excel File</label>
+				<div class="input-group">
+					<div class="custom-file">
+					<input type="file" class="form-control" name="formFile" id="formFile" required  />
+					</div>
+				</div>
+			</div>
+			<!-- /.card-body -->
+			<div class="card-footer">
+				<button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-upload"></i> Upload</button>
+			</div>
+		</form>
+	</div>
+	<div class="card card-default">
+		<div class="card-header"><h3 class="card-title">Format Samples Must be</h3></div>
+		<div class="card-body">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>PPO Number</th>
+						<th>Account Number</th>
+						<th>MP</th>
+						<th>CMA</th>
+						<th>Orderly</th>
+						<th>Month</th>
+						<th>paid Amount</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>4516/45643</td>
+						<td>0000000000000000 16 or 14 digits</td>
+						<td>0.00</td>
+						<td>0.00</td>
+						<td>0.00</td>
+						<td>First Date of month 2021-08-01 for Aug 2021</td>
+						<td>Paid</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</div>

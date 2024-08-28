@@ -1,0 +1,450 @@
+﻿@using Pension.Entities.Helpers;
+@model PensionSystem.ViewModels.CashBookVM
+@{
+    Layout = null;
+    decimal selfPension = 0;
+    decimal familyPension = 0;
+    decimal CashRecieved = 0;
+    decimal TotalCommutation = 0;
+    decimal BankCommision = 0;
+    decimal ClosingBalance = 0;
+    decimal OpeningBalance = 0;
+    decimal tempClosingBalance = 0;
+    int totalCompanies = 0;
+    if (Model.CashBookCompanyVMs != null)
+    {
+        totalCompanies = Model.CashBookCompanyVMs.Max(x => x.CompanyID);
+    }    // commutation variables for company
+    if (Model.CashBooksEntries != null)
+    {
+        OpeningBalance = Model.CashBooksEntries.Where(x => x.Month.Date == Model.Month.Date && x.Particulars.Contains("C/F")).Sum(m => m.Amount);
+        List<CashBook> CreditTransaction = Model.CashBooksEntries.Where(x => x.TransactionType == TransactionType.Credit).ToList();
+        CashRecieved = CreditTransaction.Sum(x => x.Amount);
+        // it will remove doubling of opening balance
+        CashRecieved -= OpeningBalance;
+        List<CashBook> Debit = Model.CashBooksEntries.Where(x => x.TransactionType == TransactionType.Debit).ToList();
+        BankCommision = Debit.Sum(x => x.Amount);
+    }
+}
+<div id="cashBook">
+    <style>
+        tbody tr td:nth-child(3) {
+            word-wrap: break-word;
+            max-width: 300px;
+            white-space: normal;
+            /* Add your CSS styles for the third <td> here */
+        }
+
+        tbody tr td:nth-child(5) {
+            word-wrap: break-word;
+            max-width: 120px;
+            white-space: normal;
+            /* Add your CSS styles for the third <td> here */
+        }
+
+    </style>
+    <div class="container" id="table-header">
+        <div class="row">
+            <h3 class="text-center">PESHAWAR ELECTRIC SUPPLY COMPANY LTD.</h3>
+            <h4 class="text-center">XEN SS&TL Division PESCO Mardan</h4>
+            <h5 class="text-center">Cash Book For The Month Of <b>@UserFormat.GetMonthYear(Model.Month)</b></h5>
+        </div>
+    </div>
+    <table class="table table-bordered myTable" id="data-table">
+        <thead>
+            <tr style="background-color:grey;">
+                <th>Cash</th>
+                <th>Date</th>
+                <th>Particulars</th>
+                <th>PPO#</th>
+                <th>Period</th>
+                <th>V#</th>
+                <th>Cheq#</th>
+                <th>Bank</th>
+                <th>Cash Det.</th>
+                <th>Bank <br /> Commis.</th>
+                <th>Commut.</th>
+                <th>Self</th>
+                <th>Family</th>
+                <th>Closing Bal.</th>
+                <th>Initial</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.CashBookEntryList != null && Model.CashBookEntryList.Count > 0)
+            {
+                int voucherNumber = 1;
+                var orderEntryListByDate = Model.CashBookEntryList.OrderBy(x => x.Month).ToList();
+                @foreach (var cashBookEntryListOrdered in orderEntryListByDate)
+                {
+                    if (cashBookEntryListOrdered.CashBookEntryId != 0)
+                    {
+                        @if (Model.CashBooksEntries != null && Model.CashBooksEntries.Count > 0)
+                        {
+                            var Entry = Model.CashBooksEntries.Where(x => x.Id == cashBookEntryListOrdered.CashBookEntryId).FirstOrDefault();
+                            if (Entry != null)
+                            {
+                                tempClosingBalance += Entry.Amount;
+
+                                <tr>
+                                    <td>
+                                        @if (Entry.TransactionType == TransactionType.Credit)
+                                        {
+                                            <span>@UserFormat.GetAmount(Entry.Amount)</span>
+                                        }
+                                    </td>
+
+                                    <td>@UserFormat.GetDate(Entry.Month)</td>
+                                    <td>@Entry.Particulars</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                    </td>
+                                    <td>
+                                        @if (Entry.TransactionType == TransactionType.Debit)
+                                        {
+                                            <span>@UserFormat.GetAmount(Entry.Amount)</span>
+                                        }
+                                    </td>
+                                    <td>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>-</td>
+                                    @*Initial*@
+                                    <td></td>
+                                </tr>
+                            }
+                        }
+                    }
+                    if (cashBookEntryListOrdered.ChequeId != 0)
+                    {
+                        if (Model.Cheques != null && Model.Cheques.Count > 0)
+                        {
+                            var Entry = Model.Cheques.Where(x => x.Id == cashBookEntryListOrdered.ChequeId).FirstOrDefault();
+                            if (Entry != null)
+                            {
+                                tempClosingBalance -= Entry.Amount;
+                                <tr>
+                                    <td></td>
+                                    <td>@Entry.Date.ToString("dd-MM-yyyy")</td>
+                                    <td>@Entry.Name</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>@Entry.Number</td>
+                                    <td></td>
+                                    <td>@UserFormat.GetAmount(Entry.Amount)</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        -
+                                    </td>
+                                    @*Initial*@
+                                    <td></td>
+                                </tr>
+
+                                @if (Model.MonthlPayment != null && Model.MonthlPayment.Count > 0)
+                                {
+                                    var listMonthly = Model.MonthlPayment.Where(x => x.ChequeId == Entry.Id).ToList();
+                                    foreach (var itemMonthly in listMonthly)
+                                    {
+                                        <tr>
+                                            @*Cash*@
+                                            <td></td>
+                                            @*Date*@
+                                            <td></td>
+                                            @*Particular*@
+                                            <td>@itemMonthly.Pensioner.Claimant</td>
+                                            @*PPO#*@
+                                            <td>@itemMonthly.Pensioner.PPOSystem</td>
+                                            @*Period*@
+                                            <td></td>
+                                            @*VoucherNumber*@
+                                            <td>@voucherNumber</td>
+                                            @*Cheque*@
+                                            <td>-</td>
+                                            <td>@itemMonthly.Branch.Bank.ShortName</td>
+                                            <td></td>
+                                            @*Commission*@
+                                            <td>-</td>
+                                            @*Commutation*@
+                                            <td>-</td>
+                                            @if (itemMonthly.Pensioner.Relation.Name == "Self")
+                                            {
+                                                selfPension += itemMonthly.Total;
+                                                @*Self*@
+                                                <td>@UserFormat.GetAmount(itemMonthly.Total)</td>
+                                                @*Family*@
+                                                <td></td>
+                                            }
+                                            else
+                                            {
+                                                familyPension += itemMonthly.Total;
+                                                @*Self*@
+                                                <td></td>
+                                                @*Family*@
+                                                <td>@UserFormat.GetAmount(itemMonthly.Total)</td>
+                                            }
+                                            @*Closing Balance*@
+                                            <td></td>
+                                            @*Initial*@
+                                            <td></td>
+                                        </tr>
+                                        voucherNumber++;
+                                    }
+                                }
+                                @*Commutations if in this cheque*@
+                                @if (Model.Commutations != null && Model.Commutations.Count > 0)
+                                {
+                                    var listHBLCommutations = Model.Commutations.Where(x => x.ChequeId == Entry.Id).ToList();
+                                    foreach (var itemCommutation in listHBLCommutations)
+                                    {
+                                        <tr>
+                                            @*Blank*@
+                                            @*Cash*@
+                                            <td></td>
+                                            @*Date*@
+                                            <td></td>
+                                            @*Particular*@
+                                            <td>
+                                                @itemCommutation.Pensioner.Claimant <span>(Commutation)</span>
+                                            </td>
+                                            @*PPO#*@
+                                            <td>@itemCommutation.Pensioner.PPOSystem</td>
+                                            @*Period*@
+                                            <td></td>
+                                            @*VoucherNumber*@
+                                            <td>@voucherNumber</td>
+                                            @*Cheque*@
+                                            <td>-</td>
+                                            <td></td>
+                                            <td></td>
+                                            @*Commission*@
+                                            <td>-</td>
+                                            @*Commutation*@
+                                            <td>@UserFormat.GetAmount(itemCommutation.Amount)</td>
+                                            @if (itemCommutation.Pensioner.Relation.Name == "Self")
+                                            {
+                                                selfPension += itemCommutation.Amount;
+                                                @*Self*@
+                                                <td>@UserFormat.GetAmount(itemCommutation.Amount)</td>
+                                                @*Family*@
+                                                <td></td>
+                                            }
+                                            else
+                                            {
+                                                familyPension += itemCommutation.Amount;
+                                                @*Self*@
+                                                <td></td>
+                                                @*Family*@
+                                                <td>@UserFormat.GetAmount(itemCommutation.Amount)</td>
+                                            }
+                                            @*Closing Balance*@
+                                            <td></td>
+                                            @*Initial*@
+                                            <td></td>
+                                        </tr>
+                                    }
+                                }
+                                @*Arrears if in this cheque*@
+                                @if (Model.HBLArrears != null && Model.HBLArrears.Count > 0)
+                                {
+                                    var listHBLArrears = Model.HBLArrears.Where(x => x.ChequeId == Entry.Id).ToList();
+                                    int tempPPONumber = 0;
+                                    foreach (var itemArrears in listHBLArrears)
+                                    {
+
+                                        <tr>
+                                            @*Blank*@
+                                            @*Cash*@
+                                            <td></td>
+                                            @*Date*@
+                                            <td></td>
+                                            @*Particular*@
+                                            <td> @itemArrears.Pensioner.Claimant <br />@itemArrears.Description</td>
+                                            @*PPO#*@
+                                            <td>@itemArrears.Pensioner.PPOSystem</td>
+                                            @*Period*@
+                                            <td>@UserFormat.GetDate(itemArrears.FromMonth) to @UserFormat.GetDate(itemArrears.ToMonth)</td>
+                                            @*VoucherNumber*@
+                                            <td>
+                                                @if (tempPPONumber != itemArrears.Pensioner.PPOSystem)
+                                                {
+                                                    <i>@voucherNumber</i>
+                                                    voucherNumber++;
+                                                }
+                                                else
+                                                {
+                                                    <i>-</i>
+                                                }
+                                            </td>
+                                            @*Cheque*@
+                                            <td>-</td>
+                                            <td>@itemArrears.Branch.Bank.ShortName</td>
+                                            <td></td>
+                                            @*Commission*@
+                                            <td>-</td>
+                                            @*Commutation*@
+                                            <td>-</td>
+                                            @if (itemArrears.Pensioner.Relation.Name == "Self")
+                                            {
+                                                selfPension += itemArrears.Amount;
+                                                @*Self*@
+                                                <td>@UserFormat.GetAmount(itemArrears.Amount)</td>
+                                                @*Family*@
+                                                <td></td>
+                                            }
+                                            else
+                                            {
+                                                familyPension += itemArrears.Amount;
+                                                @*Self*@
+                                                <td></td>
+                                                @*Family*@
+                                                <td>@UserFormat.GetAmount(itemArrears.Amount)</td>
+                                            }
+                                            @*Closing Balance*@
+                                            <td></td>
+                                            @*Initial*@
+                                            <td></td>
+                                        </tr>
+                                        tempPPONumber = itemArrears.Pensioner.PPOSystem;
+                                    }
+                                }
+
+                            }
+                            // ends all loops
+                            // summary
+                        }
+                    }
+                    // first we will check is it normal entry
+                }
+                ClosingBalance = (CashRecieved + OpeningBalance) - (BankCommision + selfPension + familyPension);
+            }
+            <tr>
+                <th>@UserFormat.GetAmount(CashRecieved + OpeningBalance)</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th>@UserFormat.GetAmount((selfPension + familyPension))</th>
+                <th>@UserFormat.GetAmount(BankCommision)</th>
+                <th>
+                    @if (Model.Commutations != null && Model.Commutations.Count > 0)
+                    {
+                        TotalCommutation = Model.Commutations.Sum(x => x.Amount);
+                        <b>
+                            @UserFormat.GetAmount(TotalCommutation)
+                        </b>
+                    }
+                    else
+                    {
+                        <i>-</i>
+                    }
+                </th>
+                <th>@UserFormat.GetAmount((selfPension))</th>
+                <th>@UserFormat.GetAmount((familyPension))</th>
+                <th>@UserFormat.GetAmount(ClosingBalance)</th>
+                <th></th>
+            </tr>
+        </tbody>
+    </table>
+    <div id="table-footer">
+        <div class="container">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th style="text-align: end; background-color:lightgray;">Opening Balance</th>
+                            <th>@UserFormat.GetAmount(OpeningBalance)</th>
+                        </tr>
+                        <tr>
+                            <th style="text-align: end;background-color:lightgray;">Reciepts During The Month</th>
+                            <th>@UserFormat.GetAmount(CashRecieved)</th>
+                        </tr>
+                        <tr>
+                            <th style="text-align: end; background-color:lightgray;">Total</th>
+                            <th>@UserFormat.GetAmount(CashRecieved + OpeningBalance)</th>
+                        </tr>
+                        <tr>
+                            <th style="text-align: end;background-color:lightgray;">Total Expenditure During the Month</th>
+                            <th>@UserFormat.GetAmount(familyPension + selfPension + BankCommision)</th>
+
+                        </tr>
+                        <tr>
+                            <th style="text-align: end;background-color:lightgray;">Closing Balance</th>
+                            <th>@UserFormat.GetAmount(ClosingBalance)</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="container">
+            @if (Model.Session != null)
+            {
+                <div class="row" style="margin-top: 200px;">
+                    <div class="col-6">
+                        <p class="text-center">@Model.Session.AMStamp</p>
+                        <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                    </div>
+                    <div class="col-6">
+                        <div>
+                            <p class="text-center">@Model.Session.DMStamp</p>
+                            <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+</div>
+<script>
+    $(document).ready(function () {
+        var dataTable = $("#data-table").DataTable({
+            "responsive": true,
+            "sorting": false,
+            "lengthChange": false,
+            "autoWidth": false,
+            buttons: [
+                {
+                    extend: 'print',
+                    customize: function (win) {
+                        $(win.document.body).prepend($('#table-header').html()); // before table
+                        $(win.document.body).append($("#table-footer").html()); //after the table
+                        $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                        var last = null;
+                        var current = null;
+                        var bod = [];
+                        var css = '@@page { size: landscape; }', head = win.document.head || win.document.getElementsByTagName('head')[0], style = win.document.createElement('style');
+                        style.type = 'text/css';
+                        style.media = 'print';
+                        if (style.styleSheet) {
+                            style.styleSheet.cssText = css;
+                        }
+                        else {
+                            style.appendChild(win.document.createTextNode(css));
+                        }
+                        head.appendChild(style);
+                    },
+                    title: '',
+                    message: '<div class="text-center">Cash Book</div>',
+                },
+                'excel',
+                'copy',
+                'csv',
+                'pdf'
+            ],
+        });
+        dataTable.buttons().container().appendTo('#data-table_wrapper .col-md-6:eq(0)');
+    });
+</script>

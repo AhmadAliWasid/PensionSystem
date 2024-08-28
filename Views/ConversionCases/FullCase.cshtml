@@ -1,0 +1,89 @@
+﻿@model PensionSystem.Entities.Models.Pensioner
+@{
+    ViewData["Title"] = " Cases";
+}
+<div class="card">
+    <div class="card-header">
+        <!-- Collapse Button -->
+        <form id="filledCaseForm">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="PPONumber" class="control-label"></label>
+                        <input asp-for="PPONumber" class="form-control" />
+                        <span asp-validation-for="PPONumber" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Name" class="control-label"></label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Designation" class="control-label"></label>
+                        <input asp-for="Designation" class="form-control" />
+                        <span asp-validation-for="Designation" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Mobile" class="control-label"></label>
+                        <input asp-for="Mobile" class="form-control" />
+                        <span asp-validation-for="Mobile" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Claimant" class="control-label"></label>
+                        <input asp-for="Claimant" class="form-control" />
+                        <span asp-validation-for="Claimant" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label" asp-for="ClaimantCNIC"></label>
+                        <input asp-for="ClaimantCNIC" class="form-control" />
+                        <span asp-validation-for="ClaimantCNIC" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <label asp-for="Address" class="control-label"></label>
+                    <input asp-for="Address" class="form-control" />
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+        </form>
+        <div class="col-md-12">
+            <button class="btn btn-primary" id="btnSubmit">Click to Filled</button>
+        </div>
+    </div>
+    <div class="card-body" id="content">
+    </div>
+</div>
+<script>
+    $(document).ready(function (e) {
+        $("#btnSubmit").click(function (e) {
+            var formData = new FormData($("#filledCaseForm");
+            $.ajax({
+                type: 'POST',
+                url: '@Url.Action("GetFullCase")',
+                data: formData,
+                success: function (result) {
+                    $("#content").html(result);
+                },
+                error: function (xhr, status, error) {
+                    $("#content").html(error);// handle error response here
+                }
+            });
+        });
+
+    });
+</script>

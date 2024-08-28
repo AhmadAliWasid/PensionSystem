@@ -1,0 +1,119 @@
+﻿@using Pension.Entities.Helpers
+@{
+    ViewData["Title"] = "Pension Arrears ";
+    ViewData["SubTitle"] = "Payments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="row">
+            <div class="col-md-2">
+                <button class="btn btn-primary" onclick="AddOrUpdate(0)"><i class="fa fa-plus"></i> Add New Crud</button>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <select id="ArrearsDemandId" class="form-control" asp-items="ViewBag.ArrearsDemandId"></select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-info" id="GetDemandList"><i class="fa fa-list"></i> Get Demand</button>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-info" id="ClearDemandButton"><i class="fa fa-list"></i> Clear </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body" id="content">
+        <p>You Can Upload File Directly</p>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Demand #</th>
+                    <th>ID#</th>
+                    <th>Description</th>
+                    <th>MP</th>
+                    <th>CMA</th>
+                    <th>Orderly</th>
+                    <th>Total</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Months</th>
+                    <th>Deduction</th>
+                    <th>Net</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create/Update</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="Save()">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<script>
+    $(document).ready(function (e) {
+        $("#GetDemandList").click(function (e) {
+            getDemandList();
+        });
+        $("#ClearDemandButton").click(function (e) {
+            var ArrearsDemandId = $("#ArrearsDemandId").val();
+            if (ArrearsDemandId != "") {
+                awaitHtmlElement("#content");
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("ClearArrearDemand")",
+                    data: { demandId: ArrearsDemandId },
+                    dataType: "text",
+                    success: function (msg) {
+                        var resp = JSON.parse(msg);
+                        if (resp.rCode == 1) {
+                            $("#content").html("<div class='alert alert-success'>" + resp.rText + "</div>");
+                        }
+                        else {
+                            $("#content").html("<div class='alert alert-danger'>" + resp.rText + "</div>");
+
+                        }
+                    },
+                    error: function (req, status, error) {
+                        alert(error);
+                    }
+                });
+            }
+        });
+    });
+    function getDemandList() {
+        var ArrearsDemandId = $("#ArrearsDemandId").val();
+        if (ArrearsDemandId != "") {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDemandList")",
+                data: { demandId: ArrearsDemandId },
+                dataType: "text",
+                success: function (msg) {
+                    $("#content").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+    }
+
+</script>

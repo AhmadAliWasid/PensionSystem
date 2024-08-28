@@ -1,0 +1,117 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.PensionerViewModel
+@if (Model != null)
+{
+    <div id="list-pensioners">
+        <div class="card">
+            <div class="card-header">
+                <div class="card-header">
+                    <h3 class="card-title">Active Pensioners</h3>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="data-table" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Action</th>
+                            <th>PPO</th>
+                            <th>Claimant</th>
+                            <th>S/W/D</th>
+                            <th>Name</th>
+                            <th>Desig.</th>
+                            <th>MP</th>
+                            <th>CMA</th>
+                            <th>Orderly</th>
+                            <th>Total</th>
+                            <th>Bank</th>
+                            <th>Ac#</th>
+                            <th>Mobile</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Pensioners != null && Model.Pensioners.Count() > 0)
+                        {
+                            var branch = Model.Branches;
+                            @foreach (var item in Model.Pensioners)
+                            {
+                                <tr style='color: @(item.IsActiveClaimant? "green": "red") '>
+                                    <td>
+                                        <button type="button" class="btn btn-warning btn-sm" onclick="Update(@item.Id)">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                    </td>
+                                    <td>@item.PPOSystem</td>
+                                    <td>@item.Claimant </td>
+                                    <td>
+                                        @if (item.Relation != null)
+                                        {
+                                            <span>@item.Relation.Short</span>
+                                        }
+                                        else
+                                        {
+                                            <span>N/A</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.Relation != null && (item.Relation.Short == "S/O" || item.Relation.Short == "D/O"))
+                                        {
+                                            <span>@item.FatherName</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@item.Spouse</span>
+                                        }
+                                    </td>
+                                    <td>@item.Designation</td>
+                                    <td>@UserFormat.GetAmount(item.MonthlyPension)</td>
+                                    <td>@UserFormat.GetAmount(item.CMA)</td>
+                                    <td>@UserFormat.GetAmount(item.OrderelyAllowence)</td>
+                                    <td>@UserFormat.GetAmount(item.Total)</td>
+                                    <td>@item.Branch.Bank.ShortName - @item.Branch.Name (@item.Branch.Code)</td>
+                                    <td>@item.AccountNumber</td>
+                                    <td>@UserFormat.GetMobilePK(item.Mobile)</td>
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#data-table').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'print',
+                            customize: function (win) {
+                                $(win.document.body).append($("#table-footer").html()); //after the table
+                                $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                            },
+                            exportOptions: {
+                                columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                            },
+                            title: 'SS&TL Division PESCO Mardan',
+                            message: '<div class="text-center">List of Pensioner for the month of </div>',
+                        },
+                        'excel',
+                        'copy',
+                        'csv',
+                        'pdf'
+                    ],
+                    "paging": true,
+                    "lengthChange": false,
+                    "searching": true,
+                    "ordering": false,
+                    "info": true,
+                });
+            });
+        </script>
+    </div>
+
+}
+else
+{
+    <div class="alert alert-danger">No Pensioner Found!</div>
+}

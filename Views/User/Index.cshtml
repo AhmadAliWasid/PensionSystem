@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model List<IdentityUser>
+@{
+    ViewData["Title"] = "User";
+    ViewData["SubTitle"] = "List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">@ViewData["Title"]</h3>
+        <div class="card-tools">
+        </div>
+        <!-- /.card-tools -->
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body" id="content">
+        <div class="table-wrapper-scroll-y my-custom-scrollbar">
+            <!-- Your main view content here -->
+
+            <div>
+                <!-- Render the partial view -->
+                @await Html.PartialAsync("_List")
+            </div>
+
+            <!-- Other main view content here -->
+
+        </div>
+
+
+    </div>
+    <!-- /.card-body -->
+</div>

@@ -1,0 +1,88 @@
+﻿@using Pension.Entities.Helpers
+@model IEnumerable<PensionSystem.Entities.Models.Commutation>
+
+@{
+    Layout = null;
+}
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title">Commutations</div>
+    </div>
+    <div class="card-body">
+        <div class="col-md-12">
+            @if (Model != null)
+            {
+                <table class="table" id="data-table">
+                    <thead>
+                        <tr>
+                            <th>PPO</th>
+                            <th>Name</th>
+                            <th>Claimant</th>
+                            <th>Month</th>
+                            <th>Amount</th>
+                            <th>Created</th>
+                            <th>Modified</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                @if (item.Pensioner != null)
+                                {
+                                    <td>@item.Pensioner.PPOSystem</td>
+                                    <td>@item.Pensioner.Name</td>
+                                    <td>@item.Pensioner.Claimant</td>
+                                    <td>@UserFormat.GetMonthYear(item.Month)</td>
+                                    <td>@UserFormat.GetAmount(item.Amount)</td>
+                                    <td>@UserFormat.GetDateTime(item.CreatedDate)</td>
+                                    <td>@UserFormat.GetDateTime(item.ModifiedDate)</td>
+                                    <td>
+                                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td colspan="8">N/A</td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <script>
+                    $(document).ready(function () {
+                        $('#data-table').DataTable({
+                            dom: 'Bfrtip',
+                            buttons: [
+                                {
+                                    extend: 'print',
+                                    customize: function (win) {
+                                        $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                                    },
+                                    title: '',
+                                    message: '<div class="text-center">Commutations</div>',
+                                },
+                                'excel',
+                                'copy',
+                                'csv',
+                                'pdf'
+                            ],
+                            "paging": true,
+                            "lengthChange": false,
+                            "searching": true,
+                            "ordering": false,
+                            "info": true,
+                        });
+                    });
+                </script>
+            }
+        </div>
+    </div>
+
+</div>
+
+

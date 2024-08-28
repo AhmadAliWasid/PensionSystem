@@ -1,0 +1,177 @@
+﻿@model PensionSystem.ViewModels.ConsolidateSearchModel
+@{
+    Layout = "~/views/shared/_layout.cshtml";
+    ViewData["Title"] = "Consolidated";
+    DateTime dateTime = DateTime.Now.Date;
+    string lastJuly = (new DateTime(dateTime.Year, 7, dateTime.Day)).ToString("yyyy-MM");
+    if (dateTime.Month <= 7)
+    {
+        lastJuly = (new DateTime(dateTime.AddYears(-1).Year, 7, dateTime.Day)).ToString("yyyy-MM");
+    }
+    string curentMonth = "";
+    if (dateTime.Day > 27)
+    {
+        curentMonth = dateTime.ToString("yyyy-MM");
+    }
+    else
+    {
+        curentMonth = dateTime.AddMonths(-1).ToString("yyyy-MM");
+    }
+}
+<!-- /.col-md-6 -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">Generate Consolidated Reports </h3>
+            </div>
+            <form role="form" asp-action="GetConsolidated" id="form">
+                <div class="card-body">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label asp-for="StartingMonth"></label>
+                            <input class="form-control" type="month" value="@lastJuly" asp-for="StartingMonth" />
+                            <span asp-validation-for="StartingMonth" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EndingMonth"></label>
+                            <input class="form-control" type="month" value="@curentMonth" asp-for="EndingMonth" />
+                            <span asp-validation-for="EndingMonth" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- /.card-body -->
+            <div class="card-footer">
+                <button type="button" class="btn btn-primary btn-flat" id="button-get-list"><i class="fa fa-list"></i> Get </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">Get Ledger </h3>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="PensionerId" class="control-label">Pensioner</label>
+                    <select id="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
+                </div>
+            </div>
+            <div class="card-footer">
+                <p>Select From List</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card card-info">
+            <div class="card-header">
+                <h3 class="card-title">Generate PPO Page</h3>
+            </div>
+            <form role="form" asp-action="GetPPOPage" id="form-ppo-page">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label asp-for="StartingMonth"></label>
+                            <input class="form-control" type="month" value="@lastJuly" asp-for="StartingMonth" />
+                            <span asp-validation-for="StartingMonth" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="EndingMonth"></label>
+                            <input class="form-control" type="month" value="@curentMonth" asp-for="EndingMonth" />
+                            <span asp-validation-for="EndingMonth" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="PensionerId" class="control-label">Pensioner</label>
+                            <select id="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- /.card-body -->
+            <div class="card-footer">
+                <button type="button" class="btn btn-info btn-block" id="btn-ppo-page" disabled><i class="fa fa-list"></i> Get </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="card">
+        <div id="content">
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function (e) {
+        $("#button-get-list").click(function (e) {
+            var StartingMonth = $("#StartingMonth").val();
+            var EndingMonth = $("#EndingMonth").val();
+            if (EndingMonth != "" && StartingMonth != "") {
+                awaitHtmlElement("#content");
+                $.ajax({
+                    type: "POST",
+                    url: "GetConsolidated",
+                    data: {
+                        StartingMonth: StartingMonth,
+                        EndingMonth: EndingMonth
+                    },
+                    dataType: "text",
+                    success: function (msg) {
+                        $("#content").html(msg);
+                    },
+                    error: function (req, status, error) {
+                        alert(error);
+                    }
+                });
+            }
+            else {
+                alert("Starting Month and Ending Months are required!");
+            }
+        });
+        $("#btn-ppo-page").click(function (e) {
+
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "GET",
+                data: "",
+                url: "GetConsolidated",
+                data: {
+                    StartingMonth: StartingMonth,
+                    EndingMonth: EndingMonth
+                },
+                dataType: "text",
+                success: function (msg) {
+                    $("#content").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+
+        });
+        $("#PensionerId").change(function (e) {
+            var PensionerId = $(this).val();
+            if (PensionerId != "") {
+                awaitHtmlElement("#content");
+                $.ajax({
+                    type: "GET",
+                    url: "GetConsolidatedByPensionerId",
+                    data: { PensionerId: PensionerId },
+                    dataType: "text",
+                    success: function (msg) {
+                        $("#content").html(msg);
+                    },
+                    error: function (req, status, error) {
+                        $("#content").html(error);
+                    }
+                });
+            }
+            else {
+                alert("Starting Month and Ending Months are required!");
+            }
+        });
+    });
+
+</script>

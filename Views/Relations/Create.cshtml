@@ -1,0 +1,34 @@
+﻿@model PensionSystem.Entities.Models.Relation
+
+@{
+	ViewData["Title"] = "Add";
+	ViewData["SubTitle"] = "New";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card">
+	<div class="card-header">
+		<div class="card-title">Relation</div>
+	</div>
+	<div class="card-body">
+		<form asp-action="Create">
+			<div asp-validation-summary="All" class="text-danger"></div>
+			<div class="form-group">
+				<label asp-for="Name" class="control-label"></label>
+				<input asp-for="Name" class="form-control" />
+				<span asp-validation-for="Name" class="text-danger"></span>
+			</div>
+			     <div class="form-group">
+                <label asp-for="Short" class="control-label"></label>
+                <input asp-for="Short" class="form-control" />
+                <span asp-validation-for="Short" class="text-danger"></span>
+            </div>
+			<div class="form-group">
+				<input type="submit" value="Create" class="btn btn-primary" />
+			</div>
+		</form>
+	</div>
+	<div class="card-footer">
+		<a asp-action="Index">Back to List</a>
+	</div>
+</div>
+

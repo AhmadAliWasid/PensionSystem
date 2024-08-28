@@ -1,0 +1,236 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewData["Title"] - PensionSystem</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+          integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+    <!-- Bootstrap 4 -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" media="all" />
+    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+
+
+    <!-- AdminLTE App -->
+    <script src="~/dist/js/adminlte.min.js"></script>
+    @* <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script> *@
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" media="all" />
+
+</head>
+<body>
+    <div class="hold-transition sidebar-mini layout-navbar-fixed">
+        <div class="wrapper">
+            <partial name="_Navbar" />
+            <partial name="_MainSideBar" />
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                <!-- Content Header (Page header) -->
+                <section class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1>@ViewData["Title"]</h1>
+                            </div>
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item"><a asp-controller="Home" action="index" asp-area="">Home</a></li>
+                                    <li class="breadcrumb-item">@ViewData["Title"]</li>
+                                    <li class="breadcrumb-item active">@ViewData["SubTitle"]</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div><!-- /.container-fluid -->
+                </section>
+                <!-- Main content -->
+                <section class="content">
+                    <div class="container-fluid">
+                        <div class="row">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </section>
+                <!-- /.content -->
+            </div>
+            <!-- /.content-wrapper -->
+            <partial name="_Footer" />
+            <partial name="_ControlSideBar" />
+
+        </div>
+
+    </div>
+
+    <!-- AdminLTE for demo purposes -->
+    <script src="~/js/site.js"></script>
+    <!-- DataTables  & Plugins -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script>
+        $(document).ready(function (e) {
+            setInterval(function () {
+                $.ajax({
+                    url: '@Url.Action("DummyRequest", "Home")',
+                    type: 'POST',
+                    data: null,
+                    success: function (response) {
+                        console.log('Success!');
+                    },
+                    error: function (xhr, status, error) {
+                        console.log('Error: ' + error.message);
+                    }
+                });
+            }, 295000);
+
+        });
+        function Save() {
+            var Form = $("#CreateUpdate");
+            var formData = Form.serialize();
+            $.ajax({
+                url: "@Url.Action("Save")",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.RCode == 1) {
+                        $("#modal-default").modal("hide");
+                        LoadList();
+                    }
+                    else {
+                        $("#ErrorDiv").html(msg.RText);
+                    }
+                },
+                error: function (req, status, error) {
+                    $("#ErrorDiv").html(error);
+                }
+            });
+        }
+        // function Create() {
+        //     var Form = $("#Create");
+        //     var formData = Form.serialize();
+        //     $.ajax({
+        //         url: "@Url.Action("Create")",
+        //         type: "POST",
+        //         data: formData,
+        //         dataType: "json",
+        //         success: function (msg) {
+        //             $("#modal-default").modal("hide");
+        //             LoadList();
+        //         },
+        //         error: function (req, status, error) {
+        //             $("#ErrorDiv").html(error);
+        //         }
+        //     });
+        // }
+        function AddOnly() {
+            var Form = $("#Create");
+            var formData = Form.serialize();
+            $.ajax({
+                url: "@Url.Action("Add")",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (msg) {
+                    $("#modal-default").modal("hide");
+                    LoadList();
+                },
+                error: function (req, status, error) {
+                    $("#ErrorDiv").html(error);
+                }
+            });
+        }
+        function AddOrUpdate(value) {
+            var Id = value;
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Crud")",
+                data: { id: Id },
+                dataType: "text",
+                success: function (msg) {
+                    $("#modal-default").modal("show");
+                    $("#modal-body").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+        function Create() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Create")",
+                data: null,
+                dataType: "text",
+                success: function (msg) {
+                    $("#modal-default").modal("show");
+                    $("#modal-body").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+        function LoadList() {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Load")",
+                dataType: "text",
+                success: function (msg) {
+                    $("#content").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+        function Delete(id) {
+            if (id != "") {
+                if (window.confirm("Are Your Sure You Want to Delete This Item")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("Delete")",
+                        data: { id: Id },
+                        dataType: "text",
+                        success: function (msg) {
+                            $("#content").html(msg);
+                        },
+                        error: function (req, status, error) {
+                            alert(error);
+                        }
+                    });
+                }
+            }
+        }
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

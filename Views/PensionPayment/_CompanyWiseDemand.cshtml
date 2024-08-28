@@ -1,0 +1,420 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.PensionerPaymentViewModel
+@if (Model != null && Model.PayablesThisMonth != null && Model.LastMonthList != null)
+{
+    decimal TotalAmount = Model.AmountVerified;
+    string sTotalAmount = Calculation.ConvertAmount((double)TotalAmount);
+    decimal TotalMonthlyPension = 0;
+    decimal TotalCashMedicalAllowence = 0;
+    decimal TotalDeduction = 0;
+    decimal TotalOrderlyAllowence = 0;
+    decimal TotalNetPension = 0;
+    string relation = "";
+    int relationId = 0;
+    decimal difference = 0;
+    decimal TotalDifference = 0;
+    int serial = 1;
+    var Companies = Model.PayablesThisMonth.GroupBy(x => x.Pensioner.CompanyId).ToList();
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                <h4>Demand List</h4>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Bank</th>
+                            <th>Amount</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if (Model.BankDemandVMs != null)
+                            {
+                                foreach (var item in Model.BankDemandVMs)
+                                {
+                                    <tr>
+                                        <td>@item.BankName</td>
+                                        <td>@UserFormat.GetAmount(item.Amount)</td>
+                                        <td>@item.Count</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div id="list-pensioners">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Verified : @Model.Verified  & Amount: @UserFormat.GetAmount(Model.AmountVerified) </th>
+                        </tr>
+                    </thead>
+                </table>
+                @foreach (var c in Companies)
+                {
+                    var listCompany = Model.PayablesThisMonth.Where(x => x.Pensioner.CompanyId == c.Key).ToList();
+                    <h4 class="text-center">@listCompany.First().Pensioner.Company.ShortName</h4>
+                    <table class="table table-bordered datatable-table" id="data-table-@c.Key">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>PPO#</th>
+                                <th>Claimant</th>
+                                <th>Rel</th>
+                                <th>Name.</th>
+                                <th>MP</th>
+                                <th>CMA</th>
+                                <th>Orderly</th>
+                                <th>Recovery</th>
+                                <th>Net</th>
+                                <th>Last Month</th>
+                                <th>Difference</th>
+                                <th>Remarks</th>
+                                <th>Certificate</th>
+                                <th>Physically</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in listCompany)
+                            {
+                                var lastMonthPensioner = Model.LastMonthList
+                                .Where(x => x.PensionerId == item.PensionerId)
+                                .FirstOrDefault();
+                                if (lastMonthPensioner != null)
+                                {
+                                    difference = item.NetPension - lastMonthPensioner.NetPension;
+                                }
+                                else
+                                {
+                                    difference = item.NetPension;
+                                }
+                                TotalDifference += (difference);
+                                relation = item.Pensioner.Relation.Short;
+                                relationId = item.Pensioner.RelationId;
+                                <tr style='color: @((item.CertificateVerified || item.NetPension == 0)? "green": "red")'>
+                                    <td><button class="btn btn-sm btn-warning" onclick="getUpdate(@item.Id)"><i class="fa fa-edit"></i> Edit</button></td>
+                                    <td>@item.Pensioner.PPOSystem</td>
+                                    <td>
+                                        @if (relationId == 1)
+                                        {
+                                            <span>@item.Pensioner.Claimant - Ex. @item.Pensioner.Designation </span>
+                                        }
+                                        else
+                                        {
+                                            <span>@item.Pensioner.Claimant</span>
+                                        }
+                                    </td>
+
+                                    <td>@item.Pensioner.Relation.Short</td>
+                                    <td>
+                                        @if (relationId == 1)
+                                        {
+                                            <span>@item.Pensioner.FatherName</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@item.Pensioner.Name Ex. @item.Pensioner.Designation</span>
+                                        }
+                                    </td>
+                                    <td>@UserFormat.GetAmount(item.MonthlyPension)</td>
+                                    <td>@UserFormat.GetAmount(item.CMA)</td>
+                                    <td>@UserFormat.GetAmount(item.OrderelyAllowence)</td>
+                                    <td>@UserFormat.GetAmount(item.Deduction)</td>
+                                    <td>@UserFormat.GetAmount(item.NetPension)</td>
+                                    <td>
+                                        @if (lastMonthPensioner != null)
+                                        {
+                                            <span>@UserFormat.GetAmount(lastMonthPensioner.NetPension)</span>
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+
+
+                                    <td>
+                                        @if (difference > 0)
+                                        {
+                                            <span>+</span>
+                                        }
+                                        @UserFormat.GetAmount(difference)
+                                    </td>
+                                    <td></td>
+                                    <td>
+                                        @if (!item.CertificateVerified)
+                                        {
+                                            <button type="button" class="btn btn-block bg-gradient-primary" onclick="VerifyCertificate(@item.Id,this)"><i class="fas fa-check-square"></i> Verify</button>
+                                        }
+                                        else
+                                        {
+                                            <div class="text-green"><i class="fas fa-check-square"></i> Verified</div>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (item.PhysicallyVerified)
+                                        {
+                                            <span>Verified</span>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-block bg-gradient-warning" onclick="VerifyPhysically(@item.Id,this)"><i class="fas fa-check-circle"></i> Verify</button>
+                                        }
+                                    </td>
+                                </tr>
+                                serial++;
+                                difference = 0;
+                            }
+
+                        </tbody>
+
+                    </table>
+                    <div id="table-footer-@c.Key">
+                        <table class="table table-bordered">
+                            <thead>
+                                @{
+                                    decimal TotalCompany = listCompany.Where(n => n.CertificateVerified == true && n.PhysicallyVerified == true).Sum(x => x.NetPension);
+                                    decimal LastMonthAmount = Model.LastMonthList.Where(x => x.Pensioner.CompanyId == c.Key).Sum(n => n.NetPension);
+                                    decimal Difference = TotalCompany - LastMonthAmount;
+                                    <tr>
+                                        <th>MP : @UserFormat.GetAmount(listCompany.Where(n => n.NetPension > 0).Sum(x => x.MonthlyPension))</th>
+                                        <th>CMA : @UserFormat.GetAmount(listCompany.Where(n => n.NetPension > 0).Sum(x => x.CMA))</th>
+                                        <th>Orderly : @UserFormat.GetAmount(listCompany.Where(n => n.NetPension > 0).Sum(x => x.OrderelyAllowence))</th>
+                                        <th>Deduction : @UserFormat.GetAmount(listCompany.Where(n => n.NetPension > 0).Sum(x => x.Deduction))</th>
+                                        <th>Total : @UserFormat.GetAmount(TotalCompany)</th>
+                                        <th>Last Month : @UserFormat.GetAmount(LastMonthAmount)</th>
+                                        <th>Difference : @UserFormat.GetAmount(Difference)</th>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="7">Rupees : @Calculation.ConvertAmount((double)TotalCompany)</th>
+                                    </tr>
+                                }
+                            </thead>
+                        </table>
+
+                    </div>
+                }
+
+                <table class="table table-bordered" id="datatable-table-summary">
+                    <thead>
+                        <tr>
+                            <th>S#</th>
+                            <th>Company</th>
+                            <th>MP</th>
+                            <th>CMA</th>
+                            <th>Orderly</th>
+                            <th>Deduction</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    @{
+                        int s = 1;
+                    }
+                    @foreach (var c in Companies)
+                    {
+                        var listCompany = Model.PayablesThisMonth.Where(x => x.Pensioner.CompanyId == c.Key).ToList();
+                        decimal TotalCompany = listCompany
+                        .Where(n => n.CertificateVerified == true && n.PhysicallyVerified == true).Sum(x => x.NetPension);
+                        decimal MP = listCompany.Where(n => n.NetPension > 0).Sum(x => x.MonthlyPension);
+                        TotalMonthlyPension += MP;
+                        decimal CMA = listCompany.Where(n => n.NetPension > 0).Sum(x => x.CMA);
+                        TotalCashMedicalAllowence += CMA;
+                        decimal Orderly = listCompany.Where(n => n.NetPension > 0).Sum(x => x.OrderelyAllowence);
+                        TotalOrderlyAllowence += Orderly;
+                        decimal Deduction = listCompany.Where(n => n.NetPension > 0).Sum(x => x.Deduction);
+                        TotalDeduction += Deduction;
+                        TotalNetPension += TotalCompany;
+                        <tr>
+                            <td>@s</td>
+                            <td>@c.First().Pensioner.Company.ShortName</td>
+                            <td>@UserFormat.GetAmount(MP)</td>
+                            <td>@UserFormat.GetAmount(CMA)</td>
+                            <td>@UserFormat.GetAmount(Orderly)</td>
+                            <td>@UserFormat.GetAmount(Deduction)</td>
+                            <td>@UserFormat.GetAmount(TotalCompany)</td>
+                        </tr>
+                        s++;
+                    }
+                    <tfoot>
+                        <tr>
+                            <th></th>
+                            <th>Total</th>
+                            <th>@UserFormat.GetAmount(TotalMonthlyPension)</th>
+                            <th>@UserFormat.GetAmount(TotalCashMedicalAllowence)</th>
+                            <th>@UserFormat.GetAmount(TotalOrderlyAllowence)</th>
+                            <th>@UserFormat.GetAmount(TotalDeduction)</th>
+                            <th>@UserFormat.GetAmount(TotalAmount)</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+        @{
+            string functionCalling = "";
+        }
+
+        @foreach (var c in Companies)
+        {
+            functionCalling += "GenerateTable(" + c.Key + ");";
+        }
+        @functionCalling;
+            function GenerateTable(id) {
+                $('#data-table-' + id + '').DataTable({
+                    dom: 'Bfrtip',
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": false,
+                    "info": true,
+                    buttons: [
+                        {
+                            extend: 'print',
+                            title: '@Model.Session.BaseStamp',
+                            message: '<div class="text-center">List of Pensioner for the month of @UserFormat.GetMonthYear(Model.Month) </div>',
+                            footer: true,
+                            customize: function (win) {
+                                $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                                $(win.document.body).append($("#table-footer-" + id + "").html());
+                                $(win.document.body).append($("#table-footer").html());
+                                var last = null;
+                                var current = null;
+                                var bod = [];
+                                var css = '@@page { size: landscape; }', head = win.document.head || win.document.getElementsByTagName('head')[0], style = win.document.createElement('style');
+                                style.type = 'text/css';
+                                style.media = 'print';
+                                if (style.styleSheet) {
+                                    style.styleSheet.cssText = css;
+                                }
+                                else {
+                                    style.appendChild(win.document.createTextNode(css));
+                                }
+                                head.appendChild(style);
+                            },
+                            exportOptions: {
+                                columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+                            },
+
+                        },
+                        'excel',
+                        'copy',
+                        'csv',
+                        'pdf'
+                    ]
+                });
+            }
+            $('#datatable-table-summary').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        footer: true,
+                        customize: function (win) {
+                            $(win.document.body).append($("#table-footer").html()); //after the table
+                            $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                            var last = null;
+                            var current = null;
+                            var bod = [];
+                            var css = '@@page { size: landscape; }', head = win.document.head || win.document.getElementsByTagName('head')[0], style = win.document.createElement('style');
+                            style.type = 'text/css';
+                            style.media = 'print';
+                            if (style.styleSheet) {
+                                style.styleSheet.cssText = css;
+                            }
+                            else {
+                                style.appendChild(win.document.createTextNode(css));
+                            }
+                            head.appendChild(style);
+                        },
+                        title: '<div class="text-center">@Model.Session.BaseStamp</div>',
+                        message: '<div class="text-center">Company Wise for the month of @UserFormat.GetMonthYear(Model.Month) </div>',
+                    },
+                    'excel',
+                    'copy',
+                    'csv',
+                    'pdf'
+                ],
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": false,
+                "info": true,
+            });
+        });
+        function VerifyCertificate(Id, element) {
+            if (Id != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("VerifyCertificate")",
+                    data: { Id: Id },
+                    dataType: "text",
+                    success: function (msg) {
+                        if (msg) {
+                            $(element).hide();
+                            $(element).parent().html("Verified");
+                        }
+                    },
+                    error: function (req, status, error) {
+                        alert(error);
+                    }
+                });
+            }
+            else {
+                alert("no record selected")
+            }
+        }
+        function VerifyPhysically(Id, element) {
+            if (Id != "") {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("VerifyPhysically")",
+                    data: { Id: Id },
+                    dataType: "text",
+                    success: function (msg) {
+                        if (msg) {
+                            $(element).hide();
+                            $(element).parent().html("Verified");
+                        }
+                    },
+                    error: function (req, status, error) {
+                        alert(error);
+                    }
+                });
+            }
+            else {
+                alert("no record selected")
+            }
+        }
+    </script>
+    <div id="table-footer">
+        <div class="container" style="margin-top: 100px;">
+            @if (Model.Session != null)
+            {
+                <div class="row">
+                    <div class="col-6">
+                        <p class="text-center">@Model.Session.AMStamp</p>
+                        <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                    </div>
+                    <div class="col-6">
+                        <div>
+                            <p class="text-center">@Model.Session.DMStamp</p>
+                            <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger">No Pensioner Found!</div>
+}

@@ -1,0 +1,118 @@
+﻿@model PensionSystem.Entities.Models.ConversionCase
+
+@{
+    ViewData["Title"] = "Conversion";
+}
+
+<div class="modal-dialog modal-xl">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Update</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="UpdateForm">
+                <div class="row">
+                    <div id="ErrorDiv" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DispatchNo" class="control-label"></label>
+                            <input asp-for="DispatchNo" class="form-control" />
+                            <span asp-validation-for="DispatchNo" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="PPONumber" class="control-label"></label>
+                            <input asp-for="PPONumber" class="form-control" />
+                            <span asp-validation-for="PPONumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Name" class="control-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DispatchDate" class="control-label"></label>
+                            <input asp-for="DispatchDate" class="form-control" />
+                            <span asp-validation-for="DispatchDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" asp-for="IsAproved" /> @Html.DisplayNameFor(model => model.IsAproved)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="ApprovalDate" class="control-label"></label>
+                            <input asp-for="ApprovalDate" class="form-control" />
+                            <span asp-validation-for="ApprovalDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DiaryNumber" class="control-label"></label>
+                            <input asp-for="DiaryNumber" class="form-control" />
+                            <span asp-validation-for="DiaryNumber" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="DiaryDate" class="control-label"></label>
+                            <input asp-for="DiaryDate" class="form-control" />
+                            <span asp-validation-for="DiaryDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="submitForm()">Save changes</button>
+        </div>
+    </div>
+    <script>
+        function submitForm() {
+            var Form = $("#UpdateForm");
+            var formData = Form.serialize();
+            $.ajax({
+                url: "@Url.Action("Save")",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.RCode == 1) {
+                        $("#modal-default").modal("hide");
+                    }
+                    else {
+                        $("#ErrorDiv").html(msg.RText);
+                    }
+                },
+                error: function (req, status, error) {
+                    $("#ErrorDiv").html(error);
+                }
+            });
+        }
+    </script>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

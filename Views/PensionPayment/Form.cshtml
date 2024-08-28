@@ -1,0 +1,83 @@
+﻿@model PensionSystem.Entities.Models.PensionerPayment
+@if (Model != null)
+{
+    <div class="card-primary">
+        <div class="card-header">
+            Payment Info
+            <div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>PPO : @Model.Pensioner.PPONumber</th>
+                            <th>Name : @Model.Pensioner.Name</th>
+                            <th>Claimant : @Model.Pensioner.Claimant</th>
+                            <th>Month : @Model.Month.ToString("MM-yyyy")</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="card card-body">
+            <form  id="UserForm">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" value="@Model.Id" />
+                <div class="row">
+                    <div id="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="form-group">
+                            <label asp-for="MonthlyPension" class="control-label"></label>
+                            <input asp-for="MonthlyPension" class="form-control" onchange="calculateTotal()" value="@Model.MonthlyPension" />
+                            <span asp-validation-for="MonthlyPension" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="form-group">
+                            <label asp-for="CMA" class="control-label"></label>
+                            <input asp-for="CMA" class="form-control" onchange="calculateTotal()" value="@Model.CMA" />
+                            <span asp-validation-for="CMA" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="form-group">
+                            <label asp-for="OrderelyAllowence" class="control-label"></label>
+                            <input asp-for="OrderelyAllowence" class="form-control" onchange="calculateTotal()" />
+                            <span asp-validation-for="OrderelyAllowence" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mb-4">
+                        <div class="form-group">
+                            <label asp-for="Deduction" class="control-label"></label>
+                            <input asp-for="Deduction" class="form-control" onchange="calculateTotal()" value="@Model.Deduction" />
+                            <span asp-validation-for="Deduction" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-4">
+                        <div class="form-group">
+                            <label asp-for="NetPension" class="control-label"></label>
+                            <input asp-for="NetPension" class="form-control" value="@Model.NetPension" />
+                            <span asp-validation-for="NetPension" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="row mb-4">
+                <div class="form-group">
+                    <button id="btnSubmit" onclick="SavePensionPayment()" value="Update" class="btn btn-primary"><i class="fa fa-pencil"></i> Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+        Unable to Get Pensioner
+    </div>
+}

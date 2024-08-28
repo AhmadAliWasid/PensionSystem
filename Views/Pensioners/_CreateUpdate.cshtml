@@ -1,0 +1,458 @@
+﻿@model PensionSystem.ViewModels.PensionerModel
+
+@{
+    ViewData["Title"] = "Pensioner";
+    ViewData["SubTitle"] = "Update";
+}
+@if (Model != null)
+{
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">@(Model.Id > 0 ? "Update" : "Add New")</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Update" id="UpdateForm">
+                    <div asp-validation-summary="All" class="text-danger" id="ErrorDiv"></div>
+                    <input type="hidden" asp-for="Id" value="@Model.Id" />
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="CompanyId" class="control-label"></label>
+                                <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
+                                <span asp-validation-for="CompanyId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="PPONumber" class="control-label"></label>
+                                <input asp-for="PPONumber" class="form-control" />
+                                <span asp-validation-for="PPONumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="PPOSystem" class="control-label"></label>
+                                <input asp-for="PPOSystem" class="form-control" />
+                                <span asp-validation-for="PPOSystem" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Name" class="control-label"></label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Designation" class="control-label"></label>
+                                <input asp-for="Designation" class="form-control" />
+                                <span asp-validation-for="Designation" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="BPS" class="control-label"></label>
+                                <input asp-for="BPS" min="0" max="22" class="form-control" />
+                                <span asp-validation-for="BPS" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="FatherName" class="control-label"></label>
+                                <input asp-for="FatherName" class="form-control" />
+                                <span asp-validation-for="FatherName" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Mobile" class="control-label"></label>
+                                <input asp-for="Mobile" class="form-control" />
+                                <span asp-validation-for="Mobile" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 ">
+                            <div class="form-group">
+                                <label asp-for="CNIC" class="control-label"></label>
+                                <input asp-for="CNIC" class="form-control" />
+                                <span asp-validation-for="CNIC" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="DOB" class="control-label"></label>
+                                <input asp-for="DOB" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                                <span asp-validation-for="DOB" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="DateOfRetirement" class="control-label"></label>
+                                <input asp-for="DateOfRetirement" max="@DateTime.Now.ToString("yyyy-MM-dd")" type="date" class="form-control" />
+                                <span asp-validation-for="DateOfRetirement" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 ">
+                            <div class="form-group">
+                                <label asp-for="RelationId" class="control-label"></label>
+                                <select asp-for="RelationId" class="form-control" asp-items="ViewBag.RelationId"></select>
+                                <span asp-validation-for="RelationId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="SanctionNumber" class="control-label"></label>
+                                <input asp-for="SanctionNumber" class="form-control" />
+                                <span asp-validation-for="SanctionNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 ">
+                            <div class="form-group">
+                                <label asp-for="SanctionDate" class="control-label"></label>
+                                <input asp-for="SanctionDate" max="@DateTime.Now.ToString("yyyy-MM-dd")" type="date" class="form-control" />
+                                <span asp-validation-for="SanctionDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Gender"></label> <br />
+                                <input type="radio" value="M" asp-for="Gender" checked />Male
+                                <input type="radio" value="F" asp-for="Gender" />Female
+                                <span asp-validation-for="Gender" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Claimant" class="control-label"></label>
+                                <input asp-for="Claimant" class="form-control" />
+                                <span asp-validation-for="Claimant" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="ClaimantCNIC"></label>
+                                <input asp-for="ClaimantCNIC" class="form-control" />
+                                <span asp-validation-for="ClaimantCNIC" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Spouse" class="control-label"></label>
+                                <input asp-for="Spouse" class="form-control" />
+                                <span asp-validation-for="Spouse" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label asp-for="Address" class="control-label"></label>
+                            <input asp-for="Address" class="form-control" />
+                            <span asp-validation-for="Address" class="text-danger"></span>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label" for="BankId">Bank</label>
+                                <select id="BankId" name="BankId" class="form-control" asp-items="ViewBag.BankId"></select>
+                                <span class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="BranchId" class="control-label"></label>
+                                <select asp-for="BranchId" class="form-control" asp-items="ViewBag.BranchId"></select>
+                                <span asp-validation-for="BranchId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="AccountTitle" class="control-label"></label>
+                                <input asp-for="AccountTitle" class="form-control" />
+                                <span asp-validation-for="AccountTitle" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="AccountNumber" class="control-label"></label>
+                                <input asp-for="AccountNumber" class="form-control" />
+                                <span asp-validation-for="AccountNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="MonthlyPension" class="control-label"></label>
+                                <input asp-for="MonthlyPension" class="form-control" onchange="calculateTotal()" />
+                                <span asp-validation-for="MonthlyPension" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="CMA" class="control-label"></label>
+                                <input asp-for="CMA" class="form-control" onchange="calculateTotal()" />
+                                <span asp-validation-for="CMA" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="OrderelyAllowence" class="control-label"></label>
+                                <input asp-for="OrderelyAllowence" class="form-control" onchange="calculateTotal()" />
+                                <span asp-validation-for="OrderelyAllowence" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Total" class="control-label"></label>
+                                <input asp-for="Total" class="form-control" />
+                                <span asp-validation-for="Total" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="LastBasicPay" class="control-label"></label>
+                                <input asp-for="LastBasicPay" class="form-control" />
+                                <span asp-validation-for="LastBasicPay" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="DateOfAppointment" class="control-label"></label>
+                                <input asp-for="DateOfAppointment" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                                <span asp-validation-for="DateOfAppointment" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="MonthlyRecovery" class="control-label"></label>
+                                <input asp-for="MonthlyRecovery" class="form-control" />
+                                <span asp-validation-for="MonthlyRecovery" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Remarks"></label>
+                                <textarea asp-for="Remarks" class="form-control"></textarea>
+                                <span asp-validation-for="Remarks" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 mb-4">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="IsActiveClaimant">Status</label>
+                                <input asp-for="IsActiveClaimant" id="IsActiveClaimant" style="height:50px; width:50px;" name="IsActiveClaimant" type="checkbox" onclick="$(this).val(this.checked ? true : false)" />
+                                <span asp-validation-for="IsActiveClaimant" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 mb-4">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="IsServiceActive">SMS Services</label>
+                                <input asp-for="IsServiceActive" id="IsServiceActive" style="height:50px; width:50px;" name="IsServiceActive" type="checkbox" onclick="$(this).val(this.checked ? true : false)" />
+                                <span asp-validation-for="IsServiceActive" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Commutation" class="control-label"></label>
+                                <input asp-for="Commutation" class="form-control" />
+                                <span asp-validation-for="Commutation" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="RetiringOffice" class="control-label"></label>
+                                <input asp-for="RetiringOffice" class="form-control" />
+                                <span asp-validation-for="RetiringOffice" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="SaveButton">Save changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
+    <script>
+        $(document).ready(function (e) {
+            $('#Mobile').inputmask('+99-999-9999999');
+            $('#CNIC').inputmask('99999-9999999-9');
+            $('#ClaimantCNIC').inputmask('99999-9999999-9');
+            //Datemask dd/mm/yyyy
+            $('#DOB').inputmask('dd-mm-yyyy', { 'placeholder': 'dd-mm-yyyy' });
+
+            $("#SaveButton").click(function (e) {
+                submitForm();
+            });
+            $("#CMA").on('keypress', function (e) {
+                if (e.which == 13) {
+                    submitForm();
+                }
+            });
+            $("#RelationId").change(function (e) {
+                var Text = $("#RelationId option:selected").text();
+                if (Text == "Self") {
+                    $("#Claimant").attr("readonly", true);
+                    $("#ClaimantCNIC").attr("readonly", true);
+                    $("#Spouse").attr("readonly", true);
+                    $("#Claimant").val($("#Name").val());
+                    $("#ClaimantCNIC").val($("#CNIC").val());
+                    $("#Spouse").val("");
+                }
+                else if (Text == "Widow") {
+                    $("#Claimant").attr("readonly", false);
+                    $("#ClaimantCNIC").attr("readonly", false);
+                    $("#Spouse").attr("readonly", true);
+                    $("#Claimant").val("");
+                    $("#ClaimantCNIC").val("");
+                    $("#Spouse").val($("#Name").val());
+                }
+                else if (Text == "Daughter") {
+                    $("#Claimant").attr("readonly", false);
+                    $("#ClaimantCNIC").attr("readonly", false);
+                    $("#Spouse").attr("readonly", true);
+                    $("#Claimant").val("");
+                    $("#ClaimantCNIC").val("");
+                    $("#Spouse").val("");
+                }
+                else if (Text == "Son") {
+                    $("#Claimant").attr("readonly", false);
+                    $("#ClaimantCNIC").attr("readonly", false);
+                    $("#Spouse").attr("readonly", true);
+                    $("#Claimant").val("");
+                    $("#ClaimantCNIC").val("");
+                    $("#Spouse").val("");
+                }
+                else {
+                    $("#Claimant").attr("readonly", false);
+                    $("#ClaimantCNIC").attr("readonly", false);
+                    $("#Spouse").attr("readonly", false);
+                    $("#Claimant").val("");
+                    $("#ClaimantCNIC").val("");
+                    $("#Spouse").val("");
+                }
+            });
+
+            $("#CompanyId").change(function (e) {
+                var cId = $(this).val();
+                if (cId != null && cId != 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("GetMaxPageNumber")",
+                        data: { "CompanyId": cId },
+                        success: function (response) {
+                            if (response != null) {
+                                $("#PageNumber").val(response.MaxNumber);
+                            }
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                }
+                else {
+                    $("#PageNumber").val("NaN");
+                }
+            });
+            $("#BankId").change(function (e) {
+                var bId = $(this).val();
+                if (bId != null) {
+                    $("#BranchId").html('<option value="0">Please Wait</option>');
+                    $.ajax({
+                        type: "GET",
+                        url: "@Url.Action("GetOptions","Branches")",
+                        data: { "BankId": bId },
+                        success: function (data) {
+                            var s = '';
+                            for (var i = 0; i < data.length; i++) {
+                                s += '<option value="' + data[i].Value + '">' + data[i].Text + '</option>';
+                            }
+                            $("#BranchId").html(s);
+                        },
+                        failure: function (response) {
+                            alert(response.responseText);
+                        },
+                        error: function (response) {
+                            alert(response.responseText);
+                        }
+                    });
+                }
+                else {
+                    $("#PageNumber").val("NaN");
+                }
+            });
+        });
+        function submitForm() {
+            var Form = $("#UpdateForm");
+            var formData = Form.serialize();
+            $.ajax({
+                url: "@Url.Action("Update")",
+                type: "POST",
+                data: formData,
+                dataType: "json",
+                success: function (msg) {
+                    if (msg.RCode == 1) {
+                        $("#modal-default").modal("hide");
+                    }
+                    else {
+                        $("#ErrorDiv").html(msg.RText);
+                    }
+                },
+                error: function (req, status, error) {
+                    $("#ErrorDiv").html(error);
+                }
+            });
+        }
+        function calculateTotal() {
+            var MonthlyPension = parseFloat($("#MonthlyPension").val());
+            var CMA = parseFloat($("#CMA").val());
+            var OrderelyAllowence = parseFloat($("#OrderelyAllowence").val());
+            var Total = MonthlyPension + CMA + OrderelyAllowence;
+
+            $("#Total").val(Total);
+        }
+    </script>
+    @section Scripts {
+    @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        }
+}
+else
+{
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+        Unable to Get Pensioner
+    </div>
+}

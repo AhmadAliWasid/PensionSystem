@@ -1,0 +1,251 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.HBLPaymentViewModel
+@if (Model != null && Model.HBLPaymentsList != null)
+{
+    string Month = Model.CurrentMonth.ToString("MM-yyyy");
+    var gList = Model.HBLPaymentsList;
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">Click Here To send SMS to All <button class="btn btn-flat btn-primary" onclick="SendSMSByChequeId()">Send SMS</button></div>
+        </div>
+        <div class="card-body">
+        </div>
+    </div>
+    <div id="list-pensioners">
+        @*table header*@
+        <div id="table-header-office">
+            <h3 class="text-center">PESHAWAR ELECTRIC SUPPLY COMPANY LIMITED</h3>
+            <div class="row">
+                <div class="col-md-6 text-start">No._______________________________/G3</div>
+                <div class="col-md-6 text-end">Dated: _____________________________</div>
+            </div>
+            <div class="row"><div class="col-md-12">The Manager (HBL) Bank Road Mardan</div></div>
+            <div class="row"><div class="col-md-12">SUBJECT: <u><b>CROSS CHEQUE</b></u></div></div>
+            @if (Model.ChequeNumber != 0)
+            {
+
+                <div class="row">
+                    <div class="col-md-12">
+                        Appended please find herewith a cross cheque bearing No.<u><b>@UserFormat.GetChequeNumber(Model.ChequeNumber)</b></u>
+                        Dated:<u><b>@UserFormat.GetDate(Model.ChequeDate)</b></u>      amounting to Rs. =<u><b>@UserFormat.GetAmount(Model.ChequeAmount)</b></u>/-  in respect of the following officials.
+                    </div>
+                </div>
+            }
+            else
+            {
+                @*now we will print a sample*@
+                <div class="row">
+                    <div class="col-md-12">
+                        Appended please find herewith a cross cheque bearing No.<u><b>__________________</b></u>Dated:<u><b>____________________</b></u>amounting to Rs. =<u><b>__________________</b></u>/-  in respect of the following officials.
+                    </div>
+                </div>
+            }
+        </div>
+        @*Office Copy*@
+        <table id="office-copy" class="table">
+            <thead>
+                <tr>
+                    <th>PPO </th>
+                    <th>Pensioner</th>
+                    <th>Claimant</th>
+                    <th>Company</th>
+                    <th>Ac#</th>
+                    <th>MP</th>
+                    <th>CMA</th>
+                    <th>Orderly</th>
+                    <th>Deduction</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.HBLPaymentsList)
+                {
+                    <tr>
+                        @if (item.Pensioner != null)
+                        {
+                            <td>@item.Pensioner.PPOSystem</td>
+                            <td>@item.Pensioner.Name </td>
+                            <td>@item.Pensioner.Claimant </td>
+                            <td>@item.Pensioner.Company.ShortName </td>
+
+                        }
+                        else
+                        {
+                            <td colspan="3">N/A</td>
+                        }
+                        @if (item.AccountNumber != null)
+                        {
+                            <td>@UserFormat.GetAccount(item.AccountNumber)</td>
+                        }
+                        else
+                        {
+                            <td>N/A</td>
+                        }
+                        <td>@UserFormat.GetAmount(item.MonthlyPension)</td>
+                        <td>@UserFormat.GetAmount(item.CMA)</td>
+                        <td>@UserFormat.GetAmount(item.OrderlyAllowance)</td>
+                        <td>@UserFormat.GetAmount(item.Deduction)</td>
+                        <td>@UserFormat.GetAmount(item.Total)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @*Bank Copy*@
+        <div class="row">
+            <div class="col-md-12">
+                <table id="bank-copy" class="table">
+                    <thead>
+                        <tr>
+                            <th>PPO</th>
+                            <th>Name</th>
+                            <th>Claimant</th>
+                            <th>Ac#</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.HBLPaymentsList)
+                        {
+                            <tr>
+                                <td>@item.Pensioner.PPOSystem </td>
+                                <td>@item.Pensioner.Name </td>
+                                <td>@item.Pensioner.Claimant </td>
+                                @if (item.AccountNumber != null)
+                                {
+                                    <td>@UserFormat.GetForHBL(item.AccountNumber)</td>
+                                }
+                                else
+                                {
+                                    <td>N/A</td>
+                                }
+                                <td>
+
+                                    @item.Total
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+        @*footer*@
+        <div id="table-footer">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Monthly Pension: @UserFormat.GetAmount(Model.TotalMP)</th>
+                        <th>CMA: @UserFormat.GetAmount(Model.TotalCMA)</th>
+                        <th>Orderly : @UserFormat.GetAmount(Model.TotalOrderly)</th>
+                        <th>Deduction : @UserFormat.GetAmount(Model.TotalDeduction)</th>
+                        <th>Amount : @UserFormat.GetAmount(Model.TotalPaid)</th>
+                    </tr>
+                    <tr>
+                        <th colspan="4">Rupees : @Calculation.Convert((long) Model.TotalPaid) Only</th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="container" style="margin-top: 200px;">
+                <div class="row">
+                    <div class="col-6">
+                        @* <p class="text-center">Divisional Accounts Officer</p> *@
+                        <p class="text-center">@Model.Session.AMStamp</p>
+                        @* <p class="text-center" style="margin-top: -20px;">SS & TL Division PESCO</p> *@
+                        <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                        <p class="text-center" style="margin-top: -20px;">Mardan</p>
+                    </div>
+                    <div class="col-6">
+                        <div>
+                            <p class="text-center">@Model.Session.DMStamp</p>
+                            @* <p class="text-center" style="margin-top: -20px;">SS & TL Division PESCO</p> *@
+                            <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                            <p class="text-center" style="margin-top: -20px;">Mardan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#table-show').DataTable({
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": false,
+                "info": true,
+            });
+            $('#office-copy').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).prepend($('#table-header-office').html()); // before table
+                            $(win.document.body).append($("#table-footer").html()); //after the table
+                            $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                        },
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8]
+                        },
+                        title: '',
+                        message: '<div class="text-center">Office Copy</div>',
+                    },
+                ],
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": false,
+                "info": true,
+            });
+            $('#bank-copy').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).prepend($('#table-header-office').html()); // before table
+                            $(win.document.body).append($("#table-footer").html()); //after the table
+                            $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                        },
+                        exportOptions: {
+                            columns: [0, 1, 2, 3, 4]
+                        },
+                        title: 'HBL List Bank Copy',
+                        message: '<div class="text-center">Bank Copy</div>',
+                    },
+                ],
+                "paging": false,
+                "lengthChange": true,
+                "searching": false,
+                "ordering": false,
+                "info": true,
+            });
+        });
+        function SendSMSByChequeId() {
+            var chequeId = $("#ChequeId").val();
+            if (chequeId != null) {
+                $.ajax({
+                    url: '@Url.Action("SendSMSByChequeId")',
+                    type: 'POST',
+                    data: {
+                        ChequeId: chequeId
+                    },
+                    success: function (response) {
+                        alert(response);
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error response
+                    }
+                });
+
+            }
+        }
+    </script>
+}
+else
+{
+    <div class="alert alert-danger">No Pensioner Found!</div>
+}

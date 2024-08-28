@@ -1,0 +1,216 @@
+﻿@model PensionSystem.Entities.Models.ArrearsPayment
+@{
+    Layout = null;
+}
+<script>
+    function CheckValidity() {
+        $("#ErrorMesssage").html("<div class='alert alert-warning'><strong>Wait!</strong> Validating Arrears </div>");
+        var From = $("#FromMonth").val();
+        var To = $("#ToMonth").val();
+        var PensionerId = $("#PensionerId").val();
+        if (From != "" && To != "" && PensionerId != 0) {
+            $("#ErrorMesssage").html("<div class='alert alert-warning'><strong>Wait!</strong> Validating Arrears </div>");
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("IsValid")",
+                data: { StartingMonth: From, EndingMonth: To, PensionerId: PensionerId },
+                dataType: "json",
+                success: function (data) {
+                    if (data.isValid) {
+                        $('#btnSubmit').prop('disabled', false);
+                        $("#ErrorMesssage").html("<div class='alert alert-success'><strong>Valid!</strong>It's Valid Arrears</div>");
+                    }
+                    else {
+                        $('#btnSubmit').prop('disabled', false);
+                        $("#ErrorMesssage").html("<div class='alert alert-danger'><strong>Invalid Try!</strong> " + data.msgResponse + "</div>");
+                    }
+                },
+                error: function (req, status, error) {
+                    $("#ErrorMesssage").html("<div class='alert alert-danger'><strong>Error!</strong> " + error + "</div>");
+                }
+            });
+        }
+        else {
+            $("#ErrorMesssage").html("<div class='alert alert-danger'><strong>Error!</strong>Please Select Pensioner & Starting Month & Ending Month</div>");
+            $('#btnSubmit').prop('disabled', true);
+        }
+    }
+</script>
+
+<form id="CreateUpdate">
+    <div id="ErrorMesssage"></div>
+    <input asp-for="Id" type="hidden" />
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="ArrearsDemandId" class="control-label"></label>
+                <select asp-for="ArrearsDemandId" class="form-control" asp-items="ViewBag.ArrearsDemandId"></select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="Month" class="control-label"></label>
+                <input asp-for="Month" type="month" class="form-control" />
+                <span asp-validation-for="Month" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="PensionerId" class="control-label"></label>
+                <select asp-for="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
+                <span asp-validation-for="PensionerId" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="MP" class="control-label"></label>
+                <input asp-for="MP" class="form-control" />
+                <span asp-validation-for="MP" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="CMA" class="control-label"></label>
+                <input asp-for="CMA" class="form-control" />
+                <span asp-validation-for="CMA" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="Orderly" class="control-label"></label>
+                <input asp-for="Orderly" class="form-control" />
+                <span asp-validation-for="Orderly" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="NetPension" class="control-label"></label>
+                <input asp-for="NetPension" onchange="CalucateTotal()" class="form-control" />
+                <span asp-validation-for="NetPension" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="FromMonth" class="control-label"></label>
+                <input asp-for="FromMonth" onchange="CalucateTotal()" onfocusout="CheckValidity()" type="date" class="form-control" />
+                <span asp-validation-for="FromMonth" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="ToMonth" class="control-label"></label>
+                <input asp-for="ToMonth" type="date" onchange="CalucateTotal()" onfocusout="CheckValidity()" class="form-control" />
+                <span asp-validation-for="ToMonth" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="NumberOfMonths" class="control-label"></label>
+                <input asp-for="NumberOfMonths" class="form-control" />
+                <span asp-validation-for="NumberOfMonths" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group">
+                <label asp-for="Total" class="control-label"></label>
+                <input asp-for="Total" class="form-control" />
+                <span asp-validation-for="Total" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+
+    $(document).ready(function (e) {
+        $("#PensionerId").change(function (e) {
+            var pensionerId = $(this).val();
+            if (pensionerId != null) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetInfo")",
+                    data: { "id": pensionerId },
+                    success: function (response) {
+                        if (response != null) {
+                            $("#MP").val(response.MonthlyPension);
+                            $("#CMA").val(response.CMA);
+                            $("#Orderly").val(response.OrderelyAllowence);
+                            $("#NetPension").val(response.Total);
+                            CalucateTotal();
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
+    });
+    function getDemand() {
+        var ArrearsDemandId = $("#ArrearsDemandId").val();
+        if (ArrearsDemandId != "" && ArrearsDemandId != 0) {
+            awaitHtmlElement("#demandList");
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetDemandList")",
+                data: { demandId: ArrearsDemandId },
+                dataType: "text",
+                success: function (msg) {
+                    $("#demandList").html(msg);
+                },
+                error: function (req, status, error) {
+                    $("#demandList").html("<div class='alert alert-danger'>res: " + req + " status :" + status + " error : " + error + "</div>");
+                }
+            });
+        }
+    }
+    function CalucateTotal() {
+        var From = $("#FromMonth").val();
+        var To = $("#ToMonth").val();
+        if (From != "" && To != "") {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("CalculateMonths", "WWFBill")",
+                data: { StartingMonth: From, EndingMonth: To },
+                dataType: "text",
+                success: function (msg) {
+                    $("#NumberOfMonths").val(msg);
+                    CalculateAmount();
+                },
+                error: function (req, status, error) {
+                    console.log(msg);
+                }
+            });
+        }
+        else {
+            $('#btnSubmit').prop('disabled', true);
+        }
+    }
+
+    function CalculateAmount() {
+        var Months = $("#NumberOfMonths").val();
+        var NetAmount = $("#NetPension").val();
+        Months = parseInt(Months);
+        NetAmount = parseInt(NetAmount);
+        var Total = Months * NetAmount;
+        $("#Total").val(Total);
+    }
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

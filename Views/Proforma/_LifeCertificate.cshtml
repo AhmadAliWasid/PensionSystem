@@ -1,0 +1,38 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.Entities.Models.Pensioner
+
+@if (Model != null)
+{
+    <div id="printDiv" style="width: 700px;max-width: 700px;padding:5px; font-size:12px;">
+        @if (Model != null)
+        {
+            string guardianName = string.Empty;
+            <div id="page">
+                <div id="p1" style="overflow: hidden; position: relative; background-color: white; width: 935px; height: 1210px;">
+                    <div class="text-container">
+                        <h2 class="text-center text-underline" style="text-decoration:underline;">ALIVE CERTIFICATE</h2>
+                        <h3 class="text-center text-underline" style="text-decoration:underline;">(VALID FOR SIX MONTHS ONLY)</h3>
+                        <p class="text-justify" style="line-height:30px; font-size:80px;">
+                            it is certified that <u style="">@Model.Claimant</u>  S/O, Wd/O, D/O,M/O <br />
+                            @if (Model.Relation.Name != null && Model.Relation.Name.Equals("Self"))
+                            {
+                                guardianName = Model.FatherName;
+                            }
+                            else
+                            {
+                                guardianName = Model.Name;
+                            }
+                            <u>@guardianName</u> having CNIC No. <u>@Model.ClaimantCNIC </u> <br />
+                            bearing PPO No. @Model.PPONumber Mobile # <u>@Model.Mobile</u> resident of <br />
+                            <u>@Model.Address</u> called on me as on ___________________________________ and he/she is ALIVE.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">No Pensioner Found</div>
+}

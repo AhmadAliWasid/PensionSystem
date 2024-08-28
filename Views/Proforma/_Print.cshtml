@@ -1,0 +1,260 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.Entities.Models.Pensioner
+
+@if (Model != null)
+{
+    string claimant = "";
+    bool isWidow = false;
+    bool isDaughter = false;
+    if (Model.Gender == 'M')
+    {
+        // it means it's self or son
+        claimant = "Mr." + Model.Claimant;
+        if (Model.Name == Model.Claimant)
+        {
+            claimant += " Ex." + Model.Designation;
+        }
+        isWidow = false;
+    }
+    else
+    {
+        claimant = " Mst. " + Model.Claimant;
+        if (Model.Name == Model.FatherName)
+        {
+            isDaughter = true;
+            isWidow = false;
+        }
+        else if (Model.Relation.Name == "Daughter")
+        {
+            isDaughter = true;
+        }
+        else
+        {
+            isWidow = true;
+            isDaughter = false;
+        }
+    }
+    double Amount = (double)Model.Total;
+    string inWords = Calculation.ConvertAmount(Amount);
+    string Total = UserFormat.GetAmount(Model.Total);
+    <link href="/lib/print/print.min.css" rel="stylesheet" />
+
+    <style>
+        .key {
+            font-weight: bolder;
+            background-color: lightgrey;
+        }
+
+        .values {
+        }
+
+        .header_table, .header_table > thead > tr > th, .header_table > tbody > tr > td, .header_table > tfoot > tr > th {
+            border: 2px solid black;
+        }
+
+        #payment_signature {
+            border: 1px solid black;
+            height: 90px;
+            width: 250px;
+            margin-left: auto;
+            margin-right: 0px;
+            margin-top: -50px;
+        }
+    </style>
+    <div id="printDiv" style="width: 700px;max-width: 700px;padding:5px">
+        @if (Model != null)
+        {
+            <div id="page first-page">
+                <div id="header" style="max-height:100px;">
+                    <img src="~/img/pesco_header.JPG" alt="header" style="width:100%">
+                </div>
+                <div class="row">
+                    <table class="table" style="font-size:12px; margin-bottom: 0px;">
+                        <thead>
+                            <tr>
+                                <th class="text-end" style="width: 5px;">Company</th>
+                                <th class="text-start">@Model.Company.ShortName</th>
+                                <th class="text-end">Page</th>
+                                <th class="text-start">@Model.PageNumber</th>
+                                <th class="text-end">PPO</th>
+                                <th class="text-start">@Model.PPOSystem</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table class="table header_table" style="font-size:12px; margin-bottom: 0px;">
+                        <thead>
+                            <tr>
+                                <th class="text-end" style="background-color:lightgrey;">Bank</th>
+                                <th class="text-center">@Model.Branch.Bank.ShortName (@Model.Branch.Name)</th>
+                                <th class="text-end" style="background-color:lightgrey;">Bank Ac#</th>
+                                <th class="text-center">@UserFormat.GetAccount(Model.AccountNumber)</th>
+                            </tr>
+                            <tr>
+                                <th class="text-end" style="background-color:lightgrey;">Date Of Retirment</th>
+                                <th class="text-center">@UserFormat.GetDate(Model.DateOfRetirement)</th>
+                                <th class="text-end" style="background-color:lightgrey;">CNIC#</th>
+                                <th class="text-center">@UserFormat.GetCNIC(Model.CNIC)</th>
+                            </tr>
+                            <tr>
+                                <th class="text-end" style="background-color:lightgrey;">Date Of Birth</th>
+                                <th class="text-center">@UserFormat.GetDate(Model.DOB)</th>
+                                <th class="text-end" style="background-color:lightgrey;">Mobile#</th>
+                                <th class="text-center">@UserFormat.GetMobile(Model.Mobile)</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div id="declaration_section" style="margin-bottom:10px;">
+                        <h2 class="text-center text-decoration-underline">DECLARATION </h2>
+                        <p style="font-family:Arial; font-size:14px;line-height: 30px;">
+                            &nbsp;Certified that I the Pensioner <u><b> @claimant </b></u>
+                            @if (Model.Relation.Name == "Self")
+                            {
+                                <span>Son Of</span>
+                            }
+                            else
+                            {
+                                <span>@Model.Relation.Name Of</span>
+                            }
+                            <b>
+                                <u>
+                                    Mr.
+                                    @if (!isWidow && !isDaughter)
+                                    {
+                                        @Model.FatherName
+                                    }
+                                    else
+                                    {
+                                        @Model.Name <span> Ex.</span> @Model.Designation
+                                    }
+
+                                </u>
+                            </b> <br>
+                            PPO No. <b><u>@Model.PPONumber</u></b>
+                            has signed the bill personally for the month of  <b><u><span style="text-decoration: underline; white-space: pre;"> </span></u><u><span style="text-decoration: underline; white-space: pre;">      </span></u><u><span style="text-decoration: underline; white-space: pre;">      </span></u></b>
+                            <br>Sanctioned No.<u> <b>@Model.SanctionNumber</b></u>
+                            Dated:<u><b>@UserFormat.GetDate(Model.SanctionDate)</b></u>
+                            <br> Rs. =<u>
+                                <b>
+                                    <span style="text-decoration: underline; white-space: pre;">             </span>
+
+                            </u>/- Rupees.<b>
+                                <u>
+                                    <span style="text-decoration: underline; white-space: pre;">                                                                                   </span>
+                                </u>
+                            </b>
+
+
+                            <br /> &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;I declared that I have not received any payment of the pension for the service in
+                            any capacity neither from governemnt Establishment nor from any local funds
+                            during the period from which the amount of pension claimed in the bill.
+                        </p>
+                    </div>
+                    <div class="signature_section" style="height:90px;">
+                        <div style="border:1px solid black; height:90px; width:250px;margin-left: auto;margin-right: 0px;">
+                            <div style="text-align: center;margin: -26px;">
+                                Thumb/Signature
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="passing_section" style="margin-top : -20px;">
+                    <p style="margin-bottom:0px;">
+                        Passed for Payment Rs. =
+                        <span style="text-decoration: underline; white-space: pre;">                   </span>
+
+                    </p>
+                    <p style="margin-bottom:0px;">
+                        Rupees.
+
+                        <span style="text-decoration: underline; white-space: pre;">                                                                                 </span>
+
+                    </p>
+
+                    <p>Chargable To <b><u>@Model.Company.ShortName</u></b></p>
+                </div>
+                <div id="higher_signature_section" style="padding-top: 130px">
+                    <p style="margin-bottom: 0px;">Divisional Accounts Officer  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;       Executive Engineer (E)</p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SS & TL Division PESCO Mardan</p>
+                </div>
+                <div id="bottom_div">
+                    <div id="payment_detail" style="padding:5px;">
+                        <p style="margin-bottom: 0px;">Pension : =<u><b>@String.Format("{0:n0}", Model.MonthlyPension)</b></u>/-</p>
+                        <p style="margin-bottom: 0px;">CMA : =<u><b>@String.Format("{0:n0}", Model.CMA)</b></u>/-</p>
+                        @if (Model.OrderelyAllowence > 0)
+                        {
+                            <p>Orderely Allowence :  =<u><b>@String.Format("{0:n0}", Model.OrderelyAllowence)</b></u>/-</p>
+                        }
+                    </div>
+                    <div id="payment_signature">
+                        <div style="text-align: center;margin: -26px;">
+                            Thumb/Signature
+                        </div>
+                    </div>
+                </div>
+                @*note section*@
+                <div class="divFooter" style="margin-top : 40px;">
+                    <div class="text-small" style="color:gray;">Note: Last date for submission of certificate is 5th of the month</div>
+                </div>
+            </div>
+            @if (isWidow || isDaughter)
+            {
+                <div class="page page-break">
+                    <div id="certifiate">
+                        <div class="text-center"><b><u>NON MARRIAGE CERTIFICATE</u></b></div>
+                        <div class="text-center" style="margin-top:40px;"><b><u>TO WHOME IT MAY CONCERN</u></b></div>
+                        <div style="line-height:2; font-size:16px; margin-top:10px;">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; This is to certifiy that
+                            <b><u>@claimant</u></b> @Model.Relation.Name of <b>
+                                <u>
+                                    @if (isWidow)
+                                    {
+                                        <span>@Model.Spouse</span>
+
+                                    }
+                                    else if (isDaughter)
+                                    {
+                                        <span>@Model.Name</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@Model.FatherName</span>
+                                    }
+
+                                    Ex.@Model.Designation
+                                </u>
+                            </b>  Holder of PPO No.<b><u>@Model.PPONumber</u></b>
+                            CNIC No. <b><u>@UserFormat.GetCNIC(Model.ClaimantCNIC)</u></b> Resident of <b><u>@Model.Address</u></b> do hereby undertake that and affirm that I am alive and have not remarried drawing my grant of pension myself
+                            Rs. <b>
+                                <u>
+                                    =
+
+                                    <span style="text-decoration: underline; white-space: pre;">             </span>
+
+
+                                    /-
+                                </u>
+                            </b> per month. I therefore request your that the sanctioned amount for the month of    <u> &emsp; &emsp; &emsp; &emsp; &emsp; &emsp;&emsp;&emsp;</u> may kindly be paid to me.
+                        </div>
+                    </div>
+                    <div class="signature_section" style="height:90px; margin-top : 20px;">
+                        <div style="border:1px solid black; height:90px; width:250px;margin-left: auto;margin-right: 0px;">
+                            <div style="text-align: center;margin: -26px;">
+                                Thumb/Signature
+                            </div>
+                        </div>
+                    </div>
+                    <div id="attester-info" style="margin-top:30px;">
+                        <p>The above statement accordingly to my knowledge is correct and is hereby confirmed.</p>
+                        <div>
+                            <img src="~/img/widow_attestation.png" width="100%">
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">No Pensioner Found</div>
+}

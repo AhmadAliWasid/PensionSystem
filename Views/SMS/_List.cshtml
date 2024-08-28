@@ -1,0 +1,37 @@
+﻿@using Pension.Entities.Helpers;
+@model List<MessagesHistory>;
+@{
+    string status = "";
+}
+<div style="width: 100%; height: 700px; overflow-x: auto; overflow-y: auto;">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+
+                <th>PPO</th>
+                <th>Name</th>
+                <th>To</th>
+                <th>Message</th>
+                <th>Resp.</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count > 0)
+            {
+                @foreach (var item in Model)
+                {
+                    status = item.JsonResponse;
+                    status = status.Substring(0, 5);
+                    <tr>
+                        <td>@item.Pensioner.PPOSystem</td>
+                        <td>@item.Pensioner.Claimant</td>
+                        <td>@item.ToNumber</td>
+                        <td>@item.MessageText</td>
+                        <td>@status</td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,139 @@
+﻿@{
+    ViewData["Title"] = "Cash Book";
+    ViewData["SubTitle"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    DateTime currentMonth = DateTime.Now;
+    if (currentMonth.Day <= 25)
+    {
+        if (currentMonth.Month == 1)
+        {
+            currentMonth = new DateTime(currentMonth.Year - 1, 12, 1);
+        }
+        else
+        {
+            currentMonth = currentMonth.AddMonths(-1);
+        }
+    }
+
+
+}
+@* <link href="~/css/print.css" type="text/css" rel="stylesheet" media="print" /> *@
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">@ViewData["Title"]</h3>
+        <div class="card-tools">
+        </div>
+        <div class="row">
+            <div class="col-md-2"><button type="button" class="btn btn-block bg-gradient-primary btn-flat" onclick="AddOrUpdate(0)"><i class="fa fa-plus"></i> Add</button></div>
+            <div class="col-md-2"><button type="button" class="btn btn-block bg-gradient-primary btn-flat" onclick="GetList()"><i class="fa fa-plus"></i> Get List</button></div>
+            <div class="col-md-2"><input type="month" class="form-control" name="month" id="month" value="@currentMonth.ToString("yyyy-MM")" max="@currentMonth.ToString("yyyy-MM")" /></div>
+            <div class="col-md-2"><button type="button" class="btn btn-block bg-gradient-info btn-flat" onclick="LoadCashBook()"><i class="fa fa-list"></i> Load </button></div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-block bg-gradient-info btn-flat" onclick="GetBreakUpSelfFamilyCompanyWise()">
+                    <i class="fa fa-list"></i>
+                    Self-Family-BreakUp
+                </button>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-block bg-gradient-info btn-flat" onclick="GetBreakUpCompanyWise()">
+                    <i class="fa fa-list"></i>
+                    MP-CMA-BreakUp
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="card-body" id="content">
+    </div>
+</div>
+<!-- /.card -->
+<div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create/Update</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-save" onclick="Save()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function LoadCashBook() {
+        var dateTime = $("#month").val();
+        if (dateTime != "") {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("Load")",
+                data: { Month: dateTime },
+                dataType: "text",
+                success: function (msg) {
+                    $("#content").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+    }
+    function GetList() {
+        awaitHtmlElement("#content");
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("GetList")",
+            data: {},
+            dataType: "text",
+            success: function (msg) {
+                $("#content").html(msg);
+            },
+            error: function (req, status, error) {
+                alert(error);
+            }
+        });
+    }
+    function GetBreakUpSelfFamilyCompanyWise() {
+        var dateTime = $("#month").val();
+        if (dateTime != "") {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetBreakUpSelfFamilyCompanyWise")",
+                data: { Month: dateTime },
+                dataType: "text",
+                success: function (msg) {
+                    $("#content").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+    }
+    function GetBreakUpCompanyWise() {
+        var dateTime = $("#month").val();
+        if (dateTime != "") {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetBreakUpCompanyWise")",
+                data: { Month: dateTime },
+                dataType: "text",
+                success: function (msg) {
+                    $("#content").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+    }
+
+</script>
+

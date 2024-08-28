@@ -1,0 +1,142 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.RestorationPaymentVM
+@if (Model != null)
+{
+    @if (Model.RestorationDemand != null && Model.RestorationPayments != null && Model.Session != null)
+    {
+        decimal TotalMP = Model.RestorationPayments.Sum(x => x.Total);
+        <link href="~/plugins/datatables-buttons/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+        <div class="card">
+            @*table header*@
+            <div id="table-header-office">
+                <h2 class="text-center">PESHAWAR ELECTRIC SUPPLY COMPANY LIMITED</h2>
+                <h3 class="text-center">@Model.Session.DMStamp @Model.Session.BaseStamp</h3>
+                <div class="row">
+                    <div class="col-md-4 text-start">Demand # <u>@Model.RestorationDemand.Number</u></div>
+                    <div class="col-md-4 text-center">Restoration Arrears For The Month of @UserFormat.GetMonthYear(Model.RestorationDemand.Date)</div>
+                    <div class="col-md-4 text-end">Dated : @UserFormat.GetDate(Model.RestorationDemand.Date)</div>
+                </div>
+            </div>
+            @*list of pensioner for demand*@
+            <div class="card-body">
+                <table class="table" id="tableId">
+                    <thead>
+                        <tr>
+                            <th>PPO</th>
+                            <th>Name</th>
+                            <th>Claimant</th>
+                            <th>Description</th>
+                            <th>MP</th>
+                            <th>CMA</th>
+                            <th>Orderly</th>
+                            <th>Net</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Months</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.RestorationPayments)
+                        {
+                            <tr>
+                                @if (item.Pensioner != null)
+                                {
+                                    <td>@item.Pensioner.PPOSystem</td>
+                                    <td>@item.Pensioner.Name</td>
+                                    <td>@item.Pensioner.Claimant</td>
+                                }
+                                else
+                                {
+                                    <td colspan="3">N/A</td>
+                                }
+                                <td>@item.Description</td>
+                                <td>@UserFormat.GetAmount(item.MP)</td>
+                                <td>@UserFormat.GetAmount(item.CMA)</td>
+                                <td>@UserFormat.GetAmount(item.Orderly)</td>
+                                <td>@UserFormat.GetAmount(item.NetPension)</td>
+                                <td>@UserFormat.GetDate(item.FromMonth)</td>
+                                <td>@UserFormat.GetDate(item.ToMonth)</td>
+                                <td>@item.NumberOfMonths</td>
+                                <td>@UserFormat.GetAmount(item.Total)</td>
+                            </tr>
+
+                        }
+                        <tr>
+                            @if (Model.RestorationPayments != null)
+                            {
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="text-bold text-end">Total Amount</td>
+                                <td class="text-bold">= @UserFormat.GetAmount(TotalMP) /-</td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                @*footer*@
+                <div id="table-footer">
+                    <div class="container" style="margin-top: 200px;">
+                        <div class="row">
+                            <div class="col-6">
+                                <p class="text-center">@Model.Session.AMStamp</p>
+                                <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                            </div>
+                            <div class="col-6">
+                                <div>
+                                    <p class="text-center">@Model.Session.DMStamp</p>
+                                    <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#tableId').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'print',
+                            customize: function (win) {
+                                $(win.document.body).prepend($('#table-header-office').html()); // before table
+                                $(win.document.body).append($("#table-footer").html()); //after the table
+                                $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                            },
+                            exportOptions: {
+
+                            },
+                            title: '',
+                            message: '<div class="text-center"></div>',
+                        },
+                    ],
+                    "paging": true,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": false,
+                    "info": true,
+                });
+            });
+        </script>
+    }
+
+
+}
+else
+{
+    <div></div>
+}

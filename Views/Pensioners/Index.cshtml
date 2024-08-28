@@ -1,0 +1,202 @@
+﻿@using Pension.Entities.Helpers
+@{
+    ViewData["Title"] = "Pensioners";
+    ViewData["SubTitle"] = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    td.dt-nowrap {
+        white-space: nowrap
+    }
+</style>
+
+<div class="col-md-12">
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                Pensioners
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="row form-group">
+                    <div class="col-md-2">
+                        <button onclick="Update(0)" class="btn btn-primary btn-block"><i class="fa  fa-plus"></i> Add</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-info btn-block" id="Active"> <i class="fa-solid fa-list"></i> Active</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-info btn-block" value="GetAll" onclick="Load(this)"> <i class="fa-solid fa-list"></i> Blocked</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-info btn-block" id="restored"><i class="fa-solid fa-list"></i> Restored</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-info btn-block" id="get-physical-verification"><i class="fa-solid fa-list"></i> Verification</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-info btn-block" id="btn-sms-list"><i class="fa-solid fa-list"></i> SMS</button>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-2">
+                        <button class="btn btn-primary btn-block" onclick="ViewPage(this)" value="Files">
+                            <i class="fa  fa-file"></i> Files
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+    </div>
+</div>
+<div class="modal fade" id="modal-default" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-xl" id="innerModal">
+    </div>
+</div>
+<script>
+    function ViewPage(element) {
+        awaitHtmlElement("#content");
+        var actionName = $(element).val();
+        var url = '@Url.Action("view_name")';
+        url = url.replace('view_name', actionName);
+        $.get(url, function (data) {
+            $("#content").html(data);
+        });
+    }
+    $(document).ready(function (e) {
+        $("#restored").click(function (e) {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("GetRestored")",
+                data: { "GetRestored": "" },
+                success: function (response) {
+                    $("#content").html(response);
+                },
+                failure: function (response) {
+                    $("#content").html(response);
+                },
+                error: function (response) {
+                    $("#content").html(response);
+                }
+            });
+        });
+        $("#Active").click(function (e) {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("List")",
+                data: "",
+                success: function (response) {
+                    $("#content").html(response);
+                },
+                failure: function (response) {
+                    $("#content").html(response);
+                },
+                error: function (response) {
+                    $("#content").html(response);
+                }
+            });
+        });
+        $("#btn-sms-list").click(function (e) {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("GetSMSList")",
+                data: {},
+                success: function (response) {
+                    $("#content").html(response);
+                },
+                failure: function (response) {
+                    $("#content").html(response);
+                },
+                error: function (response) {
+                    $("#content").html(response);
+                }
+            });
+        });
+        $("#get-physical-verification").click(function (e) {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "Get",
+                url: "@Url.Action("GetPensionerPhysicalVerification")",
+                data: "",
+                success: function (response) {
+                    $("#content").html(response);
+                },
+                failure: function (response) {
+                    $("#content").html(response);
+                },
+                error: function (response) {
+                    $("#content").html(response);
+                }
+            });
+        });
+        $("#btnUploadFile").click(function (e) {
+            awaitHtmlElement("#content");
+            var uploadFile = $("#file").get(0);
+            var files = uploadFile.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append('file', files[i]);
+            }
+            $.ajax({
+                url: '@Url.Action("UploadFile")',
+                type: 'POST',
+                data: fileData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    $("#content").html(data.rText);
+                },
+                error: function (error) {
+                    alert(error);
+                }
+            });
+        });
+
+    });
+    function Load(btnElement) {
+        awaitHtmlElement("#content");
+        var action = $(btnElement).val();
+        var url = '@Url.Action("__action__")'.replace('__action__', action);
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: "",
+            success: function (response) {
+                $("#content").html(response);
+            },
+            failure: function (response) {
+                $("#content").html(response);
+            },
+            error: function (response) {
+                $("#content").html(response);
+            }
+        });
+    }
+    function Update(Id) {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("CreateUpdate")",
+            data: { id: Id },
+            dataType: "text",
+            success: function (msg) {
+                $("#modal-default").modal("show");
+                $("#innerModal").html(msg);
+            },
+            error: function (req, status, error) {
+                alert(error);
+            }
+        });
+    }
+</script>
+
+
+
+
+

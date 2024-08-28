@@ -1,0 +1,38 @@
+﻿@model PensionSystem.ViewModels.BranchVM
+@{
+    Layout = null;
+}
+<form id="CreateUpdate">
+    <input asp-for="Id" type="hidden" />
+    <div class="row ">
+        <div class="col-md-12 text-danger text-bold" id="ErrorDiv">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="BankId" class="control-label"></label>
+                <select asp-for="BankId" class="form-control" asp-items="ViewBag.BankId"></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.Name"></label>
+                <input asp-for="@Model.Name" class="form-control" />
+                <span asp-validation-for="@Model.Name"></span>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="@Model.Code"></label>
+                <input asp-for="@Model.Code" class="form-control" />
+                <span asp-validation-for="@Model.Code"></span>
+            </div>
+        </div>
+    </div>
+</form>

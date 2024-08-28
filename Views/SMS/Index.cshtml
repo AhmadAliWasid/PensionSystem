@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewData["Title"] = "SMS";
+}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">@ViewData["Title"]</h3>
+        <div class="card-tools">
+            <!-- Collapse Button -->
+            <table>
+                <thead>
+                    <tr>
+                        <th><button type="button" class="btn btn-block bg-gradient-primary btn-flat" onclick="AddOrUpdate(0)"><i class="fa fa-plus"></i> Add</button></th>
+                        <th><button type="button" class="btn btn-block bg-gradient-info btn-flat" onclick="LoadList()"><i class="fa fa-list"></i> Reload List</button></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <!-- /.card-tools -->
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body" id="content">
+  
+    </div>
+</div>
+<script>
+ 
+    function LoadList() {
+        $.ajax({
+            type: "GET",
+            url: "@Url.Action("Load")",
+            dataType: "text",
+            success: function (msg) {
+                $("#content").html(msg);
+            },
+            error: function (req, status, error) {
+                alert(error);
+            }
+        });
+    }
+</script>
+

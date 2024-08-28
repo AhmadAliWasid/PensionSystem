@@ -1,0 +1,118 @@
+﻿@using Pension.Entities.Helpers
+@model IEnumerable<PensionSystem.Entities.Models.Cheque>
+
+@{
+    Layout = null;
+}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                @if (Model != null)
+                {
+                    DateTime valid = DateTime.Now;
+                    <table class="table table-bordered" id="data-table">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.ChequeCategory)</th>
+                                <th>@Html.DisplayNameFor(model => model.Name)</th>
+                                <th>@Html.DisplayNameFor(model => model.Amount)</th>
+                                <th>@Html.DisplayNameFor(model => model.Date)</th>
+                                <th>@Html.DisplayNameFor(model => model.Number)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    @if (item.ChequeCategory != null)
+                                    {
+                                        <td>@Html.DisplayFor(modelItem => item.ChequeCategory.Name)</td>
+                                    }
+                                    else
+                                    {
+                                        <td>N/A</td>
+                                    }
+                                    <td>@Html.DisplayFor(modelItem => item.Name)</td>
+                                    <td>@UserFormat.GetAmount(item.Amount)</td>
+                                    <td>@UserFormat.GetDate(item.Date)</td>
+                                    <td>@UserFormat.GetChequeNumber(item.Number)</td>
+                                    <td>
+                                        <span>
+                                            @if (item.IsLocked)
+                                            {
+                                                <b>Paid</b>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn  btn-warning " onclick="MarkItPaid(@item.Id,this)"><span class="fa fa-lock"></span> Locked It</button>
+                                                <button asp-action="Edit" class="btn btn-warning" onclick="AddOrUpdate(@item.Id)"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
+                                                <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.Id"><span class="fa fa-trash"></span> Delete</a>
+                                            }
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <script>
+                        $(document).ready(function () {
+                            $('#data-table').DataTable({
+                                dom: 'Bfrtip',
+                                buttons: [
+                                    {
+                                        extend: 'print',
+                                        customize: function (win) {
+                                            $(win.document.body).append($("#table-footer").html()); //after the table
+                                            $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                                        },
+                                        exportOptions: {
+                                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+                                        },
+                                        title: 'SS&TL Division PESCO Mardan',
+                                        message: '<div class="text-center">List of Pensioner for the month of </div>',
+                                    },
+                                    'excel',
+                                    'copy',
+                                    'csv',
+                                    'pdf'
+                                ],
+                                "paging": true,
+                                "lengthChange": false,
+                                "searching": true,
+                                "ordering": false,
+                                "info": true,
+                            });
+                        });
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function MarkItPaid(Id, element) {
+        if (Id != "") {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("MarkItPaid")",
+                data: { Id: Id },
+                dataType: "text",
+                success: function (msg) {
+                    if (msg) {
+                        $(element).hide();
+                        $(element).parent().html("Paid");
+                    }
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+        else {
+            alert("no record selected")
+        }
+    }
+</script>
+

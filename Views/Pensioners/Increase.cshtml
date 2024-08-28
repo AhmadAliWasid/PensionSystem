@@ -1,0 +1,90 @@
+﻿@using Pension.Entities.Helpers
+@model List<PensionSystem.Entities.Models.Pensioner>
+<div class="card ">
+    <div class="card-header">
+        <div class="row form-group">
+            <div id="content">
+            </div>
+            <div class="col-md-3">
+                <form enctype="multipart/form-data" class="form">
+                    <label class="control-lable" for="file">CSV File for allow Increases to Pensioners</label>
+                    <input type="file" id="rate-revision-file-input" name="file" size="1" class="form-control" />
+                </form>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-info btn-block" id="btnUploadCsv">
+                    Upload Rates
+                </button>
+            </div>
+            <div>
+                <p>
+                    File must be CSV viz comma seperated version format having in excel file using the below given table format.<br />
+                    convert the file to CSV in excel then upload so all MP,CMA,Orderly will be updated accordingly.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-bordered" id="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Company</th>
+                            <th>MP</th>
+                            <th>CMA</th>
+                            <th>Orderly</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                                <td>@item.Company.ShortName</td>
+                                <td>@item.MonthlyPension</td>
+                                <td>@item.CMA</td>
+                                <td>@item.OrderelyAllowence</td>
+                                <td>@item.Total</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $("#btnUploadCsv").click(function (e) {
+                    var input = document.getElementById("rate-revision-file-input");
+                    var file = input.files[0]; // Get the first selected file
+                    var formData = new FormData();
+                    formData.append("file", file); // Append the single file
+                    $.ajax(
+                        {
+                            url: '@Url.Action("UploadFileOfRatesRevision")',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            type: "POST",
+                            success: function (data) {
+                                $("#content").html(data.RText);
+                            }
+                        }
+                    );
+                });
+                var dataTable = $("#data-table").DataTable({
+                    "responsive": true,
+                    "lengthChange": false,
+                    "autoWidth": false,
+                    "buttons": [
+                        "excel"
+                    ]
+                });
+                dataTable.buttons().container().appendTo('#data-table_wrapper .col-md-6:eq(0)');
+            });
+        </script>
+    </div>
+</div>
+

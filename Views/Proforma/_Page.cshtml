@@ -1,0 +1,203 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.Entities.Models.Pensioner
+@{
+    ViewData["Title"] = "Page Slip";
+    ViewData["SubTitle"] = "Print";
+}
+
+<link href="~/css/print.css" type="text/css" rel="stylesheet" media="all" />
+
+@if (Model != null)
+{
+    double Amount = (double)Model.Total;
+    string inWords = Calculation.ConvertAmount(Amount);
+    string Total = String.Format("{0:n0}", Model.Total);
+    <link href="/lib/print/print.min.css" rel="stylesheet" type="text/css" />
+    <style>
+
+        .header_table, .header_table > thead > tr > th,
+        .header_table > tbody > tr > td,
+        .header_table > tfoot > tr > th {
+            border: 2px solid black;
+        }
+
+        .header-column {
+            background-color: lightgray;
+            text-align: center;
+        }
+    </style>
+    <div class="card">
+        <div class="card-header">
+            <h4><b>Payment Ledger</b></h4>
+        </div>
+        <div class="card-body">
+            <div id="printDiv" style="width: 767px;max-width: 767px;padding-left:5%">
+                <div class="">
+                    <table class="table" style="font-size:12px; width: 767px;">
+                        <thead>
+                            <tr>
+                                <th class="text-end">PPO # </th>
+                                <th class="text-start" style="width: 5px;">@Model.PPOSystem</th>
+                                <th class="text-end" style="width: 5px;">Company</th>
+                                <th class="text-start">@Model.Company.ShortName</th>
+                                <th class="text-center" style="width: 5px;">@Model.Company.Name</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table class="table header_table" style="width: 767px;font-size:12px;">
+                        <thead>
+                            <tr>
+                                <th style="background-color:lightgrey;">Claimant</th>
+                                <th class="text-center">
+                                    @Model.Claimant
+                                </th>
+                                <th style="background-color:lightgrey;">@Model.Relation.Short</th>
+                                <th class="text-center">
+                                    @if (Model.Relation.Name == "Self")
+                                    {
+                                        @Model.FatherName
+                                    }
+                                    else
+                                    {
+                                        @Model.Name
+                                    }
+                                </th>
+
+                                <th style="background-color:lightgrey;"> Relation</th>
+                                <th class="text-center" style="width:200px !important;"> @Model.Relation.Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="background-color:lightgrey;">PPO No.</td>
+                                <td class="text-center">@Model.PPONumber</td>
+                                <td class="text-center" style="background-color:lightgrey;">Bank Account</td>
+                                <td class="text-center">@UserFormat.GetAccount(Model.AccountNumber)</td>
+                                <td style="background-color:lightgrey; vertical-align: middle;" rowspan="3"> Address</td>
+                                <td style="vertical-align: middle;" class="text-center" rowspan="3">
+                                    @{
+                                        if (Model.Address != null && Model.Address.Length > 25)
+                                        {
+                                            IEnumerable<string> lines = UserFormat.Split(Model.Address, 25);
+                                            foreach (var line in lines)
+                                            {
+                                                <i></i>
+                                                @line <br />
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <i>@Model.Address</i>
+                                        }
+
+                                    }
+
+                            </tr>
+                            <tr>
+                                <td style="background-color:lightgrey;">DOB</td>
+                                <td class="text-center">@UserFormat.GetDate(Model.DOB)</td>
+                                <td style="background-color:lightgrey;">DOR</td>
+                                <td class="text-center">@UserFormat.GetDate(Model.DateOfRetirement)</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:lightgrey;">CNIC#</td>
+                                <td class="text-center">@UserFormat.GetCNIC(Model.CNIC)</td>
+                                <td style="background-color:lightgrey;">Mobile#</td>
+                                <td class="text-center">@UserFormat.GetMobile(Model.Mobile)</td>
+
+                            </tr>
+                            <tr>
+                                <td style="background-color:lightgrey;">Sanction No.</td>
+                                <td class="text-center">
+                                    @{
+                                        if (Model.SanctionNumber != null && Model.SanctionNumber.Length > 15)
+                                        {
+                                            @(Model.SanctionNumber.Substring(0, 15))
+                                        }
+                                        else
+                                        {
+                                            <i>@Model.SanctionNumber</i>
+                                        }
+                                    }
+                                </td>
+                                <td style="background-color:lightgrey;">Sanction Date</td>
+                                <td class="text-center">@UserFormat.GetDate(Model.SanctionDate)</td>
+                                <td style="background-color:lightgrey;"> BPS</td>
+                                <td class="text-center"> @Model.BPS</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:lightgrey;">MP</td>
+                                <td class="text-center">@UserFormat.GetAmount(Model.MonthlyPension)</td>
+                                <td style="background-color:lightgrey;">CMA</td>
+                                <td class="text-center">@UserFormat.GetAmount(Model.CMA)</td>
+                                <td style="background-color:lightgrey;"> Bank</td>
+                                <td class="text-center"> @Model.Branch.Bank.ShortName</td>
+                            </tr>
+                            <tr>
+                                <td style="background-color:lightgrey;">Orderly</td>
+                                <td class="text-center">@UserFormat.GetAmount(Model.OrderelyAllowence)</td>
+                                <td style="background-color:lightgrey;">Total</td>
+                                <td class="text-center">@UserFormat.GetAmount(Model.Total)</td>
+                                <td style="background-color:lightgrey;"> Branch</td>
+                                <td class="text-center"> @Model.Branch.Name</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="6">This Page is Started or Resumed  from @UserFormat.GetDate(DateTime.Now)  @DateTime.Now.ToShortTimeString()</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    <table class="table header_table" style="font-size:12px; margin-bottom: 0px;min-width:768px;">
+                        <thead>
+                            <tr class="header-column">
+                                <th style="width:90px;">Month</th>
+                                <th style="width:250px;">Monthly</th>
+                                <th style="width:250px;">Arrears</th>
+                                <th style="width:600px;">Remarks</th>
+                                <th>Disbursing Officer</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                DateTime date = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                                for (int i = 0; i < 36; i++)
+                                {
+                                    <tr style="height: 60px;">
+                                        <td style="vertical-align: middle;">@date.ToString("MM-yyyy")</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    date = date.AddMonths(1);
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/print/print.min.js" type="text/javascript"></script>
+    <script>
+        function printProforma() {
+            printJS({
+                printable: 'printDiv',
+                type: 'html',
+                header: null,
+                targetStyles: ['*'],
+                maxWidth: '595px',
+                repeatTableHeader: true
+            });
+        }
+    </script>
+}
+else
+{
+    <div class="alert alert-danger alert-dismissible">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+        No Pensioner Found!
+    </div>
+}

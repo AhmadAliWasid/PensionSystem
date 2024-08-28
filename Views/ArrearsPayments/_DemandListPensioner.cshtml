@@ -1,0 +1,211 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.ViewModels.DemandListViewModel
+@if (Model != null)
+{
+    @if (Model.ArrearsPayments != null && Model.ArrearsPayments.Count > 0)
+    {
+        decimal TotalMP = 0;
+        decimal TotalCMA = 0;
+        decimal TotalOrderly = 0;
+        decimal Total = 0;
+        decimal TotalDeduction = 0;
+        <div class="card">
+            @*table header*@
+            <div id="table-header-office">
+                <h3 class="text-center">PESHAWAR ELECTRIC SUPPLY COMPANY LIMITED</h3>
+                <div class="row"><div class="col-md-12 text-center">Short Fall Arrears For The Month of @UserFormat.GetMonthYear(Model.Month)</div></div>
+            </div>
+            @*list of pensioner for demand*@
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Bank</th>
+                            <th>Amount</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            if (Model.bankDemandVMs != null)
+                            {
+                                foreach (var item in Model.bankDemandVMs)
+                                {
+                                    <tr>
+                                        <td>@item.BankName</td>
+                                        <td>@UserFormat.GetAmount(item.Amount)</td>
+                                        <td>@item.Count</td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    </tbody>
+                </table>
+                <table class="table" id="tableId">
+                    <thead>
+                        <tr>
+                            <th>PPO</th>
+                            <th>Claimant</th>
+                            <th>Description</th>
+                            <th>MP</th>
+                            <th>CMA</th>
+                            <th>Orderly</th>
+                            <th>Net</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Months</th>
+                            <th>Rec</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.ArrearsPayments)
+                        {
+                            TotalMP += item.MP;
+                            TotalCMA += item.CMA;
+                            TotalOrderly += item.Orderly;
+                            Total += item.Total;
+                            TotalDeduction += item.Deduction;
+                            <tr>
+                                @if (item.Pensioner != null)
+                                {
+                                    <td>@item.Pensioner.PPOSystem</td>
+                                    <td>
+                                        @item.Pensioner.Claimant
+                                        @if (@item.Pensioner.Relation.Name != "Self")
+                                        {
+                                            <span>@item.Pensioner.Relation.Short @item.Pensioner.Name Ex. @item.Pensioner.Designation</span>
+                                        }
+                                        else
+                                        {
+                                            <span>Ex. @item.Pensioner.Designation</span>
+                                        }
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td colspan="3">N/A</td>
+                                }
+                                <td>@item.Description</td>
+                                <td>@UserFormat.GetAmount(item.MP)</td>
+                                <td>@UserFormat.GetAmount(item.CMA)</td>
+                                <td>@UserFormat.GetAmount(item.Orderly)</td>
+                                <td>@UserFormat.GetAmount(item.NetPension)</td>
+                                <td>@UserFormat.GetDate(item.FromMonth)</td>
+                                <td>@UserFormat.GetDate(item.ToMonth)</td>
+                                <td>@item.NumberOfMonths</td>
+                                <td>@UserFormat.GetAmount(item.Deduction)</td>
+                                <td>@UserFormat.GetAmount(item.Total)</td>
+                                @if (item.ArrearsDemand != null && item.ArrearsDemand.IsPaid)
+                                {
+                                    <td>Confirmed</td>
+                                }
+                                else
+                                {
+                                    <td>
+                                        <button onclick="AddOrUpdate(@item.Id)" class="btn btn-warning"><i class="fa fa-edit"></i> </button> |
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info"><i class="fa fa-info"></i> </a> |
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                    </td>
+                                }
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                @*footer*@
+                <div id="table-footer">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                @if (Model.ArrearsPayments != null)
+                                {
+                                    <th>Monthly Pension: @UserFormat.GetAmount(TotalMP)</th>
+                                    <th>CMA: @UserFormat.GetAmount(TotalCMA)</th>
+                                    <th>Orderly : @UserFormat.GetAmount(TotalOrderly)</th>
+                                    <th>Deduction : @UserFormat.GetAmount(TotalDeduction)</th>
+                                    <th>Amount : @UserFormat.GetAmount(Total)</th>
+                                }
+                            </tr>
+                            <tr>
+                                <th colspan="4">Rupees : @Calculation.Convert((long)Total) Only</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    @if (Model.Session != null)
+                    {
+                        <div class="container" style="margin-top:100px;">
+                            <div class="row">
+                                <div class="col-6">
+                                    <p class="text-center">@Model.Session.AMStamp</p>
+                                    <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                                </div>
+                                <div class="col-6">
+                                    <div>
+                                        <p class="text-center">@Model.Session.DMStamp</p>
+                                        <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        <div>
+        </div>
+        <script>
+            $(document).ready(function () {
+                $('#tableId').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        {
+                            extend: 'print',
+                            customize: function (win) {
+                                $(win.document.body).prepend($('#table-header-office').html()); // before table
+                                $(win.document.body).append($("#table-footer").html()); //after the table
+                                $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                                var last = null;
+                                var current = null;
+                                var bod = [];
+                                var css = '@@page { size: landscape; }', head = win.document.head || win.document.getElementsByTagName('head')[0], style = win.document.createElement('style');
+                                style.type = 'text/css';
+                                style.media = 'print';
+                                if (style.styleSheet) {
+                                    style.styleSheet.cssText = css;
+                                }
+                                else {
+                                    style.appendChild(win.document.createTextNode(css));
+                                }
+                                head.appendChild(style);
+                            },
+                            exportOptions: {
+                                columns: ':not(:last)'
+                            },
+                            title: '',
+                            message: '<div class="text-center"></div>',
+                        },
+                    ],
+                    "paging": false,
+                    "lengthChange": true,
+                    "searching": true,
+                    "ordering": false,
+                    "info": true,
+                });
+            });
+        </script>
+    }
+
+
+}
+else
+{
+    <div></div>
+}

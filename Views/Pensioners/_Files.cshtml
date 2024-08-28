@@ -1,0 +1,84 @@
+﻿@{
+    Layout = null;
+}
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="card-title">
+                Pensioners
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="container">
+                <div class="row form-group">
+                    <div class="col-md-4">
+                        <label class="control-label">Photo</label>
+                        <input type="file" class="form-control" id="photo" onchange="displaySelectedImage(this)" />
+                        <img height="100" width="100" id="photo-view" />
+                        <button class="btn btn-sm btn-primary" id="photo-btn" onclick="uploadTheFile(this)">
+                            <i class="fa fa-upload"></i> Upload
+                        </button>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="control-label">CNIC Side 1</label>
+                        <input type="file" class="form-control" id="cnic_front" onchange="displaySelectedImage(this)" />
+                        <img height="100" width="100" id="cnic_front-view" />
+                        <button class="btn btn-sm btn-primary" id="cnic_front-btn" onclick="uploadTheFile(this)"><i class="fa fa-upload"></i> Upload</button>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="control-label">CNIC Side 2</label>
+                        <input type="file" class="form-control" id="cnic_back" onchange="displaySelectedImage(this)" />
+                        <img height="100" width="100" id="cnic_back-view" />
+                        <button class="btn btn-sm btn-primary" id="cnic_back-btn" onclick="uploadTheFile(this)"><i class="fa fa-upload"></i> Upload</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+    </div>
+</div>
+<div class="modal fade" id="modal-default" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog modal-xl" id="innerModal">
+    </div>
+</div>
+<script>
+    function displaySelectedImage(element) {
+        var imageView = $("#" + element.id + "-view");
+        if (element.files && element.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                imageView.attr("src", e.target.result);
+            };
+            reader.readAsDataURL(element.files[0]);
+        }
+    }
+    function uploadTheFile(element) {
+        var btnId = element.id;
+        var inputId = btnId.replace("-btn", "");
+        var uploadFile = $("#" + inputId).get(0);
+        var file = uploadFile.files[0]; // Get the first (and only) file
+        var fileData = new FormData();
+        fileData.append('File', file);
+        fileData.append('PensionerId', 1);
+        fileData.append('Type', inputId);
+        $.ajax({
+            url: '@Url.Action("UploadFile")',
+            type: 'POST',
+            data: fileData,
+            processData: false,
+            contentType: false,
+            success: function (data) {
+                $("#content").html(data);
+            },
+            error: function (error) {
+                $("#content").html(error);
+            }
+        });
+    }
+</script>
+
+
+
+
+

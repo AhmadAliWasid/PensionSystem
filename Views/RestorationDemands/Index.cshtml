@@ -1,0 +1,50 @@
+﻿@using Pension.Entities.Helpers
+@model IEnumerable<PensionSystem.Entities.Models.RestorationDemand>
+
+@{
+	ViewData["Title"] = "Restoration";
+	ViewData["SubTitle"] = "Home";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="card">
+	<div class="card-header">
+		<a asp-action="Create">Create New</a>
+	</div>
+	<div class="card-body">
+		@if (Model != null)
+		{
+			<table class="table">
+				<thead>
+					<tr>
+						<th>@Html.DisplayNameFor(model => model.Description)</th>
+						<th>@Html.DisplayNameFor(model => model.Number)</th>
+						<th>@Html.DisplayNameFor(model => model.Date)</th>
+						<th>@Html.DisplayNameFor(model => model.IsPaid)</th>
+						<th>@Html.DisplayNameFor(model => model.PaymentDate)</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var item in Model)
+					{
+						<tr>
+							<td>@Html.DisplayFor(modelItem => item.Description)</td>
+							<td>@Html.DisplayFor(modelItem => item.Number)</td>
+							<td>@UserFormat.GetDate(item.Date)</td>
+							<td>@Html.DisplayFor(modelItem => item.IsPaid)</td>
+							<td>@Html.DisplayFor(modelItem => item.PaymentDate)</td>
+							<td>
+								<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+								<a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+								<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		}
+
+
+	</div>
+</div>
+

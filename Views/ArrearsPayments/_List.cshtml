@@ -1,0 +1,112 @@
+﻿@using Pension.Entities.Helpers
+@model IEnumerable<PensionSystem.Entities.Models.ArrearsPayment>
+@if (Model != null)
+{
+    <table class="table" id="data-table">
+        <thead>
+            <tr>
+                <th>Demand#</th>
+                <th>PPOSystem</th>
+                <th>Name</th>
+                <th>Claimant</th>
+                <th>FromMonth</th>
+                <th>ToMonth</th>
+                <th>MP</th>
+                <th>CMA</th>
+                <th>Orderly</th>
+                <th>NetPension</th>
+                <th>NumberOfMonths</th>
+                <th>Total</th>
+                <th>Month</th>
+                <th>CreatedDate</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    @if (item.ArrearsDemand != null)
+                    {
+                        <td>@item.ArrearsDemand.Number</td>
+                    }
+                    else
+                    {
+                        <td>No Demand</td>
+
+                    }
+                    @if (item.Pensioner != null)
+                    {
+                        <td>@item.Pensioner.PPOSystem</td>
+                        <td>@item.Pensioner.Name</td>
+                        <td>@item.Pensioner.Claimant</td>
+                    }
+                    else
+                    {
+                        <td colspan="3"></td>
+                    }
+                    <td>@UserFormat.GetDate(item.FromMonth)</td>
+                    <td>@UserFormat.GetDate(item.ToMonth)</td>
+                    <td>@UserFormat.GetAmount(item.MP)</td>
+                    <td>@UserFormat.GetAmount(item.CMA)</td>
+                    <td>@UserFormat.GetAmount(item.Orderly)</td>
+                    <td>@UserFormat.GetAmount(item.NetPension)</td>
+                    <td>@item.NumberOfMonths</td>
+                    <td>@UserFormat.GetAmount(item.Total)</td>
+                    <td>@UserFormat.GetMonthYear(item.Month)</td>
+                    <td>@UserFormat.GetDateTime(item.CreatedDate)</td>
+                    @if (item.ArrearsDemand != null && item.ArrearsDemand.IsPaid)
+                    {
+                        <td>Confirmed</td>
+                    }
+                    else
+                    {
+                        <td>
+                            <button onclick="AddOrUpdate(@item.Id)" class="btn btn-warning"><i class="fa fa-edit"></i> </button> |
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <script>
+        $(document).ready(function () {
+            $('#data-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        exportOptions: {
+                            columns: ':not(:last)'
+                        }
+                    },
+                    {
+                        extend: 'copy',
+                        exportOptions: {
+                            columns: ':not(:last)'
+                        }
+                    },
+                    {
+                        extend: 'excel',
+                        exportOptions: {
+                            columns: ':not(:last)'
+                        }
+                    },
+                    {
+                        extend: 'pdf',
+                        exportOptions: {
+                            columns: ':not(:last)'
+                        }
+                    }
+                ],
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": false,
+                "info": true,
+            });
+
+        });
+    </script>
+}
