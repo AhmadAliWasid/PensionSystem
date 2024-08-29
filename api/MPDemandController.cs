@@ -4,7 +4,7 @@ using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
 using PensionSystem.Entities.DTOs;
 
-namespace PensionSystem.api
+namespace WebAPI.api
 {
     [Route("api/[controller]")]
     [ApiController]

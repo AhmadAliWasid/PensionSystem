@@ -21,7 +21,7 @@ namespace PensionSystem.Entities.Models
         public TransactionType TransactionType { get; set; }
 
         [Required(ErrorMessage = "Please Provide a detail of the transaction")]
-        public string Particulars { get; set; }
+        public string Particulars { get; set; } = string.Empty;
     }
 
     public enum TransactionType

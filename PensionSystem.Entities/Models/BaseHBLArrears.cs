@@ -1,5 +1,4 @@
-﻿using PensionSystem.Entities.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PensionSystem.Entities.Models

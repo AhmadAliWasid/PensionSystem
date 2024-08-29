@@ -5,6 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-PensionSystem-6B71B6EC-357F-4C35-9F8A-79E383C97B7F</UserSecretsId>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <OutputType>WinExe</OutputType>
+    <Description>PESCO Pension System</Description>
+    <Copyright>My Soft Corporation</Copyright>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <Optimize>False</Optimize>
@@ -130,8 +133,5 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\PensionSystem.Entities\PensionSystem.Entities.csproj" />
   </ItemGroup>
 </Project>

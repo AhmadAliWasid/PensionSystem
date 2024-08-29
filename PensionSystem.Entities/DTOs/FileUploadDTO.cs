@@ -4,7 +4,7 @@ namespace PensionSystem.DTOs
 {
     public class FileUploadDTO
     {
-        public IFormFile File { get; set; }
+        public IFormFile? File { get; set; }
 
         public int PensionerId { get; set; }
         public FileType Type { get; set; }
