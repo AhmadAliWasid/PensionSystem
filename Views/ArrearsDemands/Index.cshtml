@@ -1,97 +1,91 @@
 ﻿@using Pension.Entities.Helpers
-@model PensionSystem.ViewModels.ArrearsDemandViewModel
 @{
     ViewData["Title"] = "Arrears Demand";
     ViewData["SubTitle"] = "Home";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@if (Model != null)
-{
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">@ViewData["Title"]</h3>
-            <div class="card-tools">
-                <table>
-                    <thead>
-                        <tr>
-                            <th><button type="button" class="btn btn-block bg-gradient-primary btn-flat" onclick="AddOrUpdate(0)"><i class="fa fa-plus"></i> Add</button></th>
-                            <th><button type="button" class="btn btn-block bg-gradient-info btn-flat" onclick="LoadList()"><i class="fa fa-list"></i> Reload List</button></th>
-                            <th></th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-        <div class="card-body" id="content">
-        </div>
-    </div>
 
-    <script>
-        function getDemand(ArrearsDemandId) {
-            if (ArrearsDemandId != "") {
-                awaitHtmlElement("#content");
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("GetDemandList", "ArrearsPayments")",
-                    data: { demandId: ArrearsDemandId },
-                    dataType: "text",
-                    success: function (msg) {
-                        $("#content").html(msg);
-                    },
-                    error: function (req, status, error) {
-                        alert(error);
-                    }
-                });
-            }
-        }
-        function MarkItPaid(Id, element) {
-            if (Id != "") {
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("MarkItPaid")",
-                    data: { Id: Id },
-                    dataType: "text",
-                    success: function (msg) {
-                        if (msg) {
-                            $(element).hide();
-                            $(element).parent().html("Paid");
-                        }
-                    },
-                    error: function (req, status, error) {
-                        alert(error);
-                    }
-                });
-            }
-            else {
-                alert("no record selected")
-            }
-        }
-    </script>
-    <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Create/Update</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="modal-body">
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="Save()">Save</button>
-                </div>
-            </div>
-            <!-- /.modal-content -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">@ViewData["Title"]</h3>
+        <div class="card-tools">
+            <table>
+                <thead>
+                    <tr>
+                        <th><button type="button" class="btn btn-block bg-gradient-primary btn-flat" onclick="AddOrUpdate(0)"><i class="fa fa-plus"></i> Add</button></th>
+                        <th><button type="button" class="btn btn-block bg-gradient-info btn-flat" onclick="LoadList()"><i class="fa fa-list"></i> Reload List</button></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+            </table>
         </div>
-        <!-- /.modal-dialog -->
     </div>
-}
-else
-{
-    <div class="alert alert-danger">No Arrear Demands Found!</div>
-}
+    <div class="card-body" id="content">
+    </div>
+</div>
+
+<script>
+    function getDemand(ArrearsDemandId) {
+        if (ArrearsDemandId != "") {
+            awaitHtmlElement("#content");
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("GetDemandList", "ArrearsPayments")",
+                data: { demandId: ArrearsDemandId },
+                dataType: "text",
+                success: function (msg) {
+                    $("#content").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+    }
+    function MarkItPaid(Id, element) {
+        if (Id != "") {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("MarkItPaid")",
+                data: { Id: Id },
+                dataType: "text",
+                success: function (msg) {
+                    if (msg) {
+                        $(element).hide();
+                        $(element).parent().html("Paid");
+                    }
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+        else {
+            alert("no record selected")
+        }
+    }
+</script>
+<div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create/Update</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="Save()">Save</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
 

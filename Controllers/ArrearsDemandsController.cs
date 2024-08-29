@@ -15,10 +15,9 @@ using System.Text.Json;
 namespace PensionSystem.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
-    public class ArrearsDemandsController(ApplicationDbContext context, IArrearsDemand arrearsDemand, SessionHelper sessionHelper,
+    public class ArrearsDemandsController(IArrearsDemand arrearsDemand, SessionHelper sessionHelper,
         IMapper mapper, IArrearsPayment arrearsPayment, HttpClient httpClient, IHttpClientFactory httpClientFactory) : Controller
     {
-        private readonly ApplicationDbContext _context = context;
         private readonly IArrearsDemand _arrearsDemand = arrearsDemand;
         private readonly SessionHelper _sessionHelper = sessionHelper;
         private readonly IMapper _mapper = mapper;
@@ -27,16 +26,9 @@ namespace PensionSystem.Controllers
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
         // GET: ArrearsDemands
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            ArrearsDemandViewModel model = new();
-            var arrearsContext = _context.ArrearsPayments;
-            if (arrearsContext != null)
-            {
-                model.ArrearsDemands = await _arrearsDemand.GetArrears(_sessionHelper.GetUserPDUId());
-                model.ArrearsPayments = await arrearsContext.ToListAsync();
-            }
-            return View(model);
+            return View();
         }
         public async Task<IActionResult> Crud(int id)
         {
@@ -141,22 +133,19 @@ namespace PensionSystem.Controllers
             }
         }
 
-        private bool ArrearsDemandExists(int id)
-        {
-            var list = _context.ArrearsDemands;
-            if (list != null)
-            {
-                return list.Any(e => e.Id == id);
-            }
-            return false;
-        }
-
         [HttpPost]
         public async Task<bool> MarkItPaid(int Id = 0)
         {
             if (Id == 0)
                 return false;
-            return await _arrearsDemand.MarkItPay(Id);
+            // marking it pay
+            var response = await _httpClient.PostAsync($"{_sessionHelper.GetUri()}api/ArrearDemand/mark-it-pay/{Id}", null);
+            if (response.IsSuccessStatusCode)
+            {
+                return true;
+            }
+            return false;
+            //return await _arrearsDemand.MarkItPay(Id);
         }
     }
 }

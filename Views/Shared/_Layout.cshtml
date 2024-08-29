@@ -200,6 +200,7 @@
             });
         }
         function LoadList() {
+            awaitHtmlElement("#content");
             $.ajax({
                 type: "GET",
                 url: "@Url.Action("Load")",

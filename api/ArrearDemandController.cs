@@ -65,6 +65,17 @@ namespace WebAPI.api
             var r = await _arrearsDemand.Delete(existingEntity);
             return r ? NoContent() : BadRequest(r);
         }
+        [HttpPost("mark-it-pay/{demandId}")]
+        public async Task<IActionResult> MarkItPay(int demandId)
+        {
+            var result = await _arrearsDemand.MarkItPay(demandId);
+            if (result)
+            {
+                return Ok("Payment marked successfully.");
+            }
+            return BadRequest("Failed to mark payment.");
+        }
+
 
 
     }
