@@ -16,7 +16,7 @@ namespace PensionSystem.Entities.DTOs
         public string? Description { get; set; }
 
         public int Number { get; set; }
-
+        [DataType(DataType.Date)]
         public DateTime Date { get; set; }
 
         public bool IsPaid { get; set; } = false;
@@ -25,8 +25,6 @@ namespace PensionSystem.Entities.DTOs
     }
     public class CreateArreardDemandDTO
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = "Please Specify a demand Description")]
         [StringLength(100)]
         public string? Description { get; set; }

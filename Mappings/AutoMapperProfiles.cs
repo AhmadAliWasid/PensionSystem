@@ -17,6 +17,10 @@ namespace PensionSystem.Mappings
             CreateMap<UpdateMPDemandDTO, MonthlyPensionDemand>().ReverseMap();
             CreateMap<PensionerModel, Pensioner>().ReverseMap();
             CreateMap<CreateArrearDemandModel, ArrearsDemand>().ReverseMap();
+            CreateMap<CreateArreardDemandDTO, ArrearsDemand>().ReverseMap();
+            CreateMap<UpdateArreardDemandDTO, ArrearsDemand>().ReverseMap();
+            CreateMap<CreateArreardDemandDTO, ArreardDemandDTO>().ReverseMap();
+            CreateMap<UpdateArreardDemandDTO, ArreardDemandDTO>().ReverseMap();
         }
 
     }

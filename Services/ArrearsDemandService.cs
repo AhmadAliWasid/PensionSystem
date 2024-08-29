@@ -3,6 +3,7 @@ using PensionSystem.Data;
 using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
+using System;
 
 namespace WebAPI.Services
 {
@@ -12,9 +13,18 @@ namespace WebAPI.Services
 
         public IQueryable<ArrearsDemand> Table => _context.ArrearsDemands;
 
-        public Task<bool> Delete(ArrearsDemand entity)
+        public async Task<bool> Delete(ArrearsDemand entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.ArrearsDemands.Remove(entity);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<ArrearsDemand?> Get(int Id)
@@ -24,9 +34,10 @@ namespace WebAPI.Services
             return await context.FindAsync(Id);
         }
 
-        public Task<List<ArrearsDemand>> GetAll(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)
+        public async Task<List<ArrearsDemand>> GetAll(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)
         {
-            throw new NotImplementedException();
+            return await Table
+               .ToListAsync();
         }
 
         public async Task<List<ArrearsDemand>> GetAll(int PDUId = 0, string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)

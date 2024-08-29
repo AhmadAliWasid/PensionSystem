@@ -42,7 +42,7 @@
                             <td>
                                 <button class="btn btn-success" onclick="MarkItPaid(@item.Id,this)"><i class="fa fa-check"></i>Pay</button>|
                                 <button onclick="AddOrUpdate(@item.Id)" class="btn btn-warning"><i class="fa fa-edit"></i></button>|
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger"><i class="fa fa-trash"></i></a>
+                                <button onclick="Delete(@item.Id)" class="btn btn-danger"><i class="fa fa-trash"></i></button>
                             </td>
                         }
 

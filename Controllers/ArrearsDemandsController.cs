@@ -5,21 +5,26 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 using Pension.Entities.Helpers;
 using PensionSystem.Data;
-using PensionSystem.Entities.Models;
+using PensionSystem.Entities.DTOs;
 using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
 using PensionSystem.ViewModels;
+using System.Text;
+using System.Text.Json;
 
 namespace PensionSystem.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
-    public class ArrearsDemandsController(ApplicationDbContext context, IArrearsDemand arrearsDemand, SessionHelper sessionHelper, IMapper mapper, IArrearsPayment arrearsPayment) : Controller
+    public class ArrearsDemandsController(ApplicationDbContext context, IArrearsDemand arrearsDemand, SessionHelper sessionHelper,
+        IMapper mapper, IArrearsPayment arrearsPayment, HttpClient httpClient, IHttpClientFactory httpClientFactory) : Controller
     {
         private readonly ApplicationDbContext _context = context;
         private readonly IArrearsDemand _arrearsDemand = arrearsDemand;
         private readonly SessionHelper _sessionHelper = sessionHelper;
         private readonly IMapper _mapper = mapper;
         private readonly IArrearsPayment _arrearsPayment = arrearsPayment;
+        private readonly HttpClient _httpClient = httpClient;
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
         // GET: ArrearsDemands
         public async Task<IActionResult> Index()
@@ -37,50 +42,62 @@ namespace PensionSystem.Controllers
         {
             if (id == 0)
             {
-                return PartialView("_Crud", new CreateArrearDemandModel());
+                var r = new ArreardDemandDTO
+                {
+                    Date = DateTime.Now
+                };
+                return PartialView("_Crud", r);
             }
             else
             {
-                var r = await _arrearsDemand.Get(id);
+                var client = _httpClientFactory.CreateClient();
+                client.BaseAddress = _sessionHelper.GetUri();
+                var r = await client.GetFromJsonAsync<ArreardDemandDTO>($"api/ArrearDemand/{id}");
                 if (r != null)
                 {
-                    var record = _mapper.Map<CreateArrearDemandModel>(r);
-                    return PartialView("_Crud", record);
+                    return PartialView("_Crud", r);
                 }
                 else
                 {
-                    return PartialView("_Crud", new CreateArrearDemandModel());
+                    return PartialView("_Crud", new ArreardDemandDTO());
                 }
             }
         }
 
-
-        // POST: ArrearsDemands/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Number,Description,Date")] ArrearsDemand arrearsDemand)
-        {
-            if (ModelState.IsValid)
-            {
-                arrearsDemand.PDUId = _sessionHelper.GetUserPDUId();
-                _context.Add(arrearsDemand);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(arrearsDemand);
-        }
-        public async Task<JsonResult> Save(CreateArrearDemandModel vM)
+        public async Task<IActionResult> Save(ArreardDemandDTO entity)
         {
             JsonResponseHelper helper = new();
             if (ModelState.IsValid)
             {
-                vM.PDUId = _sessionHelper.GetUserPDUId();
-                var r = _mapper.Map<ArrearsDemand>(vM);
-                var (IsSaved, Message) = vM.Id == 0 ? await _arrearsDemand.Insert(r) : await _arrearsDemand.Update(r);
-                helper.RCode = IsSaved ? 1 : 0;
-                helper.RText = Message;
+                entity.PDUId = _sessionHelper.GetUserPDUId();
+                if (entity.Id == 0)
+                {
+                    // add 
+                    var record = _mapper.Map<CreateArreardDemandDTO>(entity);
+                    var httpRequest = new HttpRequestMessage()
+                    {
+                        Method = HttpMethod.Post,
+                        RequestUri = new Uri($"{_sessionHelper.GetUri()}api/ArrearDemand"),
+                        Content = new StringContent(JsonSerializer.Serialize(record), Encoding.UTF8, "application/json")
+                    };
+                    var response = await _httpClient.SendAsync(httpRequest);
+                    var r = await response.Content.ReadFromJsonAsync<ArreardDemandDTO>();
+                    return r != null ? Ok(r) : BadRequest(r);
+                }
+                else
+                {
+                    // update
+                    var record = _mapper.Map<UpdateArreardDemandDTO>(entity);
+                    var httpRequest = new HttpRequestMessage()
+                    {
+                        Method = HttpMethod.Put,
+                        RequestUri = new Uri($"{_sessionHelper.GetUri()}api/ArrearDemand/{entity.Id}"),
+                        Content = new StringContent(JsonSerializer.Serialize(record), Encoding.UTF8, "application/json")
+                    };
+                    var response = await _httpClient.SendAsync(httpRequest);
+                    var r = await response.Content.ReadFromJsonAsync<ArreardDemandDTO>();
+                    return r != null ? Ok(r) : BadRequest(r);
+                }
             }
             else
             {
@@ -91,7 +108,7 @@ namespace PensionSystem.Controllers
                     helper.RText += item.ErrorMessage;
                 }
             }
-            return Json(helper);
+            return Ok(helper);
         }
         public async Task<IActionResult> Load()
         {
@@ -103,41 +120,25 @@ namespace PensionSystem.Controllers
             };
             return PartialView("_List", model);
         }
-
-        // GET: ArrearsDemands/Delete/5
+        [HttpPost]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            var httpRequest = new HttpRequestMessage()
             {
-                return NotFound();
-            }
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri($"{_sessionHelper.GetUri()}api/ArrearDemand/{id}")
+            };
 
-            var cContext = _context.ArrearsDemands;
-            if (cContext == null)
-                return NotFound();
-            var arrearsDemand = await cContext.FirstOrDefaultAsync(m => m.Id == id);
-            if (arrearsDemand == null)
+            var response = await _httpClient.SendAsync(httpRequest);
+            if (response.IsSuccessStatusCode)
             {
-                return NotFound();
+                return Ok("Successfully Deleted");
             }
-
-            return View(arrearsDemand);
-        }
-
-        // POST: ArrearsDemands/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var cContext = _context.ArrearsDemands;
-            if (cContext == null)
-                return NotFound();
-            var arrearsDemand = await cContext.FindAsync(id);
-            if (arrearsDemand == null)
-                return NotFound();
-            cContext.Remove(arrearsDemand);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            else
+            {
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                return BadRequest(errorMessage);
+            }
         }
 
         private bool ArrearsDemandExists(int id)
