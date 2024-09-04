@@ -125,6 +125,15 @@ app.MapAreaControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapBlazorHub();
+    endpoints.MapFallbackToPage("/_Host");
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
+
 app.MapRazorPages();
 
 app.UseSerilogRequestLogging();

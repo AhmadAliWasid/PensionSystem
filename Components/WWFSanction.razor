@@ -1,8 +1,107 @@
 ﻿@page "/wwfsanction"
-<h3>My Razor Component</h3>
+@using PensionSystem.Entities.DTOs
+@using PensionSystem.Helpers
+@inject HttpClient Http
+@inject SessionHelper SH
 
-<h3>WWFSanction</h3>
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">WWF Sanctions</h3>
+        <div class="card-tools">
+        </div>
+        <!-- /.card-tools -->
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <EditForm Model="@sanction" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="row form-group">
+                <div class="col-md-12">
+                    <label>Claimant:</label>
+                    <InputText @bind-Value="sanction.Claimant" class="form-control" />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-4">
+                    <label>Number:</label>
+                    <InputText @bind-Value="sanction.Number" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label>Date:</label>
+                    <InputDate @bind-Value="sanction.Date" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label>Rate:</label>
+                    <InputNumber @bind-Value="sanction.Rate" class="form-control" />
+                </div>
+            </div>
+            <div class="row form-group">
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </EditForm>
+    </div>
+    <!-- /.card-body -->
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h3>List of Sanctions</h3>
+        @if (Sanctions != null && Sanctions.Count > 0)
+        {
+            <ul>
+                @foreach (var item in Sanctions)
+                {
+                    <li>@item.Claimant - @item.Number - @item.Date - @item.Rate</li>
+                }
+            </ul>
+        }
+        else
+        {
+                <div class="alert alert-warning">No Sanctions exist</div>
+        }
+    </div>
+</div>
 
 @code {
+    private CreateWWFSanctionDTO sanction = new CreateWWFSanctionDTO();
+    private List<WWFSanctionDTO> Sanctions = new List<WWFSanctionDTO>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        Sanctions = await GetSanctions();
+    }
+
+    private async Task<List<WWFSanctionDTO>> GetSanctions()
+    {
+        try
+        {
+            var response = await Http.GetFromJsonAsync<List<WWFSanctionDTO>>($"{SH.GetUri()}api/wwfsanction");
+
+            return response ?? new List<WWFSanctionDTO>();
+        }
+        catch (Exception)
+        {
+
+            return new List<WWFSanctionDTO>();
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        sanction.PDUId = SH.GetUserPDUId();
+        
+        var response = await Http.PostAsJsonAsync($"{SH.GetUri()}api/wwfsanction", sanction);
+        if (response.IsSuccessStatusCode)
+        {
+            // Handle success
+            Sanctions = await GetSanctions(); // Refresh the list after submission
+        }
+        else
+        {
+            // Handle error
+        }
+    }
 }
