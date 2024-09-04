@@ -12,7 +12,7 @@ using WebAPI.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("Server"); // Local || 
+var connectionString = builder.Configuration.GetConnectionString("Local"); // Local || 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -34,6 +34,7 @@ builder.Services.Configure<IdentityOptions>(o =>
 }
 );
 builder.Services.AddControllersWithViews();
+builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IPensioner, PensionerService>();
 builder.Services.AddScoped<IHBLArrears, HBLArrearsService>();

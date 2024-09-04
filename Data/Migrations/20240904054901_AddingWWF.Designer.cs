@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PensionSystem.Data;
 
@@ -11,9 +12,11 @@ using PensionSystem.Data;
 namespace PensionSystem.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240904054901_AddingWWF")]
+    partial class AddingWWF
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1264,15 +1267,10 @@ namespace PensionSystem.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("PDUId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Rate")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PDUId");
 
                     b.ToTable("WWFSanctions");
                 });
@@ -1592,17 +1590,6 @@ namespace PensionSystem.Data.Migrations
                     b.Navigation("PDU");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("PensionSystem.Entities.Models.WWFSanction", b =>
-                {
-                    b.HasOne("PensionSystem.Entities.Models.PDU", "PDU")
-                        .WithMany()
-                        .HasForeignKey("PDUId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PDU");
                 });
 #pragma warning restore 612, 618
         }
