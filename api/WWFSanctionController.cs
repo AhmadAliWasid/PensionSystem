@@ -55,13 +55,7 @@ namespace WebAPI.api
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var r = await _Ientity.GetAll(null);
-            if (r != null)
-            {
-                var list = new List<WWFSanctionDTO>();
-                r = _mapper.Map(list, r);
-                return Ok(r);
-            }
+            var r = await _Ientity.GetAll(1);
             return Ok(r);
         }
 

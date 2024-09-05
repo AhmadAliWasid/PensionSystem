@@ -23,7 +23,6 @@
     <Compile Remove="Models\**" />
     <Compile Remove="obj\**" />
     <Compile Remove="wwwroot\cnic\**" />
-    <Compile Remove="wwwroot\NewFolder\**" />
     <Compile Remove="wwwroot\new_case\**" />
     <Compile Remove="wwwroot\pensioner_images\**" />
     <Compile Remove="wwwroot\photo\**" />
@@ -37,7 +36,6 @@
     <Content Remove="Models\**" />
     <Content Remove="obj\**" />
     <Content Remove="wwwroot\cnic\**" />
-    <Content Remove="wwwroot\NewFolder\**" />
     <Content Remove="wwwroot\new_case\**" />
     <Content Remove="wwwroot\pensioner_images\**" />
     <Content Remove="wwwroot\photo\**" />
@@ -51,7 +49,6 @@
     <EmbeddedResource Remove="Models\**" />
     <EmbeddedResource Remove="obj\**" />
     <EmbeddedResource Remove="wwwroot\cnic\**" />
-    <EmbeddedResource Remove="wwwroot\NewFolder\**" />
     <EmbeddedResource Remove="wwwroot\new_case\**" />
     <EmbeddedResource Remove="wwwroot\pensioner_images\**" />
     <EmbeddedResource Remove="wwwroot\photo\**" />
@@ -65,7 +62,6 @@
     <None Remove="Models\**" />
     <None Remove="obj\**" />
     <None Remove="wwwroot\cnic\**" />
-    <None Remove="wwwroot\NewFolder\**" />
     <None Remove="wwwroot\new_case\**" />
     <None Remove="wwwroot\pensioner_images\**" />
     <None Remove="wwwroot\photo\**" />
@@ -107,11 +103,13 @@
     <Folder Include="Areas\Claimant\Data\" />
     <Folder Include="Areas\Claimant\Models\" />
     <Folder Include="Data\Migrations\NewFolder\" />
+    <Folder Include="Pages\" />
     <Folder Include="wwwroot\conversion\" />
     <Folder Include="wwwroot\files\" />
     <Folder Include="wwwroot\files\ArrearPayments\" />
     <Folder Include="wwwroot\files\BulkAdditionOfPensionerFolder\" />
     <Folder Include="wwwroot\files\rateRevisionFolder\" />
+    <Folder Include="wwwroot\_framework\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />

@@ -160,7 +160,9 @@ namespace PensionSystem.Services
             var cContext = _context.PensionerPayments;
             if (cContext == null)
                 return null;
-            var listDemands = await cContext.Include(y => y.MonthlyPensionDemand).Where(c => c.PensionerId == PensionerId).ToListAsync();
+            var listDemands = await cContext
+                .Include(y => y.MonthlyPensionDemand)
+                .Where(c => c.PensionerId == PensionerId).ToListAsync();
             var vm = new List<PensionPaymentHistoryVM>();
             if (listDemands != null && listDemands.Count > 0)
             {
@@ -175,7 +177,8 @@ namespace PensionSystem.Services
                         MP = item.MonthlyPension,
                         CMA = item.CMA,
                         Orderly = item.OrderelyAllowence,
-                        Total = item.Total
+                        Total = item.Total,
+                        Paid = item.NetPension
                     });
                 }
             }

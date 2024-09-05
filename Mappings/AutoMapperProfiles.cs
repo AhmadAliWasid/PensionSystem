@@ -21,6 +21,7 @@ namespace PensionSystem.Mappings
             CreateMap<UpdateArreardDemandDTO, ArrearsDemand>().ReverseMap();
             CreateMap<CreateArreardDemandDTO, ArreardDemandDTO>().ReverseMap();
             CreateMap<UpdateArreardDemandDTO, ArreardDemandDTO>().ReverseMap();
+            CreateMap<CreateWWFSanctionDTO, WWFSanctionDTO>().ReverseMap();
             CreateMap<CreateWWFSanctionDTO, WWFSanction>().ReverseMap();
             CreateMap<WWFSanctionDTO, WWFSanction>().ReverseMap();
         }

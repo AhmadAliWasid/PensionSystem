@@ -5,13 +5,10 @@ using WebAPI.Interfaces;
 
 namespace WebAPI.Services
 {
-    public class WWFSanctionService : IWWFSanction
+    public class WWFSanctionService(ApplicationDbContext applicationDbContext) : IWWFSanction
     {
-        private readonly ApplicationDbContext _context;
-        public WWFSanctionService(ApplicationDbContext applicationDbContext)
-        {
-            _context = applicationDbContext;
-        }
+        private readonly ApplicationDbContext _context = applicationDbContext;
+
         public IQueryable<WWFSanction> Table => _context.WWFSanctions;
 
         public async Task<bool> Delete(WWFSanction entity)
@@ -38,9 +35,16 @@ namespace WebAPI.Services
             return await Table.ToListAsync();
         }
 
-        public Task<WWFSanction?> GetById(object id)
+        public async Task<WWFSanction?> GetById(object id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.WWFSanctions.FindAsync(id);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<(bool IsSaved, string Message)> Insert(WWFSanction entity)

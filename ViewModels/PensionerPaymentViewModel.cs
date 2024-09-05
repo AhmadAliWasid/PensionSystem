@@ -39,6 +39,7 @@ namespace PensionSystem.ViewModels
         public decimal Orderly { get; set; }
         public decimal Deduction { get; set; }
         public decimal Total { get; set; }
+        public decimal Paid { get; set; }
     }
 
     public class BankDemandVM

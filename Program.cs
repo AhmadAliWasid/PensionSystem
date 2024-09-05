@@ -8,6 +8,7 @@ using PensionSystem.Interfaces;
 using PensionSystem.Mappings;
 using PensionSystem.Services;
 using Serilog;
+using WebAPI.Interfaces;
 using WebAPI.Services;
 
 
@@ -34,7 +35,6 @@ builder.Services.Configure<IdentityOptions>(o =>
 }
 );
 builder.Services.AddControllersWithViews();
-builder.Services.AddServerSideBlazor();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IPensioner, PensionerService>();
 builder.Services.AddScoped<IHBLArrears, HBLArrearsService>();
@@ -55,6 +55,7 @@ builder.Services.AddScoped<IBranch, BranchService>();
 builder.Services.AddScoped<IPDU, PDUService>();
 builder.Services.AddScoped<IUserPDU, UserPDUService>();
 builder.Services.AddScoped<ICashBook, CashBookService>();
+builder.Services.AddScoped<IWWFSanction, WWFSanctionService>();
 builder.Services.AddHttpClient();
 // automapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
@@ -125,15 +126,6 @@ app.MapAreaControllerRoute(
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapBlazorHub();
-    endpoints.MapFallbackToPage("/_Host");
-    endpoints.MapControllerRoute(
-        name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
-});
-
 app.MapRazorPages();
 
 app.UseSerilogRequestLogging();
