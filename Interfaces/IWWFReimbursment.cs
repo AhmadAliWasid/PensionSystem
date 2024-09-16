@@ -4,8 +4,8 @@ using PensionSystem.ViewModels;
 
 namespace WebAPI.Interfaces
 {
-    public interface IWWFSanction : ICrud<WWFSanction>
+    public interface IWWFReimbursment : ICrud<WGReimbursment>
     {
-        public Task<IEnumerable<SelectOptions>> GetOptions();
+    
     }
 }

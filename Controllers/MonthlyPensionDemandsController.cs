@@ -121,6 +121,7 @@ namespace PensionSystem.Controllers
             {
                 try
                 {
+                    monthlyPensionDemand.PDUId = _sessionHelper.GetUserPDUId();
                     _context.Update(monthlyPensionDemand);
                     await _context.SaveChangesAsync();
                 }

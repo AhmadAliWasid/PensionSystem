@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Pension.Entities.Helpers
 {
@@ -30,6 +31,8 @@ namespace Pension.Entities.Helpers
             }
         }
 
+        public static string GetDate(DateOnly dateTime) => dateTime.ToString("dd-MM-yyyy");
+
         public static string GetDateTime(DateTime dateTime)
         {
             return dateTime.ToString("dd-MM-yyyy hh:mm tt");
@@ -60,7 +63,7 @@ namespace Pension.Entities.Helpers
 
         public static IEnumerable<string> Split(this string str, int n)
         {
-            if (String.IsNullOrEmpty(str) || n < 1)
+            if (System.String.IsNullOrEmpty(str) || n < 1)
             {
                 throw new ArgumentException();
             }
@@ -105,19 +108,17 @@ namespace Pension.Entities.Helpers
         {
             if (Amount == 0)
                 return " - ";
-            return String.Format("{0:n0}", Amount);
+            return System.String.Format("{0:n0}", Amount);
         }
 
         public static string GetMonthYear(DateTime dateTime)
         {
             return dateTime.ToString("MM-yyyy");
         }
-
-        public static string GetMonthYear(DateOnly dateOnly)
+        public static string GetMonthYear(DateOnly dateTime)
         {
-            return dateOnly.ToString("MM-yyyy");
+            return dateTime.ToString("MM-yyyy");
         }
-
         public static string GetLastDate(DateTime dateTime)
         {
             return dateTime.AddMonths(1).AddDays(-1).ToString("dd-MM-yyyy");
@@ -135,7 +136,7 @@ namespace Pension.Entities.Helpers
         /// <returns></returns>
         public static string GetChequeNumber(int chequeNumber)
         {
-            return String.Format("{0,22}", chequeNumber.ToString("D8"));
+            return System.String.Format("{0,22}", chequeNumber.ToString("D8"));
         }
 
         public static string GetMobilePK(string number)

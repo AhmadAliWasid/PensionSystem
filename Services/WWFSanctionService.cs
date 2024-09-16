@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PensionSystem.Data;
 using PensionSystem.Entities.Models;
+using PensionSystem.ViewModels;
 using WebAPI.Interfaces;
 
 namespace WebAPI.Services
@@ -27,12 +28,12 @@ namespace WebAPI.Services
 
         public async Task<List<WWFSanction>> GetAll(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)
         {
-            return await Table.ToListAsync();
+            return await Table.OrderByDescending(X=>X.Date).ToListAsync();
         }
 
         public async Task<List<WWFSanction>> GetAll(int PDUId = 0, string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)
         {
-            return await Table.ToListAsync();
+            return await Table.OrderByDescending(X => X.Date).ToListAsync();
         }
 
         public async Task<WWFSanction?> GetById(object id)
@@ -45,6 +46,21 @@ namespace WebAPI.Services
             {
                 return null;
             }
+        }
+
+        public async Task<IEnumerable<SelectOptions>> GetOptions()
+        {
+            var options = new List<SelectOptions>();
+            var relations = await Table.ToListAsync();
+            options.Add(new SelectOptions { Value = 0, Text = "Select Option" });
+            if (relations != null)
+            {
+                foreach (var item in relations)
+                {
+                    options.Add(new SelectOptions { Value = item.Id, Text = item.Claimant });
+                }
+            }
+            return options;
         }
 
         public async Task<(bool IsSaved, string Message)> Insert(WWFSanction entity)

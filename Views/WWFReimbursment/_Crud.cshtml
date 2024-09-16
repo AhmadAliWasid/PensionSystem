@@ -1,0 +1,42 @@
+﻿@model PensionSystem.Entities.DTOs.WWFReimbursmentDTO
+@{
+    Layout = null;
+}
+<form asp-action="Create" id="CreateUpdate">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <input type="hidden" asp-for="Id" />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="WWFSanctionId" class="control-label"></label>
+                <select asp-for="WWFSanctionId" class="form-control" asp-items="ViewBag.WWFSanctionId"></select>
+                <span asp-validation-for="WWFSanctionId" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="From" class="control-label"></label>
+                <input asp-for="From" class="form-control" type="date" />
+                <span asp-validation-for="From" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 form-group">
+            <label asp-for="To" class="control-label"></label>
+            <input asp-for="To" class="form-control" type="date" />
+            <span asp-validation-for="To" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label asp-for="Remarks" class="control-label"></label>
+                <input asp-for="Remarks" class="form-control" />
+                <span asp-validation-for="Remarks" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</form>

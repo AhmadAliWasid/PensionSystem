@@ -25,6 +25,10 @@
         List<CashBook> Debit = Model.CashBooksEntries.Where(x => x.TransactionType == TransactionType.Debit).ToList();
         BankCommision = Debit.Sum(x => x.Amount);
     }
+    @if (Model.Commutations != null && Model.Commutations.Count > 0)
+    {
+        TotalCommutation = Model.Commutations.Sum(x => x.Amount);
+    }
 }
 <div id="cashBook">
     <style>
@@ -148,7 +152,6 @@
                                     @*Initial*@
                                     <td></td>
                                 </tr>
-
                                 @if (Model.MonthlPayment != null && Model.MonthlPayment.Count > 0)
                                 {
                                     var listMonthly = Model.MonthlPayment.Where(x => x.ChequeId == Entry.Id).ToList();
@@ -212,9 +215,7 @@
                                             @*Date*@
                                             <td></td>
                                             @*Particular*@
-                                            <td>
-                                                @itemCommutation.Pensioner.Claimant <span>(Commutation)</span>
-                                            </td>
+                                            <td> @itemCommutation.Pensioner.Claimant <span>(Commutation)</span></td>
                                             @*PPO#*@
                                             <td>@itemCommutation.Pensioner.PPOSystem</td>
                                             @*Period*@
@@ -229,23 +230,8 @@
                                             <td>-</td>
                                             @*Commutation*@
                                             <td>@UserFormat.GetAmount(itemCommutation.Amount)</td>
-                                            @if (itemCommutation.Pensioner.Relation.Name == "Self")
-                                            {
-                                                selfPension += itemCommutation.Amount;
-                                                @*Self*@
-                                                <td>@UserFormat.GetAmount(itemCommutation.Amount)</td>
-                                                @*Family*@
-                                                <td></td>
-                                            }
-                                            else
-                                            {
-                                                familyPension += itemCommutation.Amount;
-                                                @*Self*@
-                                                <td></td>
-                                                @*Family*@
-                                                <td>@UserFormat.GetAmount(itemCommutation.Amount)</td>
-                                            }
-                                            @*Closing Balance*@
+                                            <td></td>
+                                            <td></td>
                                             <td></td>
                                             @*Initial*@
                                             <td></td>
@@ -324,7 +310,7 @@
                     }
                     // first we will check is it normal entry
                 }
-                ClosingBalance = (CashRecieved + OpeningBalance) - (BankCommision + selfPension + familyPension);
+                ClosingBalance = (CashRecieved + OpeningBalance) - (BankCommision + selfPension + familyPension + TotalCommutation);
             }
             <tr>
                 <th>@UserFormat.GetAmount(CashRecieved + OpeningBalance)</th>
@@ -337,19 +323,7 @@
                 <th></th>
                 <th>@UserFormat.GetAmount((selfPension + familyPension))</th>
                 <th>@UserFormat.GetAmount(BankCommision)</th>
-                <th>
-                    @if (Model.Commutations != null && Model.Commutations.Count > 0)
-                    {
-                        TotalCommutation = Model.Commutations.Sum(x => x.Amount);
-                        <b>
-                            @UserFormat.GetAmount(TotalCommutation)
-                        </b>
-                    }
-                    else
-                    {
-                        <i>-</i>
-                    }
-                </th>
+                <th>@UserFormat.GetAmount(TotalCommutation) </th>
                 <th>@UserFormat.GetAmount((selfPension))</th>
                 <th>@UserFormat.GetAmount((familyPension))</th>
                 <th>@UserFormat.GetAmount(ClosingBalance)</th>
@@ -376,7 +350,7 @@
                         </tr>
                         <tr>
                             <th style="text-align: end;background-color:lightgray;">Total Expenditure During the Month</th>
-                            <th>@UserFormat.GetAmount(familyPension + selfPension + BankCommision)</th>
+                            <th>@UserFormat.GetAmount(familyPension + selfPension + BankCommision + TotalCommutation)</th>
 
                         </tr>
                         <tr>

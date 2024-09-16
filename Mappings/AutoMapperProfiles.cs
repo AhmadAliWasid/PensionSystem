@@ -4,7 +4,7 @@ using PensionSystem.Entities.DTOs;
 using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
 
-namespace PensionSystem.Mappings
+namespace WebAPI.Mappings
 {
     public class AutoMapperProfiles : Profile
     {
@@ -24,6 +24,10 @@ namespace PensionSystem.Mappings
             CreateMap<CreateWWFSanctionDTO, WWFSanctionDTO>().ReverseMap();
             CreateMap<CreateWWFSanctionDTO, WWFSanction>().ReverseMap();
             CreateMap<WWFSanctionDTO, WWFSanction>().ReverseMap();
+            CreateMap<WWFReimbursmentDTO, WGReimbursment>().ReverseMap();
+            CreateMap<CreateWWFReimbursmentDTO, WGReimbursment>().ReverseMap();
+            CreateMap<CreateWWFReimbursmentDTO, WWFReimbursmentDTO>().ReverseMap();
+
         }
 
     }

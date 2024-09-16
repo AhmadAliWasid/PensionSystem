@@ -70,5 +70,6 @@ namespace PensionSystem.Data
         public DbSet<UserPDU> UserPDUs { get; set; }
         public DbSet<MessagesHistory> MessagesHistories { get; set; }
         public DbSet<WWFSanction> WWFSanctions { get; set; }
+        public DbSet<WGReimbursment> WGReimbursments { get; set; }
     }
 }

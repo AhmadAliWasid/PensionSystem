@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -5,15 +6,15 @@ using Newtonsoft.Json.Serialization;
 using PensionSystem.Data;
 using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
-using PensionSystem.Mappings;
 using PensionSystem.Services;
 using Serilog;
 using WebAPI.Interfaces;
+using WebAPI.Mappings;
 using WebAPI.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("Local"); // Local || 
+var connectionString = builder.Configuration.GetConnectionString("Server"); // Local || 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -56,8 +57,10 @@ builder.Services.AddScoped<IPDU, PDUService>();
 builder.Services.AddScoped<IUserPDU, UserPDUService>();
 builder.Services.AddScoped<ICashBook, CashBookService>();
 builder.Services.AddScoped<IWWFSanction, WWFSanctionService>();
+builder.Services.AddScoped<IWWFReimbursment, WWFReimbursmentService>();
 builder.Services.AddHttpClient();
 // automapper
+// Add AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 // scoped
 builder.Services.AddScoped<SessionHelper>();
