@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using PensionSystem.DTOs;
+using PensionSystem.Entities.DTOs;
 using PensionSystem.Interfaces;
 
 namespace PensionSystem.api
@@ -11,12 +13,14 @@ namespace PensionSystem.api
         private readonly IPensioner _pensioner;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IMapper _mapper;
 
-        public PensionerController(IPensioner pensioner, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
+        public PensionerController(IPensioner pensioner, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, IMapper mapper)
         {
             _pensioner = pensioner;
             _webHostEnvironment = webHostEnvironment;
             _contextAccessor = httpContextAccessor;
+            _mapper = mapper;
         }
 
         [HttpPost]
@@ -56,6 +60,16 @@ namespace PensionSystem.api
         {
             var r = await _pensioner.GetById(Id);
             if (r == null) return NotFound();
+            return Ok(r);
+
+        }
+        [HttpGet]
+        [Route("GetOptions")]
+        public async Task<IActionResult> GetOptions()
+        {
+            var l = await _pensioner.GetAll(1);
+            if (l == null) return NotFound();
+            var r = _mapper.Map<List<PensionerOptionDTO>>(l);
             return Ok(r);
 
         }
