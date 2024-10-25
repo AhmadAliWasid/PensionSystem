@@ -348,8 +348,7 @@
                     </ul>
                 </li>
 
-                @if (User.IsInRole("Administrator"))
-                {
+         
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-user"></i>
@@ -379,7 +378,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a asp-area="" asp-controller="WWFDemands" asp-action="Index" class="nav-link">
+                                <a asp-area="" asp-controller="WWFDemand" asp-action="Index" class="nav-link">
                                     <i class="far fa-user nav-icon"></i>
                                     <p>Demands</p>
                                 </a>
@@ -462,8 +461,6 @@
                             </li>
                         </ul>
                     </li>
-                }
-
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

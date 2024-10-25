@@ -71,7 +71,8 @@ namespace PensionSystem.Services
                     var pContext = _context.Pensioner;
                     if (pContext == null)
                         return (false, "Pension Table Does not Exist in DB");
-
+                    // first we will check it is it already exist or not then
+                    var pInDB = await pContext.Where(x => x.PDUId == pensionerUploadVMs.First().PDUId).ToListAsync();
                     // now i will add them to db
                     var listPensioners = new List<Pensioner>();
                     foreach (var item in pensionerUploadVMs)
@@ -90,8 +91,10 @@ namespace PensionSystem.Services
                         if (currentBank == null)
                             return (false, $"Bank Does not Exist for PPO # {item.PPONumber} Please add this Bank {item.BankShortName} First");
 
-                        // we will check company
-                        var currentBranch = listBranches.Where(x => x.Code == item.BranchCode && x.BankId == currentBank.Id).FirstOrDefault();
+                        // we will check branch
+                        var currentBranch = listBranches
+                            .Where(x => x.Code.ToString() == item.BranchCode.ToString() && x.BankId == currentBank.Id)
+                            .FirstOrDefault();
                         if (currentBranch == null)
                             return (false, $"Branch Does not Exist for PPO # {item.PPONumber} Please add this Branch {item.BranchCode} & IN Bank {item.BankShortName} First in Database");
 
@@ -110,49 +113,56 @@ namespace PensionSystem.Services
                             cSpouse = item.Name;
                             cClaiment = item.Name;
                         }
-                        listPensioners.Add(new Pensioner()
+                        // if the pension is already exist in db then leave ti
+                        int pNumber = (int)item.PPONumber;
+                        var isExist = pInDB.Where(x => x.PPOSystem == pNumber).FirstOrDefault();
+                        if (isExist == null)
                         {
-                            AccountNumber = item.AccountNumber,
-                            AccountTitle = cClaiment,
-                            Name = item.Name.Trim(),
-                            Claimant = item.Claimant.Trim(),
-                            AddedDate = DateTime.Now,
-                            Address = "N/A",
-                            BPS = item.BPS,
-                            BranchId = currentBranch.Id,
-                            DOB = DateTime.Now,
-                            Designation = item.Designation.Trim(),
-                            Gender = cGender,
-                            PDUId = item.PDUId,
-                            PPONumber = item.PPONumber.ToString().Trim(),
-                            PPOSystem = item.PPONumber,
-                            ClaimantCNIC = item.ClaimantCNIC.Trim(),
-                            Commutation = 0,
-                            DateOfAppointment = DateTime.Now,
-                            DateOfRetirement = DateTime.Now,
-                            CompanyId = currentCompany.Id,
-                            FatherName = "N/A",
-                            IsActiveClaimant = true,
-                            IsRestored = false,
-                            CNIC = item.ClaimantCNIC.Trim(),
-                            Mobile = "",
-                            IsServiceActive = false,
-                            LastBasicPay = 0,
-                            MonthlyPension = item.MonthlyPension,
-                            CMA = item.CMA,
-                            OrderelyAllowence = item.Orderly,
-                            Total = item.Total,
-                            MonthlyRecovery = 0,
-                            RelationId = cRelationId,
-                            SanctionNumber = "N/A",
-                            SanctionDate = DateTime.Now,
-                            Spouse = item.Name.Trim(),
-                            RetiringOffice = "NA",
-                            ModifiedDate = DateTime.Now,
-                            PageNumber = 0,
-                            Remarks = "New Added Using Bulk",
-                            RestorationDate = DateTime.Now
-                        });
+                            listPensioners.Add(new Pensioner()
+                            {
+                                AccountNumber = item.AccountNumber,
+                                AccountTitle = cClaiment,
+                                Name = item.Name.Trim(),
+                                Claimant = item.Claimant.Trim(),
+                                AddedDate = DateTime.Now,
+                                Address = "N/A",
+                                BPS = item.BPS,
+                                BranchId = currentBranch.Id,
+                                DOB = DateTime.Now,
+                                Designation = item.Designation.Trim(),
+                                Gender = cGender,
+                                PDUId = item.PDUId,
+                                PPONumber = item.PPONumber.ToString().Trim(),
+                                PPOSystem = item.PPONumber,
+                                ClaimantCNIC = item.ClaimantCNIC.Trim(),
+                                Commutation = 0,
+                                DateOfAppointment = DateTime.Now,
+                                DateOfRetirement = DateTime.Now,
+                                CompanyId = currentCompany.Id,
+                                FatherName = "N/A",
+                                IsActiveClaimant = true,
+                                IsRestored = false,
+                                CNIC = item.ClaimantCNIC.Trim(),
+                                Mobile = "",
+                                IsServiceActive = false,
+                                LastBasicPay = 0,
+                                MonthlyPension = item.MonthlyPension,
+                                CMA = item.CMA,
+                                OrderelyAllowence = item.Orderly,
+                                Total = item.Total,
+                                MonthlyRecovery = 0,
+                                RelationId = cRelationId,
+                                SanctionNumber = "N/A",
+                                SanctionDate = DateTime.Now,
+                                Spouse = item.Name.Trim(),
+                                RetiringOffice = "NA",
+                                ModifiedDate = DateTime.Now,
+                                PageNumber = 0,
+                                Remarks = "New Added Using Bulk",
+                                RestorationDate = DateTime.Now
+                            });
+                        }
+
                     }
                     await pContext.AddRangeAsync(listPensioners);
                     await _context.SaveChangesAsync();

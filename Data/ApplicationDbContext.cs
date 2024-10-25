@@ -71,5 +71,6 @@ namespace PensionSystem.Data
         public DbSet<MessagesHistory> MessagesHistories { get; set; }
         public DbSet<WWFSanction> WWFSanctions { get; set; }
         public DbSet<WGReimbursment> WGReimbursments { get; set; }
+        public DbSet<WWFDemand> WWFDemands { get; set; }
     }
 }
