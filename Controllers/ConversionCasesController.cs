@@ -27,7 +27,7 @@ namespace PensionSystem.Controllers
         // GET: ConversionCases/Details/5
         public async Task<IActionResult> Load()
         {
-            return PartialView("_List", await _context.ConversionCases.ToListAsync());
+            return PartialView("_List", await _context.ConversionCases.OrderByDescending(x => x.DispatchDate).ToListAsync());
         }
 
         public IActionResult FullCase()
