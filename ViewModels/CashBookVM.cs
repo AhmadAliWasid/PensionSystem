@@ -46,6 +46,7 @@ namespace PensionSystem.ViewModels
 
         [Required(ErrorMessage = "Please Provide a detail of the transaction")]
         public string Particulars { get; set; }
+        public int PDUId { get; set; }
     }
 
     public class CashBookCompanyVM

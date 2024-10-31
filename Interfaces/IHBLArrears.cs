@@ -18,5 +18,6 @@ namespace PensionSystem.Interfaces
         public Task<string> PayHBLArrearsInBulk(List<ArrearsPayment> payments, int ChequeId, DateTime Month);
 
         public Task<List<HBLArrears>?> GetArrears(DateTime Month);
+        public Task<List<HBLArrears>?> GetArrearsByMonth(DateTime Month,int PDUId);
     }
 }

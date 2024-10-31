@@ -9,6 +9,6 @@ namespace PensionSystem.Interfaces
         /// </summary>
         /// <param name="Month"></param>
         /// <returns></returns>
-        Task<List<CashBook>?> GetByMonth(DateTime Month);
+        Task<List<CashBook>?> GetByMonth(DateTime Month,int PDUId);
     }
 }

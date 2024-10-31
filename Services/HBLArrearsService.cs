@@ -71,6 +71,21 @@ namespace PensionSystem.Services
             return list;
         }
 
+        public async Task<List<HBLArrears>?> GetArrearsByMonth(DateTime Month, int PDUId)
+        {
+            var cContext = _context.HBLArrears;
+            if (cContext == null)
+                return null;
+            return await cContext
+                .Include(p => p.Pensioner)
+                .Include(r => r.Pensioner.Relation)
+                .Include(b => b.Branch)
+                .Include(ba => ba.Branch.Bank)
+                .Include(c => c.Cheque)
+                .Where(x => x.Month.Month == Month.Month && x.Month.Year == Month.Year && x.Cheque.PDUId == PDUId)
+                .OrderBy(c => c.Pensioner.PPOSystem).ToListAsync();
+        }
+
         public async Task<string> PayHBLArrearsInBulk(
             List<ArrearsPayment> payments, int ChequeId, DateTime PaymentMonth)
         {

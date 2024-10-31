@@ -60,7 +60,8 @@ namespace PensionSystem.Controllers
                         Particulars = model.Particulars,
                         Month = model.Month,
                         Amount = model.Amount,
-                        TransactionType = model.TransactionType
+                        TransactionType = model.TransactionType,
+                        PDUId = _sessionHelper.GetUserPDUId()
                     };
                     var (IsSaved, Message) = await _cashBook.Insert(cashBook);
                     if (IsSaved)
@@ -95,9 +96,9 @@ namespace PensionSystem.Controllers
                 Month = month,
                 MonthlPayment = await _hBLPayments.GetByMonth(month),
                 HBLArrears = await _hBLArrears.GetArrears(month),
-                Cheques = await _cheque.GetCheque(month),
+                Cheques = await _cheque.GetCheque(month, _sessionHelper.GetUserPDUId()),
                 Commutations = await _commutation.GetCommutations(dateOnly),
-                CashBooksEntries = await _cashBook.GetByMonth(month)
+                CashBooksEntries = await _cashBook.GetByMonth(month, _sessionHelper.GetUserPDUId())
             };
             var list = new List<CashBookEntryListVM>();
             if (CashBookVM.CashBooksEntries != null && CashBookVM.CashBooksEntries.Count > 0)
@@ -239,9 +240,9 @@ namespace PensionSystem.Controllers
             CashBookVM cashBookVM = new()
             {
                 Month = Month,
-                MonthlPayment = await _hBLPayments.GetByMonth(Month),
-                HBLArrears = await _hBLArrears.GetArrears(Month),
-                Commutations = await _commutation.GetCommutations(dateOnly)
+                MonthlPayment = await _hBLPayments.GetByMonth(Month, _sessionHelper.GetUserPDUId()),
+                HBLArrears = await _hBLArrears.GetArrearsByMonth(Month, _sessionHelper.GetUserPDUId()),
+                Commutations = await _commutation.GetCommutationsByMonth(dateOnly, _sessionHelper.GetUserPDUId())
             };
             var listCompanies = await _company.GetCompanies();
             var listCompaniesVM = new List<CashBookCompanyVM>();
@@ -303,7 +304,7 @@ namespace PensionSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetList()
         {
-            int pduId = 1; // Replace with your PDUId value
+            int pduId = _sessionHelper.GetUserPDUId(); // Replace with your PDUId value
             string filterOn = ""; // Add your filter values if needed
             string filterQuery = ""; // Add your filter values if needed
             string sortBy = ""; // Add your sort values if needed

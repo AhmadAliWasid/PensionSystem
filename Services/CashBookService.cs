@@ -28,15 +28,17 @@ namespace PensionSystem.Services
         public async Task<List<CashBook>> GetAll(int PDUId = 0, string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)
         {
             var records = Table;
-            return await records.ToListAsync();
+            return await records
+                .Where(p => p.PDUId == PDUId)
+                .OrderByDescending(x => x.Month)
+                .ToListAsync();
         }
 
         public CashBook GetById(object id)
         {
             throw new NotImplementedException();
         }
-
-        public async Task<List<CashBook>?> GetByMonth(DateTime Month)
+        public async Task<List<CashBook>?> GetByMonth(DateTime Month, int PDUId)
         {
             var cContext = _context.CashBook;
             if (cContext == null)
@@ -44,7 +46,7 @@ namespace PensionSystem.Services
                 return null;
             }
             return await cContext
-                .Where(x => x.Month.Year == Month.Year && x.Month.Month == Month.Month)
+                .Where(x => x.Month.Year == Month.Year && x.Month.Month == Month.Month && x.PDUId == PDUId)
                 .OrderBy(x => x.Month)
                 .ToListAsync();
         }

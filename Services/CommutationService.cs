@@ -57,7 +57,7 @@ namespace PensionSystem.Services
             var cCommutations = _context.Commutations;
             if (cCommutations == null)
             {
-                return new List<Commutation>();
+                return [];
             }
             return await cCommutations
                 .Include(p => p.Pensioner)
@@ -71,6 +71,22 @@ namespace PensionSystem.Services
         {
             var commutations = await GetCommutations();
             return commutations.Where(x => x.Month >= startingDate && x.Month <= endingDate).ToList();
+        }
+
+        public async Task<List<Commutation>> GetCommutationsByMonth(DateOnly Month, int PDUId)
+        {
+            var cCommutations = _context.Commutations;
+            if (cCommutations == null)
+            {
+                return [];
+            }
+            return await cCommutations
+                .Include(p => p.Pensioner)
+                .Include(x => x.Pensioner.Company)
+                .Include(r => r.Pensioner.Relation)
+                .Include(c => c.Cheque)
+                .Where(x => x.Month.Month == Month.Month && x.Month.Year == Month.Year && x.Cheque.PDUId == PDUId)
+                .ToListAsync();
         }
 
         public async Task<(bool IsSaved, string Message)> Insert(Commutation entity)

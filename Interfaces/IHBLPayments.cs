@@ -29,5 +29,7 @@ namespace PensionSystem.Interfaces
         public Task<List<HBLPaymentHistoryPensionerVM>?> GetByPensionerId(int PensionerId);
 
         public Task<List<HBLPayment>?> GetByMonth(DateTime month);
+        // the above will be depracated 
+        public Task<List<HBLPayment>?> GetByMonth(DateTime month,int PDUId);
     }
 }

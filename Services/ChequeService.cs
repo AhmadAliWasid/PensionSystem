@@ -86,13 +86,15 @@ namespace PensionSystem.Services
             return cheque;
         }
 
-        public async Task<List<Cheque>?> GetCheque(DateTime Month)
+
+
+        public async Task<List<Cheque>?> GetCheque(DateTime Month, int PDUIId)
         {
             var cContext = _context.Cheque;
             if (cContext == null)
                 return null;
             return await cContext
-                .Where(x => x.Date.Month == Month.Month && x.Date.Year == Month.Year)
+                .Where(x => x.Date.Month == Month.Month && x.Date.Year == Month.Year && x.PDUId == PDUIId)
                 .OrderBy(c => c.Number).ThenBy(c => c.Date).ToListAsync();
         }
 

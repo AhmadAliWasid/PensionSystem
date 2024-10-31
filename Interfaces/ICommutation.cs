@@ -20,5 +20,11 @@ namespace PensionSystem.Interfaces
         /// <param name="Month"></param>
         /// <returns></returns>
         public Task<List<Commutation>> GetCommutations(DateOnly Month);
+        /// <summary>
+        /// Get Commutations by Month
+        /// </summary>
+        /// <param name="Month"></param>
+        /// <returns></returns>
+        public Task<List<Commutation>> GetCommutationsByMonth(DateOnly Month,int PDUId);
     }
 }

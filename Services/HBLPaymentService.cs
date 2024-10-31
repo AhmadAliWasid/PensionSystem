@@ -10,7 +10,6 @@ namespace PensionSystem.Services
     public class HBLPaymentService(ApplicationDbContext applicationDbContext) : IHBLPayments
     {
         private readonly ApplicationDbContext _context = applicationDbContext;
-
         public async Task<List<HBLPaymentPensioner>?> GetAllPensioners(DateTime startingDate, DateTime endingDate)
         {
             var HBLPensioners = _context.HBLPayments;
@@ -111,7 +110,6 @@ namespace PensionSystem.Services
             }
             return listPensioners;
         }
-
         public async Task<List<HBLPayment>?> GetByChequeId(int chequeId)
         {
             var c = _context.HBLPayments;
@@ -124,8 +122,28 @@ namespace PensionSystem.Services
                 .Where(x => x.ChequeId == chequeId)
                 .OrderBy(y => y.Pensioner.PPOSystem).ToListAsync();
         }
-
         public async Task<List<HBLPayment>?> GetByMonth(DateTime month)
+        {
+            var pensionersPayments = _context.HBLPayments;
+            if (pensionersPayments != null)
+            {
+                return await pensionersPayments
+                    .Include(p => p.Pensioner)
+                    .Include(cp => cp.Pensioner.Company)
+                    .Include(c => c.Branch)
+                    .Include(b => b.Branch.Bank)
+                    .Include(r => r.Pensioner.Relation)
+                    .Where(x => x.Month.Month == month.Month && x.Month.Year == month.Year)
+                    .OrderBy(a => a.Pensioner.PPOSystem)
+                    .ToListAsync();
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<HBLPayment>?> GetByMonth(DateTime month, int PDUId)
         {
             var pensionersPayments = _context.HBLPayments;
             if (pensionersPayments != null)
@@ -256,8 +274,11 @@ namespace PensionSystem.Services
             var pensionersPayments = _context.HBLPayments;
             if (pensionersPayments != null)
             {
-                return await pensionersPayments.Include(p => p.Pensioner)
-                    .Include(c => c.Pensioner.Company).Where(x => x.Month.Month == dateOnly.Month && x.Month.Year == dateOnly.Year).ToListAsync();
+                return await pensionersPayments
+                    .Include(p => p.Pensioner)
+                    .Include(c => c.Pensioner.Company)
+                    .Where(x => x.Month.Month == dateOnly.Month && x.Month.Year == dateOnly.Year)
+                    .ToListAsync();
             }
             else
             {

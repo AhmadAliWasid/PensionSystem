@@ -67,7 +67,7 @@ namespace PensionSystem.Interfaces
         /// <returns></returns>
         public Task<bool> MarkItPay(int chequeId);
 
-        public Task<List<Cheque>?> GetCheque(DateTime Month);
+        public Task<List<Cheque>?> GetCheque(DateTime Month,int PDUIId);
         /// <summary>
         /// Get Latest Cheque Number
         /// </summary>
