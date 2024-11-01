@@ -8,7 +8,7 @@
 
     @if (Model.ArrearsDemands != null)
     {
-        <table class="table" id="tableId">
+        <table class="table" id="data-table">
             <thead>
                 <tr>
                     <th>Demand#</th>
@@ -51,9 +51,21 @@
             </tbody>
         </table>
         <script>
-            $(document).ready(function (e) {
-                $("#tableId").dataTable({
-                    "ordering": false
+            $(document).ready(function () {
+                $('#data-table').DataTable({
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'print',
+                        'excel',
+                        'copy',
+                        'csv',
+                        'pdf'
+                    ],
+                    "paging": true,
+                    "lengthChange": false,
+                    "searching": true,
+                    "ordering": false,
+                    "info": true,
                 });
             });
 

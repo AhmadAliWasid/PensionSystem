@@ -10,7 +10,7 @@ namespace PensionSystem.Services
     public class HBLPaymentService(ApplicationDbContext applicationDbContext) : IHBLPayments
     {
         private readonly ApplicationDbContext _context = applicationDbContext;
-        public async Task<List<HBLPaymentPensioner>?> GetAllPensioners(DateTime startingDate, DateTime endingDate)
+        public async Task<List<HBLPaymentPensioner>?> GetAllPensioners(DateTime startingDate, DateTime endingDate, int PDUId)
         {
             var HBLPensioners = _context.HBLPayments;
 
@@ -20,7 +20,8 @@ namespace PensionSystem.Services
                 var listPaymentsOnly = await HBLPensioners
                     .Include(x => x.Pensioner).Include(r => r.Pensioner.Relation)
                     .Include(c => c.Pensioner.Company)
-                    .Where(z => z.Month >= startingDate && z.Month <= endingDate)
+                    .Include(ch => ch.Cheque)
+                    .Where(z => z.Month >= startingDate && z.Month <= endingDate && z.Cheque.PDUId == PDUId)
                     .GroupBy(x => x.Pensioner.Id)
                     .Select(g => g.First())
                     .ToListAsync();
@@ -254,13 +255,16 @@ namespace PensionSystem.Services
             return [.. HBLPaymentHistoryPensionerVMList.OrderByDescending(x => x.Month)];
         }
 
-        public async Task<List<HBLPayment>?> GetConsolidatedPensioner(DateTime startingDate, DateTime endingDate)
+        public async Task<List<HBLPayment>?> GetConsolidatedPensioner(DateTime startingDate, DateTime endingDate, int PDUId)
         {
             var listPensioners = _context.HBLPayments;
             if (listPensioners != null)
             {
-                var listPaymentsOnly = await listPensioners.Include(x => x.Pensioner)
-                    .Where(y => y.Month >= startingDate && y.Month <= endingDate).ToListAsync();
+                var listPaymentsOnly = await listPensioners
+                    .Include(x => x.Pensioner)
+                    .Include(c => c.Cheque)
+                    .Where(y => y.Month >= startingDate && y.Month <= endingDate && y.Cheque.PDUId == PDUId)
+                    .ToListAsync();
                 return listPaymentsOnly;
             }
             else

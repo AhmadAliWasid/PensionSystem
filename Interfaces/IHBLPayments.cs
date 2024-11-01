@@ -7,7 +7,7 @@ namespace PensionSystem.Interfaces
     {
         public Task<List<HBLPayment>?> GetHBLPayments(DateOnly dateOnly);
 
-        public Task<List<HBLPayment>?> GetConsolidatedPensioner(DateTime startingDate, DateTime endingDate);
+        public Task<List<HBLPayment>?> GetConsolidatedPensioner(DateTime startingDate, DateTime endingDate,int PDUId);
 
         /// <summary>
         /// Get all pensioners with selected date who are paid
@@ -15,7 +15,7 @@ namespace PensionSystem.Interfaces
         /// <param name="startingDate"></param>
         /// <param name="endingDate"></param>
         /// <returns></returns>
-        public Task<List<HBLPaymentPensioner>?> GetAllPensioners(DateTime startingDate, DateTime endingDate);
+        public Task<List<HBLPaymentPensioner>?> GetAllPensioners(DateTime startingDate, DateTime endingDate,int PDUId);
 
         /// <summary>
         /// Get All HBL List By Cheque Id

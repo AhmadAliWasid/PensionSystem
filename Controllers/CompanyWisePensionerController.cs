@@ -9,25 +9,15 @@ using PensionSystem.ViewModels;
 namespace PensionSystem.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
-    public class CompanyWisePensionerController : Controller
+    public class CompanyWisePensionerController(ApplicationDbContext applicationDbContext,
+        IHBLPayments hBLPayments, ICompany company, IHBLArrears hBLArrears, ICommutation commutation, SessionHelper sessionHelper) : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IHBLPayments _hBLPayments;
-        private readonly ICompany _company;
-        private readonly IHBLArrears _hBLArrears;
-        private readonly ICommutation _commutation;
-        private readonly SessionHelper _sessionHelper;
-
-        public CompanyWisePensionerController(ApplicationDbContext applicationDbContext,
-            IHBLPayments hBLPayments, ICompany company, IHBLArrears hBLArrears, ICommutation commutation, SessionHelper sessionHelper)
-        {
-            _context = applicationDbContext;
-            _hBLPayments = hBLPayments;
-            _company = company;
-            _hBLArrears = hBLArrears;
-            _commutation = commutation;
-            _sessionHelper = sessionHelper;
-        }
+        private readonly ApplicationDbContext _context = applicationDbContext;
+        private readonly IHBLPayments _hBLPayments = hBLPayments;
+        private readonly ICompany _company = company;
+        private readonly IHBLArrears _hBLArrears = hBLArrears;
+        private readonly ICommutation _commutation = commutation;
+        private readonly SessionHelper _sessionHelper = sessionHelper;
 
         public IActionResult Index()
         {
@@ -40,7 +30,7 @@ namespace PensionSystem.Controllers
             CompanyWisePensionerViewModel model = new()
             {
                 HBLPayments = await _hBLPayments.GetByMonth(month,_sessionHelper.GetUserPDUId()),
-                HBLPaymentPensioners = await _hBLPayments.GetAllPensioners(month, month.AddMonths(1).AddDays(-1)),
+                HBLPaymentPensioners = await _hBLPayments.GetAllPensioners(month, month.AddMonths(1).AddDays(-1),_sessionHelper.GetUserPDUId()),
                 Companies = await _company.GetCompanies(),
                 HBLArrears = await _hBLArrears.GetArrearsByMonth(month, _sessionHelper.GetUserPDUId()),
                 Commutations = await _commutation.GetCommutationsByDates(month, month.AddMonths(1).AddDays(-1)),

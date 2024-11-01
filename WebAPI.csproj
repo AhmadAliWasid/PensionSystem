@@ -136,9 +136,6 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PensionSystem.Entities\PensionSystem.Entities.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="PensionSystem.Entities">
       <HintPath>..\PensionSystem.Entities\bin\Debug\net8.0\PensionSystem.Entities.dll</HintPath>
     </Reference>

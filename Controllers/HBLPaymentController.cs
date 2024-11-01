@@ -95,7 +95,7 @@ namespace PensionSystem.Controllers
                 var FilteredPaymentList = PaymentList.Where(x => x.NetPension >= 1);
                 foreach (var item in FilteredPaymentList)
                 {
-                    
+
                     HBLPayment hBLPayment = new()
                     {
                         PensionerId = item.PensionerId,
@@ -176,7 +176,7 @@ namespace PensionSystem.Controllers
             DateTime StartingDate = new(StartingMonth.Year, StartingMonth.Month, 1);
             DateTime EndingDate = EndingMonth.AddMonths(1).AddDays(-1);
 
-            var listHblPayments = await _hBLPayments.GetConsolidatedPensioner(StartingDate, EndingDate);
+            var listHblPayments = await _hBLPayments.GetConsolidatedPensioner(StartingDate, EndingDate, _sessionHelper.GetUserPDUId());
             ConsolidatedSummaryModel model = new();
             if (listHblPayments != null)
             {
@@ -189,7 +189,7 @@ namespace PensionSystem.Controllers
             }
             model.HBLPayments = listHblPayments;
             var hblArrears = await _context.HBLArrears.Include(p => p.Pensioner).Where(x => x.Month >= StartingMonth && x.Month <= EndingDate).ToListAsync();
-            var listAllPensioners = await _hBLPayments.GetAllPensioners(StartingDate, EndingDate);
+            var listAllPensioners = await _hBLPayments.GetAllPensioners(StartingDate, EndingDate, _sessionHelper.GetUserPDUId());
             if (listAllPensioners != null)
             {
                 model.AllPensioners = [.. listAllPensioners.OrderBy(x => x.PPOSystem)];

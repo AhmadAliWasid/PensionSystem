@@ -85,9 +85,6 @@ namespace PensionSystem.Services
             }
             return cheque;
         }
-
-
-
         public async Task<List<Cheque>?> GetCheque(DateTime Month, int PDUIId)
         {
             var cContext = _context.Cheque;
@@ -101,6 +98,7 @@ namespace PensionSystem.Services
         public async Task<int> GetChequeNumber(int PDUId)
         {
             var r = await Table
+                .Where(x => x.PDUId == PDUId)
                 .OrderByDescending(x => x.Id)
                 .FirstOrDefaultAsync();
             if (r == null) return 0;

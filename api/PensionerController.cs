@@ -23,27 +23,27 @@ namespace PensionSystem.api
             _mapper = mapper;
         }
 
-        [HttpPost]
-        [Route("Upload")]
-        public async Task<IActionResult> Upload([FromForm] FileUploadDTO model)
-        {
-            if (model.File == null || model.File.Length == 0)
-            {
-                return BadRequest("No file uploaded.");
-            }
-            if (model.File.Length > 5000000)
-            {
-                ModelState.AddModelError("file", "Maximum file size 5MP");
-                return BadRequest(ModelState);
-            }
-            var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "/" + model.Type + "/", model.File.FileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                await model.File.CopyToAsync(stream);
-            }
+        //[HttpPost]
+        //[Route("Upload")]
+        //public async Task<IActionResult> Upload([FromForm] FileUploadDTO model)
+        //{
+        //    if (model.File == null || model.File.Length == 0)
+        //    {
+        //        return BadRequest("No file uploaded.");
+        //    }
+        //    if (model.File.Length > 5000000)
+        //    {
+        //        ModelState.AddModelError("file", "Maximum file size 5MP");
+        //        return BadRequest(ModelState);
+        //    }
+        //    var filePath = Path.Combine(_webHostEnvironment.ContentRootPath, "/" + model.Type + "/", model.File.FileName);
+        //    using (var stream = new FileStream(filePath, FileMode.Create))
+        //    {
+        //        await model.File.CopyToAsync(stream);
+        //    }
 
-            return Ok("Image uploaded successfully.");
-        }
+        //    return Ok("Image uploaded successfully.");
+        //}
 
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] string? filterOn,
