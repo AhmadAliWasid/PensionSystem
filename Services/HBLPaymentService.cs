@@ -18,7 +18,8 @@ namespace PensionSystem.Services
             if (HBLPensioners != null)
             {
                 var listPaymentsOnly = await HBLPensioners
-                    .Include(x => x.Pensioner).Include(r => r.Pensioner.Relation)
+                    .Include(x => x.Pensioner)
+                    .Include(r => r.Pensioner.Relation)
                     .Include(c => c.Pensioner.Company)
                     .Include(ch => ch.Cheque)
                     .Where(z => z.Month >= startingDate && z.Month <= endingDate && z.Cheque.PDUId == PDUId)
@@ -61,7 +62,12 @@ namespace PensionSystem.Services
             var HBLArrears = _context.HBLArrears;
             if (HBLArrears != null)
             {
-                var listhHBLArrears = await HBLArrears.Include(p => p.Pensioner).Include(c => c.Pensioner.Company).Where(x => x.Month >= startingDate && x.Month <= endingDate).ToListAsync();
+                var listhHBLArrears = await HBLArrears
+                    .Include(p => p.Pensioner)
+                    .Include(c => c.Pensioner.Company)
+                    .Include(ch => ch.Cheque)
+                    .Where(x => x.Month >= startingDate && x.Month <= endingDate && x.Cheque.PDUId == PDUId)
+                    .ToListAsync();
                 if (listhHBLArrears.Count > 0)
                 {
                     foreach (var item in listhHBLArrears)
@@ -88,8 +94,12 @@ namespace PensionSystem.Services
             var HBLCommutations = _context.Commutations;
             if (HBLCommutations != null)
             {
-                var listHBLCommutations = await HBLCommutations.Include(p => p.Pensioner).Include(c => c.Pensioner.Company)
-                        .Where(x => x.Month >= startingDate && x.Month <= endingDate).ToListAsync();
+                var listHBLCommutations = await HBLCommutations
+                    .Include(p => p.Pensioner)
+                    .Include(c => c.Pensioner.Company)
+                    .Include(ch => ch.Cheque)
+                        .Where(x => x.Month >= startingDate && x.Month <= endingDate && x.Cheque.PDUId == PDUId)
+                        .ToListAsync();
                 foreach (var item in listHBLCommutations)
                 {
                     // first make sure the pensioner is not exist in list
@@ -155,7 +165,8 @@ namespace PensionSystem.Services
                     .Include(c => c.Branch)
                     .Include(b => b.Branch.Bank)
                     .Include(r => r.Pensioner.Relation)
-                    .Where(x => x.Month.Month == month.Month && x.Month.Year == month.Year)
+                    .Include(ch => ch.Cheque)
+                    .Where(x => x.Month.Month == month.Month && x.Month.Year == month.Year && x.Cheque.PDUId == PDUId)
                     .OrderBy(a => a.Pensioner.PPOSystem)
                     .ToListAsync();
             }

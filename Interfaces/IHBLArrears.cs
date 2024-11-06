@@ -19,5 +19,6 @@ namespace PensionSystem.Interfaces
 
         public Task<List<HBLArrears>?> GetArrears(DateTime Month);
         public Task<List<HBLArrears>?> GetArrearsByMonth(DateTime Month,int PDUId);
+        public Task<List<HBLArrears>?> GetArrearsByDates(DateTime StartingDate,DateTime EndingDate, int PDUId);
     }
 }

@@ -13,7 +13,13 @@ namespace PensionSystem.Interfaces
         /// <param name="endingDate"></param>
         /// <returns></returns>
         public Task<List<Commutation>> GetCommutationsByDates(DateTime startingDate, DateTime endingDate);
-
+        /// <summary>
+        /// Get commutation
+        /// </summary>
+        /// <param name="startingDate"></param>
+        /// <param name="endingDate"></param>
+        /// <returns></returns>
+        public Task<List<Commutation>> GetCommutationsByDates(DateTime startingDate, DateTime endingDate,int PDUId);
         /// <summary>
         /// Get Commutations by Month
         /// </summary>

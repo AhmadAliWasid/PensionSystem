@@ -23,129 +23,134 @@
                 decimal TotalDeduction = 0;
                 decimal TotalMonthly = 0;
                 var currentCompanyList = Model.HBLPaymentPensioners.Where(x => x.CompanyId == company.Id).OrderBy(y => y.PPOSystem);
-                <div id="table-header-@company.Id">
-                    <h3 class="text-center">LIST OF PENSIONER UNDER SS & TL DIVISION PESCO MARDAN</h3>
-                    <div class="row">
-                        <div class="col-md-4 text-start">Company : @company.ShortName</div>
-                        <div class="col-md-4 text-center">Month : @Month</div>
-                        <div class="col-md-4 text-end">Pensioners : @currentCompanyList.Count()</div>
+                @if (currentCompanyList.Count() > 0)
+                {
+                    <div id="table-header-@company.Id">
+                        <h3 class="text-center">LIST OF PENSIONER UNDER @Model.Session.BaseStamp</h3>
+                        <div class="row">
+                            <div class="col-md-4 text-start">Company : @company.ShortName</div>
+                            <div class="col-md-4 text-center">Month : @Month</div>
+                            <div class="col-md-4 text-end">Pensioners : @currentCompanyList.Count()</div>
+                        </div>
                     </div>
-                </div>
-                <table id="data-table-@company.Id" class="table">
-                    <thead>
-                        <tr>
-                            <th>S#</th>
-                            <th>PPO </th>
-                            <th>Claimant</th>
-                            <th>MP</th>
-                            <th>CMA</th>
-                            <th>Orderly</th>
-                            <th>Deduction</th>
-                            <th>Total</th>
-                            <th>Paid</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in currentCompanyList)
-                        {
-                            <tr>
-                                <td>@s</td>
-                                <td>@item.PPOSystem</td>
-                                <td>@item.Claimant </td>
-                                @{
-
-                                    var singleHBLPayment = Model.HBLPayments.Where(x => x.PensionerId == item.PensionerId).FirstOrDefault();
-                                    var singleHBLArrears = Model.HBLArrears.Where(x => x.PensionerId == item.PensionerId).Sum(h => h.Amount);
-                                    var singlecommutation = Model.Commutations.Where(x => x.PensionerId == item.PensionerId).Sum(y => y.Amount);
-                                }
-                                @if (singleHBLPayment != null)
-                                {
-                                    TotalMP += singleHBLPayment.MonthlyPension;
-                                    TotalCMA += singleHBLPayment.CMA;
-                                    TotalOrderly += singleHBLPayment.OrderlyAllowance;
-                                    TotalDeduction += singleHBLPayment.Deduction;
-                                    TotalMonthly += singleHBLPayment.Total;
-                                    NetPaid += singleHBLPayment.Total;
-                                    gTotalMonthly += singleHBLPayment.Total;
-                                    <td>@UserFormat.GetAmount(singleHBLPayment.MonthlyPension)</td>
-                                    <td>@UserFormat.GetAmount(singleHBLPayment.CMA)</td>
-                                    <td>@UserFormat.GetAmount(singleHBLPayment.OrderlyAllowance)</td>
-                                    <td>@UserFormat.GetAmount(singleHBLPayment.Deduction)</td>
-                                    <td>@UserFormat.GetAmount(singleHBLPayment.Total)</td>
-                                    // monthly + arrears + commutations
-                                }
-                                else
-                                {
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                    <td>-</td>
-                                }
-                                @{
-                                    <td>
-                                        @if (singleHBLPayment != null && singleHBLPayment.Total > 0)
-                                        {
-                                            @UserFormat.GetAmount(singleHBLPayment.Total)
-                                            <br />
-                                        }
-                                        @if (singleHBLArrears > 0)
-                                        {
-                                            NetPaid += singleHBLArrears;
-                                            <i>&amp;</i> @UserFormat.GetAmount(singleHBLArrears) <i>(A)</i>
-                                            <br>
-                                        }
-                                        @if (singlecommutation > 0)
-                                        {
-                                            NetPaid += singlecommutation;
-                                            <i>&amp;</i> @UserFormat.GetAmount(singlecommutation) <i>(C)</i>
-                                        }
-                                    </td>
-                                }
-                            </tr>
-                            s++;
-                        }
-                    </tbody>
-                </table>
-                @*footer*@
-                <div id="table-footer-@company.Id">
-                    <table class="table">
+                    <table id="data-table-@company.Id" class="table">
                         <thead>
                             <tr>
-                                <th>Monthly Pension: @UserFormat.GetAmount(TotalMP)</th>
-                                <th>CMA: @UserFormat.GetAmount(TotalCMA)</th>
-                                <th>Orderly : @UserFormat.GetAmount(TotalOrderly)</th>
-                                <th>Recovery : @UserFormat.GetAmount(TotalDeduction)</th>
-                                <th>Total : @UserFormat.GetAmount(TotalMonthly)</th>
-                                <th>Amount : @UserFormat.GetAmount(NetPaid)</th>
+                                <th>S#</th>
+                                <th>PPO </th>
+                                <th>Claimant</th>
+                                <th>MP</th>
+                                <th>CMA</th>
+                                <th>Orderly</th>
+                                <th>Deduction</th>
+                                <th>Total</th>
+                                <th>Paid</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach (var item in currentCompanyList)
+                            {
+                                <tr>
+                                    <td>@s</td>
+                                    <td>@item.PPOSystem</td>
+                                    <td>@item.Claimant </td>
+                                    @{
+
+                                        var singleHBLPayment = Model.HBLPayments.Where(x => x.PensionerId == item.PensionerId).FirstOrDefault();
+                                        var singleHBLArrears = Model.HBLArrears.Where(x => x.PensionerId == item.PensionerId).Sum(h => h.Amount);
+                                        var singlecommutation = Model.Commutations.Where(x => x.PensionerId == item.PensionerId).Sum(y => y.Amount);
+                                    }
+                                    @if (singleHBLPayment != null)
+                                    {
+                                        TotalMP += singleHBLPayment.MonthlyPension;
+                                        TotalCMA += singleHBLPayment.CMA;
+                                        TotalOrderly += singleHBLPayment.OrderlyAllowance;
+                                        TotalDeduction += singleHBLPayment.Deduction;
+                                        TotalMonthly += singleHBLPayment.Total;
+                                        NetPaid += singleHBLPayment.Total;
+                                        gTotalMonthly += singleHBLPayment.Total;
+                                        <td>@UserFormat.GetAmount(singleHBLPayment.MonthlyPension)</td>
+                                        <td>@UserFormat.GetAmount(singleHBLPayment.CMA)</td>
+                                        <td>@UserFormat.GetAmount(singleHBLPayment.OrderlyAllowance)</td>
+                                        <td>@UserFormat.GetAmount(singleHBLPayment.Deduction)</td>
+                                        <td>@UserFormat.GetAmount(singleHBLPayment.Total)</td>
+                                        // monthly + arrears + commutations
+                                    }
+                                    else
+                                    {
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                    }
+                                    @{
+                                        <td>
+                                            @if (singleHBLPayment != null && singleHBLPayment.Total > 0)
+                                            {
+                                                @UserFormat.GetAmount(singleHBLPayment.Total)
+                                                <br />
+                                            }
+                                            @if (singleHBLArrears > 0)
+                                            {
+                                                NetPaid += singleHBLArrears;
+                                                <i>&amp;</i> @UserFormat.GetAmount(singleHBLArrears) <i>(A)</i>
+                                                <br>
+                                            }
+                                            @if (singlecommutation > 0)
+                                            {
+                                                NetPaid += singlecommutation;
+                                                <i>&amp;</i> @UserFormat.GetAmount(singlecommutation) <i>(C)</i>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                                s++;
+                            }
+                        </tbody>
                     </table>
-                    @{
-                        gTotalMP += TotalMP;
-                        gTotalCMA += TotalCMA;
-                        gTotalOrderly += TotalOrderly;
-                        gTotalDeduction += TotalDeduction;
-                        gTotalPaid += NetPaid;
-                    }
-                    @if (Model.Session != null)
-                    {
-                        <div class="container" style="margin-top: 200px;">
-                            <div class="row">
-                                <div class="col-6">
-                                    <p class="text-center">@Model.Session.AMStamp</p>
-                                    <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
-                                </div>
-                                <div class="col-6">
-                                    <div>
-                                        <p class="text-center">@Model.Session.DMStamp</p>
+                    @*footer*@
+                    <div id="table-footer-@company.Id">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Monthly Pension: @UserFormat.GetAmount(TotalMP)</th>
+                                    <th>CMA: @UserFormat.GetAmount(TotalCMA)</th>
+                                    <th>Orderly : @UserFormat.GetAmount(TotalOrderly)</th>
+                                    <th>Recovery : @UserFormat.GetAmount(TotalDeduction)</th>
+                                    <th>Total : @UserFormat.GetAmount(TotalMonthly)</th>
+                                    <th>Amount : @UserFormat.GetAmount(NetPaid)</th>
+                                </tr>
+                            </thead>
+                        </table>
+                        @{
+                            gTotalMP += TotalMP;
+                            gTotalCMA += TotalCMA;
+                            gTotalOrderly += TotalOrderly;
+                            gTotalDeduction += TotalDeduction;
+                            gTotalPaid += NetPaid;
+                        }
+                        @if (Model.Session != null)
+                        {
+                            <div class="container" style="margin-top: 200px;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="text-center">@Model.Session.AMStamp</p>
                                         <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <div>
+                                            <p class="text-center">@Model.Session.DMStamp</p>
+                                            <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    }
-                </div>
+
+                        }
+                    </div>
+                }
+
             }
             @*foreach company end*@
                     // now we will print or check grand total
@@ -186,7 +191,7 @@
                 @functionCalling
                 ;
             }
-                                                               });
+                                                                                                   });
             function GenerateTable(id) {
                 $('#data-table-' + id + '').DataTable({
                     dom: 'Bfrtip',

@@ -6,16 +6,10 @@ using PensionSystem.Entities.Models;
 
 namespace PensionSystem.Services
 {
-    public class HBLArrearsService : IHBLArrears
+    public class HBLArrearsService(ApplicationDbContext applicationDbContext, ICheque cheque) : IHBLArrears
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ICheque _cheque;
-
-        public HBLArrearsService(ApplicationDbContext applicationDbContext, ICheque cheque)
-        {
-            _context = applicationDbContext;
-            _cheque = cheque;
-        }
+        private readonly ApplicationDbContext _context = applicationDbContext;
+        private readonly ICheque _cheque = cheque;
 
         public async Task<List<HBLArrears>?> Get()
         {
@@ -69,6 +63,16 @@ namespace PensionSystem.Services
                       .OrderBy(o => o.Pensioner.PPOSystem).ToListAsync();
             }
             return list;
+        }
+
+        public async Task<List<HBLArrears>?> GetArrearsByDates(DateTime StartingDate, DateTime EndingDate, int PDUId)
+        {
+            return await _context
+              .HBLArrears
+              .Include(p => p.Pensioner)
+              .Include(c => c.Cheque)
+              .Where(x => x.Month >= StartingDate && x.Month <= EndingDate && x.Cheque.PDUId == PDUId)
+              .ToListAsync();
         }
 
         public async Task<List<HBLArrears>?> GetArrearsByMonth(DateTime Month, int PDUId)

@@ -29,11 +29,11 @@ namespace PensionSystem.Controllers
             DateOnly dateOnly = new(month.Year, month.Month, month.Day);
             CompanyWisePensionerViewModel model = new()
             {
-                HBLPayments = await _hBLPayments.GetByMonth(month,_sessionHelper.GetUserPDUId()),
-                HBLPaymentPensioners = await _hBLPayments.GetAllPensioners(month, month.AddMonths(1).AddDays(-1),_sessionHelper.GetUserPDUId()),
+                HBLPayments = await _hBLPayments.GetByMonth(month, _sessionHelper.GetUserPDUId()),
+                HBLPaymentPensioners = await _hBLPayments.GetAllPensioners(month, month.AddMonths(1).AddDays(-1), _sessionHelper.GetUserPDUId()),
                 Companies = await _company.GetCompanies(),
                 HBLArrears = await _hBLArrears.GetArrearsByMonth(month, _sessionHelper.GetUserPDUId()),
-                Commutations = await _commutation.GetCommutationsByDates(month, month.AddMonths(1).AddDays(-1)),
+                Commutations = await _commutation.GetCommutationsByDates(month, month.AddMonths(1).AddDays(-1), _sessionHelper.GetUserPDUId()),
                 Month = month,
                 Session = new SessionViewModel()
                 {

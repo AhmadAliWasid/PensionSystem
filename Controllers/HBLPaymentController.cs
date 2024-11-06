@@ -176,7 +176,8 @@ namespace PensionSystem.Controllers
             DateTime StartingDate = new(StartingMonth.Year, StartingMonth.Month, 1);
             DateTime EndingDate = EndingMonth.AddMonths(1).AddDays(-1);
 
-            var listHblPayments = await _hBLPayments.GetConsolidatedPensioner(StartingDate, EndingDate, _sessionHelper.GetUserPDUId());
+            var listHblPayments = await _hBLPayments
+                .GetConsolidatedPensioner(StartingDate, EndingDate, _sessionHelper.GetUserPDUId());
             ConsolidatedSummaryModel model = new();
             if (listHblPayments != null)
             {
@@ -188,14 +189,14 @@ namespace PensionSystem.Controllers
                 model.Months = Months;
             }
             model.HBLPayments = listHblPayments;
-            var hblArrears = await _context.HBLArrears.Include(p => p.Pensioner).Where(x => x.Month >= StartingMonth && x.Month <= EndingDate).ToListAsync();
+            var hblArrears = await _hBLArrears.GetArrearsByDates(StartingDate, EndingDate, _sessionHelper.GetUserPDUId());
             var listAllPensioners = await _hBLPayments.GetAllPensioners(StartingDate, EndingDate, _sessionHelper.GetUserPDUId());
             if (listAllPensioners != null)
             {
                 model.AllPensioners = [.. listAllPensioners.OrderBy(x => x.PPOSystem)];
             }
             model.HBLArrears = hblArrears;
-            model.Commutations = await _commutation.GetCommutationsByDates(StartingDate, EndingDate);
+            model.Commutations = await _commutation.GetCommutationsByDates(StartingDate, EndingDate, _sessionHelper.GetUserPDUId());
             model.Session = new SessionViewModel()
             {
                 AMStamp = _sessionHelper.GetAMStamp(),

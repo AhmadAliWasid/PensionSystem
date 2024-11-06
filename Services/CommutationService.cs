@@ -9,7 +9,7 @@ namespace PensionSystem.Services
     {
         private readonly ApplicationDbContext _context = applicationDbContext;
 
-        public IQueryable<Commutation> Table => _context.Set<Commutation>();
+        public IQueryable<Commutation> Table => _context.Commutations;
 
         public Task<bool> Delete(Commutation entity)
         {
@@ -71,6 +71,13 @@ namespace PensionSystem.Services
         {
             var commutations = await GetCommutations();
             return commutations.Where(x => x.Month >= startingDate && x.Month <= endingDate).ToList();
+        }
+
+        public async Task<List<Commutation>> GetCommutationsByDates(DateTime startingDate, DateTime endingDate, int PDUId)
+        {
+            return await Table.Include(c => c.Cheque)
+                .Where(x => x.Month >= startingDate && x.Month <= endingDate && x.Cheque.PDUId == PDUId)
+                .ToListAsync();
         }
 
         public async Task<List<Commutation>> GetCommutationsByMonth(DateOnly Month, int PDUId)
