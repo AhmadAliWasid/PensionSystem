@@ -29,6 +29,8 @@ namespace PensionSystem.Services
             var listLastDemand = await GetByMonth(lastDemandDate);
             if (listLastDemand == null)
                 return "Last Demand Records not found";
+            bool certificateStatus = false;
+            bool physicallyStatus = false;
 
             // first we will check the the amount is already verified make sure the date is not october or april
             List<(int PensionerId, bool CertificateStatus)> verificationStatusList = [];
@@ -48,18 +50,15 @@ namespace PensionSystem.Services
             }
             try
             {
-                bool certificateStatus = false;
-                bool physicallyStatus = false;
+
                 foreach (var item in pensioners)
                 {
                     // certificate verification checking
                     var recordC = verificationStatusList.Where(x => x.PensionerId == item.Id);
-                    if (recordC.Any())
-                        certificateStatus = recordC.First().CertificateStatus;
+                    certificateStatus = recordC.Any() ? recordC.First().CertificateStatus : false;
                     // checking physical status
                     var recordP = physicallyStatusList.Where(x => x.PensionerId != item.Id);
-                    if (recordP.Any())
-                        physicallyStatus = recordP.First().PhysicalStatus;
+                    physicallyStatus = recordP.Any() ? recordP.First().PhysicalStatus : false;
 
                     PensionerPayment pensionerPayment = new()
                     {

@@ -6,7 +6,7 @@ using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
 using System.Linq.Expressions;
 
-namespace PensionSystem.Services
+namespace WebAPI.Services
 {
     public class PensionerService : IPensioner
     {
@@ -114,7 +114,7 @@ namespace PensionSystem.Services
                             cClaiment = item.Name;
                         }
                         // if the pension is already exist in db then leave ti
-                        int pNumber = (int)item.PPONumber;
+                        int pNumber = item.PPONumber;
                         var isExist = pInDB.Where(x => x.PPOSystem == pNumber).FirstOrDefault();
                         if (isExist == null)
                         {
@@ -288,12 +288,12 @@ namespace PensionSystem.Services
 
         public async Task<Pensioner?> GetById(object id)
         {
-            return (await _context.Pensioner
+            return await _context.Pensioner
                 .Include(b => b.Branch)
                 .Include(ba => ba.Branch.Bank)
                 .Include(c => c.Company)
                 .Include(r => r.Relation)
-                .FirstOrDefaultAsync(x => x.Id == (int)id));
+                .FirstOrDefaultAsync(x => x.Id == (int)id);
         }
 
         public async Task<Pensioner?> GetByPPOAndCNIC(int PPONumber, string CNIC)
@@ -309,9 +309,11 @@ namespace PensionSystem.Services
             var cContext = _context.Pensioner;
             if (cContext == null)
                 return null;
-            return await cContext.Include(b => b.Relation)
+            return await cContext
+                .Include(b => b.Relation)
                 .Include(x => x.Branch)
                 .Include(c => c.Branch.Bank)
+                .Include(co => co.Company)
                 .Where(p => p.PDUId == PDUId && p.IsActiveClaimant == false)
                 .OrderBy(d => d.PPOSystem).ToListAsync();
         }
@@ -379,7 +381,7 @@ namespace PensionSystem.Services
             if (pContext != null)
             {
                 var listPensioner = await pContext.Include(c => c.Company).Include(r => r.Relation)
-                    .Where(x => x.IsActiveClaimant == true && x.PDUId == PDUId && ((DateTime.Now.Date.Year - x.DOB.Date.Year) >= 72))
+                    .Where(x => x.IsActiveClaimant == true && x.PDUId == PDUId && DateTime.Now.Date.Year - x.DOB.Date.Year >= 72)
                     .OrderByDescending(p => p.DOB).ToListAsync();
                 return listPensioner;
             }

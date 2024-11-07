@@ -8,5 +8,6 @@ namespace PensionSystem.Interfaces
         public Task<List<SelectOptions>> GetOptions();
 
         public Task<List<Company>?> GetCompanies();
+        public Task<List<Company>?> GetCompaniesByMonth(DateOnly month,int PDUId);
     }
 }

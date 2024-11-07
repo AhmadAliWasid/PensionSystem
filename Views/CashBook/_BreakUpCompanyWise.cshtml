@@ -87,7 +87,8 @@
                     <tr>
                         @if (Model.CashBookCompanyVMs != null)
                         {
-                            <th colspan="2">Total</th>
+                            <th ></th>
+                            <th >Total</th>
                             <th>@UserFormat.GetAmount(TotalcompanyMP)</th>
                             <th>@UserFormat.GetAmount(TotalcompanyCMA) </th>
                             <th>@UserFormat.GetAmount(TotalcompanyOrderly) </th>
@@ -133,6 +134,7 @@
                     buttons: [
                         {
                             extend: 'print',
+                            footer: true,
                             customize: function (win) {
                                 $(win.document.body).prepend($('#table-header').html()); // before table
                                 $(win.document.body).append($("#table-footer").html()); //after the table

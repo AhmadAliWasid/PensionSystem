@@ -163,14 +163,14 @@ namespace PensionSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> GetBreakUpSelfFamilyCompanyWise(DateTime Month)
         {
+            DateOnly dateOnly = new(Month.Year, Month.Month, Month.Day);
             CashBookVM cashBookVM = new()
             {
                 Month = Month,
-                MonthlPayment = await _hBLPayments.GetByMonth(Month),
-                HBLArrears = await _hBLArrears.GetArrears(Month),
+                MonthlPayment = await _hBLPayments.GetByMonth(Month, _sessionHelper.GetUserPDUId()),
+                HBLArrears = await _hBLArrears.GetArrearsByMonth(Month, _sessionHelper.GetUserPDUId()),
+                Commutations = await _commutation.GetCommutationsByMonth(dateOnly, _sessionHelper.GetUserPDUId())
             };
-            DateOnly dateOnly = new(Month.Year, Month.Month, Month.Day);
-            cashBookVM.Commutations = await _commutation.GetCommutations(dateOnly);
             var listCompanies = await _company.GetCompanies();
             var listCompaniesVM = new List<CashBookCompanyVM>();
             if (listCompanies != null && cashBookVM.MonthlPayment != null && cashBookVM.Commutations != null)
@@ -184,13 +184,27 @@ namespace PensionSystem.Controllers
                         .Sum(y => y.CMA);
                     decimal OrderlyMonthly = cashBookVM.MonthlPayment.Where(x => x.Pensioner.CompanyId == c.Id)
                         .Sum(y => y.OrderlyAllowance);
-                    decimal selfMP = cashBookVM.MonthlPayment.Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name == "Self").Sum(y => y.MonthlyPension);
-                    decimal selfCMA = cashBookVM.MonthlPayment.Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name == "Self").Sum(y => y.CMA);
-                    decimal FamilyMP = cashBookVM.MonthlPayment.Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name != "Self").Sum(y => y.MonthlyPension);
-                    decimal FamilayCMA = cashBookVM.MonthlPayment.Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name != "Self").Sum(y => y.CMA);
-                    decimal Commutation = cashBookVM.Commutations.Where(x => x.Pensioner.CompanyId == c.Id).Sum(x => x.Amount);
-                    decimal SelfRecovery = cashBookVM.MonthlPayment.Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name == "Self").Sum(y => y.Deduction);
-                    decimal FamilayRecovery = cashBookVM.MonthlPayment.Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name != "Self").Sum(y => y.Deduction);
+                    decimal selfMP = cashBookVM.MonthlPayment
+                        .Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name == "Self")
+                        .Sum(y => y.MonthlyPension);
+                    decimal selfCMA = cashBookVM.MonthlPayment
+                        .Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name == "Self")
+                        .Sum(y => y.CMA);
+                    decimal FamilyMP = cashBookVM.MonthlPayment
+                        .Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name != "Self")
+                        .Sum(y => y.MonthlyPension);
+                    decimal FamilayCMA = cashBookVM.MonthlPayment
+                        .Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name != "Self")
+                        .Sum(y => y.CMA);
+                    decimal Commutation = cashBookVM
+                        .Commutations.Where(x => x.Pensioner.CompanyId == c.Id)
+                        .Sum(x => x.Amount);
+                    decimal SelfRecovery = cashBookVM.MonthlPayment
+                        .Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name == "Self")
+                        .Sum(y => y.Deduction);
+                    decimal FamilayRecovery = cashBookVM.MonthlPayment
+                        .Where(x => x.Pensioner.CompanyId == c.Id && x.Pensioner.Relation.Name != "Self")
+                        .Sum(y => y.Deduction);
                     // arrears
                     decimal SelfArrears = 0;
                     decimal FamilyArrears = 0;

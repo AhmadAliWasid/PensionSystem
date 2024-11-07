@@ -318,7 +318,7 @@ namespace PensionSystem.Controllers
         {
             return _context.Pensioner.Any(e => e.Id == id);
         }
-
+        [HttpGet]
         public async Task<IActionResult> GetRestored()
         {
             return PartialView("_Restored", await _pensioner.GetRestored(_sessionHelper.GetUserPDUId()));
