@@ -175,10 +175,7 @@
                             <tr>
                                 <th>PPO </th>
                                 <th>Claimant</th>
-                                @* <th>MP</th>
-                    <th>CMA</th>
-                    <th>Orderly</th>
-                    <th>Total</th> *@
+
                                 @if (Model.Months != null)
                                 {
                                     @foreach (var month in Model.Months)
@@ -203,11 +200,6 @@
                                     <tr>
                                         <th>@item.PPOSystem</th>
                                         <th>@item.Claimant </th>
-                                        @* <th>@UserFormat.GetAmount(item.MP)</th>
-                    <th>@UserFormat.GetAmount(item.CMA)</th>
-                    <th>@UserFormat.GetAmount(item.Orderly)</th>
-                    <th>@UserFormat.GetAmount(item.Total)</th> *@
-                                        @*// print for each month*@
                                         @if (Model.Months != null)
                                         {
                                             @foreach (var month in Model.Months)
@@ -242,32 +234,32 @@
                                                     .Sum(y => y.Amount);
                                                     MonthlyTotal += CommutationsInMonth;
                                                 }
+                                                yearlyTotal += MonthlyTotal;
                                                 <th>@UserFormat.GetAmount(MonthlyTotal)</th>
                                             }
                                         }
-                                        <td>-</td>
+                                        <td>@UserFormat.GetAmount(yearlyTotal)</td>
+                                    </tr>
+                                }
+
+                                @if (Model.Months != null)
+                                {
+
+                                    <tr>
+                                        <th>Total</th>
+                                        <th></th>
+                                        @foreach (var month in Model.Months)
+                                        {
+                                            int monthNumber = month.Month.Month;
+
+                                            <th class="text-bold text-lg">@UserFormat.GetAmount(monthlyTotal[monthNumber])</th>
+                                        }
+                                        <th>@UserFormat.GetAmount(yearlyGrandTotal)</th>
                                     </tr>
                                 }
                             }
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <th>Total</th>
-                                <th></th>
-                                @if (Model.Months != null)
-                                {
-                                    @foreach (var month in Model.Months)
-                                    {
-                                        int monthNumber = month.Month.Month;
-                                        <td class="text-bold text-lg">@UserFormat.GetAmount(monthlyTotal[monthNumber])</td>
-                                    }
-                                }
-                                else
-                                {
-                                    <td>No Months detail</td>
-                                }
-                            </tr>
-                        </tfoot>
+
                     </table>
                 </div>
             </div>
@@ -281,37 +273,6 @@
                             customize: function (win) {
                                 $(win.document.body).prepend($('#table-header-office').html()); // before table
                                 $(win.document.body).append($("#table-footer").html()); //after the table
-                                $(win.document.body).
-                                    find('table')
-                                    .addClass('bordered')
-                                    .css({
-                                        'font-size': '10px',
-                                        'font-weight': 'bold',
-                                        'border': '1px solid black',
-                                        'border-collapse': 'collapse',
-                                        'padding': '0px'
-                                    });
-                                $(win.document.body).
-                                    find('td')
-                                    .css({
-                                        'border': '1px solid black',
-                                        'padding': '.5px',
-                                        'vertical-align': 'middle',
-                                        'white-space': nowrap
-                                    });
-                                var last = null;
-                                var current = null;
-                                var bod = [];
-                                var css = '@@page { size: landscape; }', head = win.document.head || win.document.getElementsByTagName('head')[0], style = win.document.createElement('style');
-                                style.type = 'text/css';
-                                style.media = 'print';
-                                if (style.styleSheet) {
-                                    style.styleSheet.cssText = css;
-                                }
-                                else {
-                                    style.appendChild(win.document.createTextNode(css));
-                                }
-                                head.appendChild(style);
                             },
                             'title': '',
                         },
@@ -334,15 +295,13 @@
                     buttons: [
                         {
                             extend: 'print',
+                            footer: false,
                             customize: function (win) {
+                                $(win.document.body).prepend($('#table-header-office').html()); // before table
                                 $(win.document.body).append($("#table-footer").html()); //after the table
                                 $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
                             },
-                            exportOptions: {
-                                columns: [1, 2, 3, 4, 5, 6, 7, 8, 9]
-                            },
-                            title: 'SS&TL Division PESCO Mardan',
-                            message: '<div class="text-center">List of Pensioner for the month of </div>',
+                            'title': '',
                         },
                         'excel',
                         'copy',
