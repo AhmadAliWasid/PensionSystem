@@ -28,12 +28,14 @@ namespace WebAPI.Services
 
         public async Task<List<WWFSanction>> GetAll(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)
         {
-            return await Table.OrderByDescending(X=>X.Date).ToListAsync();
+            return await Table.OrderByDescending(X => X.Date).ToListAsync();
         }
 
         public async Task<List<WWFSanction>> GetAll(int PDUId = 0, string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)
         {
-            return await Table.OrderByDescending(X => X.Date).ToListAsync();
+            return await Table
+                .Where(y => y.PDUId == PDUId)
+                .OrderByDescending(X => X.Date).ToListAsync();
         }
 
         public async Task<WWFSanction?> GetById(object id)

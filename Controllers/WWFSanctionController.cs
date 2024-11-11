@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
                     if (response.IsSuccessStatusCode)
                         return Ok();
                     else
-                        return BadRequest();    
+                        return BadRequest();
                 }
             }
             else
@@ -101,9 +101,7 @@ namespace WebAPI.Controllers
         }
         public async Task<IActionResult> Load()
         {
-            var apiUrl = "https://localhost:7204/api/WWFSanction";
-            var response = await _httpClient.GetAsync(apiUrl);
-
+            var response = await _httpClient.GetAsync($"{_sessionHelper.GetUri()}api/WWFSanction/GetByPDUId({_sessionHelper.GetUserPDUId()})");
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();

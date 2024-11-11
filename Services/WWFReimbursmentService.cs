@@ -23,7 +23,9 @@ namespace WebAPI.Services
 
         public async Task<List<WGReimbursment>> GetAll(int PDUId = 0, string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)
         {
-            return await Table.Include(x => x.WWFSanction)
+            return await Table
+                .Include(x => x.WWFSanction)
+                .Where(p => p.WWFSanction.PDUId == PDUId)
                 .OrderByDescending(c => c.To).ToListAsync();
         }
 

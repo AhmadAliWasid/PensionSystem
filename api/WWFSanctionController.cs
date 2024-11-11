@@ -8,15 +8,11 @@ namespace WebAPI.api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WWFSanctionController : ControllerBase
+    public class WWFSanctionController(IMapper mapper, IWWFSanction wWFSanction) : ControllerBase
     {
-        private readonly IMapper _mapper;
-        private readonly IWWFSanction _Ientity;
-        public WWFSanctionController(IMapper mapper, IWWFSanction wWFSanction)
-        {
-            _mapper = mapper;
-            _Ientity = wWFSanction;
-        }
+        private readonly IMapper _mapper = mapper;
+        private readonly IWWFSanction _Ientity = wWFSanction;
+
         [HttpGet]
         [Route("{Id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int Id)
@@ -53,9 +49,10 @@ namespace WebAPI.api
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        [Route("GetByPDUId({id:int})")]
+        public async Task<IActionResult> GetByPDUId(int id)
         {
-            var r = await _Ientity.GetAll(1);
+            var r = await _Ientity.GetAll(id);
             return Ok(r);
         }
 

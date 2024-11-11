@@ -14,7 +14,7 @@ using WebAPI.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = builder.Configuration.GetConnectionString("local"); 
+var connectionString = builder.Configuration.GetConnectionString("Server"); 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
   options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

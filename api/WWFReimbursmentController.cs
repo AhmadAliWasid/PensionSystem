@@ -49,9 +49,10 @@ namespace WebAPI.api
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        [Route("GetByPDUId({id:int})")]
+        public async Task<IActionResult> Get(int id)
         {
-            var r = await _Ientity.GetAll(1);
+            var r = await _Ientity.GetAll(id);
             return Ok(r);
         }
 

@@ -104,8 +104,7 @@ namespace WebAPI.Controllers
         }
         public async Task<IActionResult> Load()
         {
-            var response = await _httpClient.GetAsync($"{_sessionHelper.GetUri()}api/WWFReimbursment");
-
+            var response = await _httpClient.GetAsync($"{_sessionHelper.GetUri()}api/WWFReimbursment/GetByPDUId({_sessionHelper.GetUserPDUId()})");
             if (response.IsSuccessStatusCode)
             {
                 var jsonString = await response.Content.ReadAsStringAsync();
