@@ -94,10 +94,10 @@ namespace PensionSystem.Controllers
             var CashBookVM = new CashBookVM
             {
                 Month = month,
-                MonthlPayment = await _hBLPayments.GetByMonth(month),
-                HBLArrears = await _hBLArrears.GetArrears(month),
+                MonthlPayment = await _hBLPayments.GetByMonth(month, _sessionHelper.GetUserPDUId()),
+                HBLArrears = await _hBLArrears.GetArrearsByMonth(month, _sessionHelper.GetUserPDUId()),
                 Cheques = await _cheque.GetCheque(month, _sessionHelper.GetUserPDUId()),
-                Commutations = await _commutation.GetCommutations(dateOnly),
+                Commutations = await _commutation.GetCommutationsByMonth(dateOnly, _sessionHelper.GetUserPDUId()),
                 CashBooksEntries = await _cashBook.GetByMonth(month, _sessionHelper.GetUserPDUId())
             };
             var list = new List<CashBookEntryListVM>();

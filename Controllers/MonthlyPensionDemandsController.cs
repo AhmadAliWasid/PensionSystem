@@ -186,9 +186,9 @@ namespace PensionSystem.Controllers
             var lastDateForHBL = new DateOnly(lastDate.Year, lastDate.Month, lastDate.Day);
             vm.MonthlyPensionDemand = demand;
             vm.PensionerPayments = await _pensionPayment.GetPensionPayments(id);
-            vm.HBLPayments = await _hblPayments.GetHBLPayments(lastDateForHBL);
-            vm.Commutations = await _commutation.GetCommutations(lastDateForHBL);
-            vm.HBLArrears = await _hBLArrears.GetArrearsAsync(lastDateForHBL);
+            vm.HBLPayments = await _hblPayments.GetByMonth(lastDate, _sessionHelper.GetUserPDUId());
+            vm.Commutations = await _commutation.GetCommutationsByMonth(lastDateForHBL, _sessionHelper.GetUserPDUId());
+            vm.HBLArrears = await _hBLArrears.GetArrearsByMonth(lastDate, _sessionHelper.GetUserPDUId());
             return PartialView("_Print", vm);
         }
 
