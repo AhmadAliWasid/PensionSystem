@@ -169,7 +169,8 @@ namespace PensionSystem.Controllers
                 Month = Month,
                 MonthlPayment = await _hBLPayments.GetByMonth(Month, _sessionHelper.GetUserPDUId()),
                 HBLArrears = await _hBLArrears.GetArrearsByMonth(Month, _sessionHelper.GetUserPDUId()),
-                Commutations = await _commutation.GetCommutationsByMonth(dateOnly, _sessionHelper.GetUserPDUId())
+                Commutations = await _commutation.GetCommutationsByMonth(dateOnly, _sessionHelper.GetUserPDUId()),
+                CashBooksEntries = await _cashBook.GetByMonth(Month, _sessionHelper.GetUserPDUId())
             };
             var listCompanies = await _company.GetCompanies();
             var listCompaniesVM = new List<CashBookCompanyVM>();
@@ -256,7 +257,8 @@ namespace PensionSystem.Controllers
                 Month = Month,
                 MonthlPayment = await _hBLPayments.GetByMonth(Month, _sessionHelper.GetUserPDUId()),
                 HBLArrears = await _hBLArrears.GetArrearsByMonth(Month, _sessionHelper.GetUserPDUId()),
-                Commutations = await _commutation.GetCommutationsByMonth(dateOnly, _sessionHelper.GetUserPDUId())
+                Commutations = await _commutation.GetCommutationsByMonth(dateOnly, _sessionHelper.GetUserPDUId()),
+                CashBooksEntries = await _cashBook.GetByMonth(Month, _sessionHelper.GetUserPDUId())
             };
             var listCompanies = await _company.GetCompanies();
             var listCompaniesVM = new List<CashBookCompanyVM>();

@@ -109,7 +109,7 @@
                     <th>PPO </th>
                     <th>Claimant</th>
                     <th>CNIC</th>
-                    <th>Bank</th>
+                    @* <th>Bank</th> *@
                     <th>Ac#</th>
                     <th>MP</th>
                     <th>CMA</th>
@@ -132,7 +132,7 @@
                         {
                             <td colspan="3">N/A</td>
                         }
-                        <td>@item.Branch.Bank.ShortName (@item.Branch.Name)</td>
+                        @* <td>@item.Branch.Bank.ShortName (@item.Branch.Name)</td> *@
                         <td>@item.Branch.Code-@item.AccountNumber</td>
                         <td>@UserFormat.GetAmount(item.MonthlyPension)</td>
                         <td>@UserFormat.GetAmount(item.CMA)</td>

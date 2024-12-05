@@ -11,6 +11,12 @@
         decimal TotalcompanyOrderly = 0;
         decimal Totalcommutation = 0;
         decimal Total = 0;
+        int serialNumber = 1;
+        decimal bankCharges = 0;
+        if (Model.CashBooksEntries != null && Model.CashBooksEntries.Count > 0)
+        {
+            bankCharges = Model.CashBooksEntries.Where(a => a.TransactionType == TransactionType.Debit).Sum(c => c.Amount);
+        }
         <div>
             <div id="table-header">
                 <h3 class="text-center text-bold">PESHAWAR ELECTRIC SUPPLY COMPANY LTD.</h3>
@@ -34,8 +40,7 @@
                 <tbody>
                     @if (Model.CashBookCompanyVMs != null && Model.CashBookCompanyVMs.Count > 0)
                     {
-                        int serialNumber
-                        = 1;
+                       
                         decimal TotalCompany = 0;
                         decimal companyMP = 0;
                         decimal companyCMA = 0;
@@ -82,13 +87,25 @@
                             commutation = 0;
                         }
                     }
+                    <tr>
+                        <td>@serialNumber</td>
+                        <td>Bank Chargs</td>
+                        <td> </td>
+                        <td></td>
+                        <td> </td>
+                        <td> </td>
+                        <td></td>
+                        <td>@UserFormat.GetAmount(bankCharges)</td>
+                        <td>@UserFormat.GetAmount(bankCharges)</td>
+                    </tr>
                 </tbody>
                 <tfoot>
                     <tr>
                         @if (Model.CashBookCompanyVMs != null)
                         {
-                            <th ></th>
-                            <th >Total</th>
+                            Total += bankCharges;
+                            <th></th>
+                            <th>Total</th>
                             <th>@UserFormat.GetAmount(TotalcompanyMP)</th>
                             <th>@UserFormat.GetAmount(TotalcompanyCMA) </th>
                             <th>@UserFormat.GetAmount(TotalcompanyOrderly) </th>

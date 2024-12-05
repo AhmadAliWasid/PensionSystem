@@ -126,9 +126,10 @@ namespace PensionSystem.Services
             var c = _context.HBLPayments;
             if (c == null)
                 return [];
-            return await c.Include(p => p.Pensioner)
-                .Include(x => x.Pensioner.Branch)
-                .Include(ba => ba.Pensioner.Branch.Bank)
+            return await c
+                .Include(p => p.Pensioner)
+                .Include(x => x.Branch)
+                .Include(ba => ba.Branch.Bank)
                 .Include(c => c.Pensioner.Company)
                 .Where(x => x.ChequeId == chequeId)
                 .OrderBy(y => y.Pensioner.PPOSystem).ToListAsync();
