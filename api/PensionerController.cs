@@ -8,20 +8,12 @@ namespace PensionSystem.api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PensionerController : ControllerBase
+    public class PensionerController(IPensioner pensioner, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, IMapper mapper) : ControllerBase
     {
-        private readonly IPensioner _pensioner;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IMapper _mapper;
-
-        public PensionerController(IPensioner pensioner, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor, IMapper mapper)
-        {
-            _pensioner = pensioner;
-            _webHostEnvironment = webHostEnvironment;
-            _contextAccessor = httpContextAccessor;
-            _mapper = mapper;
-        }
+        private readonly IPensioner _pensioner = pensioner;
+        private readonly IWebHostEnvironment _webHostEnvironment = webHostEnvironment;
+        private readonly IHttpContextAccessor _contextAccessor = httpContextAccessor;
+        private readonly IMapper _mapper = mapper;
 
         //[HttpPost]
         //[Route("Upload")]
@@ -72,6 +64,12 @@ namespace PensionSystem.api
             var r = _mapper.Map<List<PensionerOptionDTO>>(l);
             return Ok(r);
 
+        }
+        [HttpPut]
+        [Route("UpdateAccountNumber")]
+        public async Task<IActionResult> UpdateAccountNumber(UpdateBranchDTO updateBranchDTO)
+        {
+            return await _pensioner.UpdateAccountNumber(updateBranchDTO) == true ? Ok() : BadRequest();
         }
     }
 }

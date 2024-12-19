@@ -57,7 +57,6 @@ namespace PensionSystem.Data
         public DbSet<Relation> Relations { get; set; }
         //public DbSet<WWFBill> WWFBills { get; set; }
         //public DbSet<WWFDemand> WWFDemands { get; set; }
-        //public DbSet<WWFPayment> WWFPayments { get; set; }
         public DbSet<MonthlyPensionDemand> MonthlyPensionDemands { get; set; }
         public DbSet<RestorationDemand> RestorationDemands { get; set; }
         public DbSet<RestorationPayment> RestorationPayments { get; set; }

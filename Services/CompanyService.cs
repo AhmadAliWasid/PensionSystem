@@ -10,10 +10,7 @@ namespace PensionSystem.Services
     {
         private readonly ApplicationDbContext _context;
 
-        public CompanyService(ApplicationDbContext applicationDbContext)
-        {
-            _context = applicationDbContext;
-        }
+        public CompanyService(ApplicationDbContext applicationDbContext) => _context = applicationDbContext;
 
         public async Task<List<Company>?> GetCompanies()
         {
@@ -23,7 +20,7 @@ namespace PensionSystem.Services
 
         public async Task<List<Company>?> GetCompaniesByMonth(DateOnly month, int PDUIId)
         {
-            return new List<Company>();
+            return [];
         }
 
         public async Task<List<SelectOptions>> GetOptions()

@@ -1,4 +1,5 @@
-﻿using PensionSystem.Entities.Models;
+﻿using PensionSystem.Entities.DTOs;
+using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
 
 namespace PensionSystem.Interfaces
@@ -102,5 +103,6 @@ namespace PensionSystem.Interfaces
         /// <param name="pensionerUploadVMs"></param>
         /// <returns></returns>
         public Task<(bool IsSaved, string Message)> AddToDBFromFile(List<PensionerUploadVM> pensionerUploadVMs);
+        public Task<bool> UpdateAccountNumber(UpdateBranchDTO updateBranchDTO);
     }
 }

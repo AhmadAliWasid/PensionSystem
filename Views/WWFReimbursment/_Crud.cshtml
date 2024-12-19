@@ -31,6 +31,20 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-12 form-group">
+            <label asp-for="ChequeNo" class="control-label"></label>
+            <input asp-for="ChequeNo" class="form-control" type="date" />
+            <span asp-validation-for="ChequeNo" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 form-group">
+            <label asp-for="ChequeDate" class="control-label"></label>
+            <input asp-for="ChequeDate" class="form-control" type="date" />
+            <span asp-validation-for="ChequeDate" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <div class="form-group">
                 <label asp-for="Remarks" class="control-label"></label>

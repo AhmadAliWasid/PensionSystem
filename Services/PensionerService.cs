@@ -5,6 +5,7 @@ using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
 using System.Linq.Expressions;
+using PensionSystem.Entities.DTOs;
 
 namespace WebAPI.Services
 {
@@ -427,6 +428,26 @@ namespace WebAPI.Services
             throw new NotImplementedException();
         }
 
+        public async Task<bool> UpdateAccountNumber(UpdateBranchDTO updateBranchDTO)
+        {
+            var r = await Table.FirstOrDefaultAsync(x => x.Id == updateBranchDTO.PensionerId);
+            if (r == null)
+                return false;
+            try
+            {
+                r.BranchId = updateBranchDTO.BranchId;
+                r.IBAN = updateBranchDTO.IBAN;
+                r.AccountNumber = updateBranchDTO.AccountNumber;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
+
         public async Task<bool> UpdateSMSServiceStatus(int PensionerId, bool Status)
         {
             try
@@ -447,5 +468,8 @@ namespace WebAPI.Services
                 return false;
             }
         }
+
     }
+
+
 }

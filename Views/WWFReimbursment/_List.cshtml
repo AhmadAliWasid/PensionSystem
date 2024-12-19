@@ -13,6 +13,9 @@
                 <tr>
                     <th>Claimant</th>
                     <th>Period</th>
+                    <th>Ch.No</th>
+                    <th>Ch.Date</th>
+                    <th>IsReimbursed</th>
                     <th>Remarks</th>
                     <th>Action</th>
                 </tr>
@@ -23,6 +26,18 @@
                     <tr>
                         <td>@item.WWFSanction.Claimant</td>
                         <td>@UserFormat.GetMonthYear(item.From) -> @UserFormat.GetMonthYear(item.To) </td>
+                        <td>@item.ChequeNo</td>
+                        <td>@UserFormat.GetDate(item.ChequeDate)</td>
+                        <td>
+                            @if (item.IsReimbursed)
+                            {
+                                <span>Yes</span>
+                            }
+                            else
+                            {
+                                <button onclick="Reimbursement(@item.Id)" class="btn btn-warning" disabled><i class="fa fa-edit"></i></button>
+                            }
+                        </td>
                         <td>@item.Remarks</td>
                         <td>
                             <button onclick="AddOrUpdate(@item.Id)" class="btn btn-warning"><i class="fa fa-edit"></i></button>|
