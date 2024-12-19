@@ -11,9 +11,18 @@ namespace WebAPI.Services
         private readonly ApplicationDbContext _applicationDbContext = applicationDbContext;
         public IQueryable<WGReimbursment> Table => _applicationDbContext.WGReimbursments;
 
-        public Task<bool> Delete(WGReimbursment entity)
+        public async Task<bool> Delete(WGReimbursment entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _applicationDbContext.WGReimbursments.Remove(entity);
+                await _applicationDbContext.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<List<WGReimbursment>> GetAll(string? filterOn = null, string? filterQuery = null, string? sortBy = null, bool? IsAscending = null, int pageNumber = 1, int pageSize = 1000)
@@ -33,7 +42,8 @@ namespace WebAPI.Services
         {
             try
             {
-                return await _applicationDbContext.WGReimbursments.FindAsync(id);
+                var primaryKey = (int)id;
+                return await _applicationDbContext.WGReimbursments.Where(x => x.Id == primaryKey).FirstOrDefaultAsync();
             }
             catch (Exception)
             {

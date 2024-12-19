@@ -119,6 +119,15 @@ namespace Pension.Entities.Helpers
         {
             return dateTime.ToString("MM-yyyy");
         }
+        public static string GetMonthYearWWF(DateOnly dateTime)
+        {
+            if (dateTime.Day == 1 || dateTime.AddDays(1).Month != dateTime.Month)
+                return dateTime.ToString("M/yy");
+            else
+                return dateTime.ToString("d/M/yy");
+        }
+
+
         public static string GetLastDate(DateTime dateTime)
         {
             return dateTime.AddMonths(1).AddDays(-1).ToString("dd-MM-yyyy");
