@@ -13,6 +13,7 @@ using PensionSystem.ViewModels;
 using System.Data;
 using System.Text;
 using System.Text.Json;
+using PensionSystem.Entities.DTOs;
 
 namespace PensionSystem.Controllers
 {
@@ -93,10 +94,9 @@ namespace PensionSystem.Controllers
 
         public async Task<IActionResult> CreateUpdate(int? id)
         {
-            PensionerModel pM = new();
+            PensionerDTO pM = new();
             if (id == null || id == 0)
             {
-                pM = new PensionerModel();
                 ViewData["CompanyId"] = new SelectList(await _company.GetOptions(), "Value", "Text");
                 ViewData["RelationId"] = new SelectList(await _relation.GetOptions(), "Value", "Text");
                 ViewData["BankId"] = new SelectList(await _bank.GetOptions(), "Value", "Text");
@@ -146,6 +146,7 @@ namespace PensionSystem.Controllers
                     pM.RetiringOffice = p.RetiringOffice;
                     pM.Commutation = p.Commutation;
                     pM.MonthlyRecovery = p.MonthlyRecovery;
+                    pM.IBAN = p.IBAN;
                     ViewData["CompanyId"] = new SelectList(await _company.GetOptions(), "Value", "Text", p.CompanyId);
                     ViewData["RelationId"] = new SelectList(await _relation.GetOptions(), "Value", "Text", p.RelationId);
                     ViewData["BankId"] = new SelectList(await _bank.GetOptions(), "Value", "Text", p.Branch.BankId);
@@ -161,7 +162,7 @@ namespace PensionSystem.Controllers
             "FatherName","Mobile","CNIC","DOB","DateOfRetirement","RelationId","SanctionNumber","SanctionDate","Gender","Claimant","ClaimantCNIC","Spouse",
             "Address","AccountNumber","MonthlyPension","CMA","OrderelyAllowence","Total",
             "MonthlyRecovery","Remarks","IsActiveClaimant","BranchId","LastBasicPay",
-            "DateOfAppointment","AccountTitle","IsServiceActive","Commutation","RetiringOffice")] PensionerModel pM)
+            "DateOfAppointment","AccountTitle","IsServiceActive","Commutation","RetiringOffice","IBAN")] PensionerDTO pM)
         {
             JsonResponseHelper helper = new();
             if (ModelState.IsValid)
@@ -205,7 +206,8 @@ namespace PensionSystem.Controllers
                         PDUId = _sessionHelper.GetUserPDUId(),
                         Commutation = pM.Commutation,
                         RetiringOffice = pM.RetiringOffice,
-                        MonthlyRecovery = pM.MonthlyRecovery
+                        MonthlyRecovery = pM.MonthlyRecovery,
+                        IBAN = pM.IBAN
                     };
                     await _context.AddAsync(p);
                 }
@@ -253,6 +255,7 @@ namespace PensionSystem.Controllers
                     p.Commutation = pM.Commutation;
                     p.RetiringOffice = pM.RetiringOffice;
                     p.MonthlyRecovery = pM.MonthlyRecovery;
+                    p.IBAN = pM.IBAN;
                     _context.Update(p);
                 }
                 try
@@ -628,6 +631,6 @@ namespace PensionSystem.Controllers
                 return BadRequest("Error: " + responseContent);
             }
         }
-       
+
     }
 }

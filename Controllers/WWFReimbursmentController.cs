@@ -8,6 +8,7 @@ using Pension.Entities.Helpers;
 using PensionSystem.Entities.DTOs;
 using PensionSystem.Entities.Models;
 using PensionSystem.Helpers;
+using PensionSystem.Interfaces;
 using System.Text;
 using WebAPI.Interfaces;
 
@@ -136,6 +137,24 @@ namespace WebAPI.Controllers
                 var errorMessage = await response.Content.ReadAsStringAsync();
                 return BadRequest(errorMessage);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> LockIt(int Id = 0)
+        {
+            if (Id == 0)
+                return NotFound();
+            var httpRequest = new HttpRequestMessage()
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"{_sessionHelper.GetUri()}api/WWFReimbursment/LockIt({Id})")
+
+            };
+            var response = await _httpClient.SendAsync(httpRequest);
+            if (response.IsSuccessStatusCode)
+                return Ok();
+            else
+                return BadRequest();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model PensionSystem.ViewModels.PensionerModel
+﻿@model PensionSystem.Entities.DTOs.PensionerDTO
 
 @{
     ViewData["Title"] = "Pensioner";
@@ -273,6 +273,13 @@
                                 <span asp-validation-for="IsServiceActive" class="text-danger"></span>
                             </div>
                         </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label asp-for="IBAN" class="control-label"></label>
+                                <input asp-for="IBAN" class="form-control" />
+                                <span asp-validation-for="IBAN" class="text-danger"></span>
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3">
@@ -289,6 +296,7 @@
                                 <span asp-validation-for="RetiringOffice" class="text-danger"></span>
                             </div>
                         </div>
+
                     </div>
                 </form>
             </div>
@@ -390,7 +398,7 @@
                     $("#BranchId").html('<option value="0">Please Wait</option>');
                     $.ajax({
                         type: "GET",
-                        url: "@Url.Action("GetOptions","Branches")",
+                        url: "@Url.Action("GetOptions", "Branches")",
                         data: { "BankId": bId },
                         success: function (data) {
                             var s = '';
@@ -446,7 +454,7 @@
     @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
-        }
+    }
 }
 else
 {

@@ -14,6 +14,7 @@
                     <th>Claimant</th>
                     <th>Period</th>
                     <th>Months</th>
+                    <th>Rate</th>
                     <th>Amount</th>
                     <th>Ch.No</th>
                     <th>Ch.Date</th>
@@ -29,6 +30,7 @@
                         <td>@item.WWFSanction.Claimant</td>
                         <td>@UserFormat.GetMonthYearWWF(item.From)-@UserFormat.GetMonthYearWWF(item.To)</td>
                         <td>@item.Months</td>
+                        <td>@UserFormat.GetAmount(item.Rate)</td>
                         <td>@UserFormat.GetAmount(item.Amount)</td>
                         <td>@item.ChequeNo</td>
                         <td>@UserFormat.GetDate(item.ChequeDate)</td>
@@ -39,20 +41,30 @@
                             }
                             else
                             {
-                                <button onclick="Reimbursement(@item.Id)" class="btn btn-primary" disabled>Re-Imb</button>
+                                <span>Pending...</span>
                             }
                         </td>
                         <td>@item.Remarks</td>
                         <td>
-                            <button onclick="AddOrUpdate(@item.Id)" class="btn btn-warning"><i class="fa fa-edit"></i></button>|
-                            <button onclick="Delete(@item.Id)" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                            @if (item.IsLocked)
+                            {
+                                <span>Locked</span>
+                            }
+                            else
+                            {
+                                <div>
+                                    <button onclick="LockIt(@item.Id,this)" class="btn btn-sm btn-primary"><i class="fa fa-lock"></i></button>|
+                                    <button onclick="AddOrUpdate(@item.Id)" class="btn btn-warning"><i class="fa fa-edit"></i></button>|
+                                    <button onclick="Delete(@item.Id)" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                </div>
+                            }
                         </td>
                     </tr>
                 }
             </tbody>
         </table>
         <script>
-            $(document).ready(function (e) {
+               $(document).ready(function (e) {
             $('#data-table').DataTable({
                           dom: 'Bfrtip',
                           buttons:[
@@ -68,6 +80,29 @@
                           "info": true,
                       });
             });
+              function LockIt(Id, element) {
+                if (Id != "") {
+                    $.ajax({
+                        type: "POST",
+                        url: "@Url.Action("LockIt")",
+                        data: { Id: Id },
+                        dataType: "text",
+                        success: function (msg) {
+                            if (msg) {
+                                $(element).parent.hide();
+                                $(element).parent().html("Locked");
+                            }
+                        },
+                        error: function (req, status, error) {
+                            alert(error);
+                        }
+                    });
+                }
+                else {
+                    alert("no record selected")
+                }
+            }
+
         </script>
     }
 }

@@ -7,15 +7,11 @@ namespace PensionSystem.api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ChequeController : ControllerBase
+    public class ChequeController(ICheque cheque, IMapper mapper) : ControllerBase
     {
-        private readonly ICheque _cheque;
-        private readonly IMapper _mapper;
-        public ChequeController(ICheque cheque, IMapper mapper)
-        {
-            _cheque = cheque;
-            _mapper = mapper;
-        }
+        private readonly ICheque _cheque = cheque;
+        private readonly IMapper _mapper = mapper;
+
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] string? filterOn,
           [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool? isAscending, [FromQuery] int pageNumber = 1,

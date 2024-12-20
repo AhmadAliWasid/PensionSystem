@@ -29,12 +29,17 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-6 form-group">
+        <div class="col-md-4 form-group">
             <label asp-for="Months" class="control-label"></label>
             <input asp-for="Months" class="form-control" />
             <span asp-validation-for="Months" class="text-danger"></span>
         </div>
-        <div class="col-md-6 form-group">
+        <div class="col-md-4 form-group">
+            <label asp-for="Rate" class="control-label"></label>
+            <input asp-for="Rate" class="form-control" />
+            <span asp-validation-for="Rate" class="text-danger"></span>
+        </div>
+        <div class="col-md-4 form-group">
             <label asp-for="Amount" class="control-label"></label>
             <input asp-for="Amount" class="form-control" />
             <span asp-validation-for="Amount" class="text-danger"></span>
@@ -61,8 +66,11 @@
         </div>
         <div class="col-md-9">
             <div class="form-group">
+                @if(Model.Id != 0){
+                    Model.Remarks = "-";
+                }
                 <label asp-for="Remarks" class="control-label"></label>
-                <input asp-for="Remarks" class="form-control" />
+                <input asp-for="Remarks" class="form-control"  />
                 <span asp-validation-for="Remarks" class="text-danger"></span>
             </div>
         </div>

@@ -67,6 +67,15 @@ namespace WebAPI.api
             var r = await _Ientity.Delete(existingEntity);
             return r ? NoContent() : BadRequest(r);
         }
-
+        [HttpPut]
+        [Route("LockIt({id:int})")]
+        public async Task<IActionResult> LockIt(int id)
+        {
+            var r = await _Ientity.LockIt(id);
+            if (r.IsSaved)
+                return Ok();
+            else
+                return BadRequest(r.Message);
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace WebAPI.Services
             return await Table
                 .Include(x => x.WWFSanction)
                 .Where(p => p.WWFSanction.PDUId == PDUId)
-                .OrderByDescending(c => c.To).ToListAsync();
+                .OrderByDescending(c => c.ChequeDate).ToListAsync();
         }
 
         public async Task<WGReimbursment?> GetById(object id)
@@ -64,6 +64,23 @@ namespace WebAPI.Services
             catch (Exception exc)
             {
                 return (false, exc.Message.ToString());
+            }
+        }
+
+        public async Task<(bool IsSaved, string Message)> LockIt(int id)
+        {
+            try
+            {
+                var r = await GetById(id);
+                if (r == null) { return (false, ""); }
+                r.IsLocked = true;
+                _applicationDbContext.Update(r);
+                await _applicationDbContext.SaveChangesAsync();
+                return (true, "ok");
+            }
+            catch (Exception)
+            {
+                return (false, "");
             }
         }
 
