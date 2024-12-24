@@ -72,7 +72,8 @@ namespace PensionSystem.Services
             if (chequesList == null)
                 return null;
 
-            return await chequesList.Where(x => x.Amount == Amount && x.Date.Month == dateTime.Date.Month && x.Date.Year == dateTime.Date.Year && x.ChequeCategoryId == 1).FirstOrDefaultAsync();
+            return await chequesList
+                .Where(x => x.Amount == Amount && x.Date.Month == dateTime.Date.Month && x.Date.Year == dateTime.Date.Year && x.ChequeCategoryId == 1).FirstOrDefaultAsync();
         }
 
         public async Task<Cheque> GetCheque(int chequeId)
@@ -92,7 +93,9 @@ namespace PensionSystem.Services
                 return null;
             return await cContext
                 .Where(x => x.Date.Month == Month.Month && x.Date.Year == Month.Year && x.PDUId == PDUIId)
-                .OrderBy(c => c.Number).ThenBy(c => c.Date).ToListAsync();
+                .OrderByDescending(c => c.Date)
+                .ThenByDescending(c => c.Number)
+                .ToListAsync();
         }
 
         public async Task<int> GetChequeNumber(int PDUId)
@@ -114,7 +117,8 @@ namespace PensionSystem.Services
             return await cContext
                 .Include(x => x.ChequeCategory)
                 .Where(p => p.PDUId == PDUId)
-                .OrderByDescending(c => c.Date).ThenByDescending(n => n.Number).ToListAsync();
+                .OrderByDescending(c => c.Date)
+                .ThenByDescending(n => n.Number).ToListAsync();
         }
 
         public async Task<IEnumerable<ChequeOption>> GetOptions(int catId, int PDUId)
@@ -128,7 +132,9 @@ namespace PensionSystem.Services
             {
                 var cheques = await pCheques.
                     Where(c => c.ChequeCategoryId == catId && c.PDUId == PDUId)
-                    .OrderByDescending(x => x.Date).ToListAsync();
+                    .OrderByDescending(x => x.Date)
+                    .ThenByDescending(n => n.Number)
+                    .ToListAsync();
 
                 if (cheques != null)
                 {
@@ -151,8 +157,10 @@ namespace PensionSystem.Services
             };
             if (pCheques != null)
             {
-                var cheques = await pCheques.Where(x => x.PDUId == PDUId)
-                    .OrderByDescending(x => x.Date).ToListAsync();
+                var cheques = await pCheques
+                    .Where(x => x.PDUId == PDUId)
+                    .OrderByDescending(x => x.Date)
+                    .ThenByDescending(c => c.Number).ToListAsync();
 
                 if (cheques != null)
                 {
@@ -166,7 +174,7 @@ namespace PensionSystem.Services
             return options;
         }
 
-        public async Task<IEnumerable<ChequeOption>> GetOptionsUnpaid(int catId)
+        public async Task<IEnumerable<ChequeOption>> GetOptionsUnpaid(int catId, int PDUId)
         {
             var pCheques = _context.Cheque;
             var options = new List<ChequeOption>
@@ -176,8 +184,10 @@ namespace PensionSystem.Services
             if (pCheques != null)
             {
                 var cheques = await pCheques
-                    .Where(c => c.ChequeCategoryId == catId && c.IsLocked == false)
-                    .OrderByDescending(x => x.Date).ToListAsync();
+                    .Where(c => c.ChequeCategoryId == catId && c.IsLocked == false && c.PDUId == PDUId)
+                    .OrderByDescending(x => x.Date)
+                    .ThenByDescending(c => c.Number)
+                    .ToListAsync();
                 if (cheques != null)
                 {
                     options.Add(new ChequeOption { Value = 0, Text = "Select Option" });
@@ -190,7 +200,7 @@ namespace PensionSystem.Services
             return options;
         }
 
-        public async Task<IEnumerable<ChequeOption>> GetOptionsUnpaidTwoCats(int catId1, int catId2)
+        public async Task<IEnumerable<ChequeOption>> GetOptionsUnpaidTwoCats(int catId1, int catId2, int PDUId)
         {
             var pCheques = _context.Cheque;
             var options = new List<ChequeOption>
@@ -200,8 +210,11 @@ namespace PensionSystem.Services
             if (pCheques != null)
             {
                 var cheques = await pCheques
-                    .Where(c => (c.ChequeCategoryId == catId1 || c.ChequeCategoryId == catId2) && c.IsLocked == false)
-                    .OrderByDescending(x => x.Date).ToListAsync();
+                    .Where(c => (c.ChequeCategoryId == catId1 || c.ChequeCategoryId == catId2)
+                    && c.IsLocked == false && c.PDUId == PDUId)
+                    .OrderByDescending(x => x.Date)
+                    .ThenByDescending(c => c.Number)
+                    .ToListAsync();
                 if (cheques != null)
                 {
                     options.Add(new ChequeOption { Value = 0, Text = "Select Option" });
@@ -259,8 +272,6 @@ namespace PensionSystem.Services
             {
                 return (false, exc.ToString());
             }
-
-
         }
     }
 }

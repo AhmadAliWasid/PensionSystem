@@ -18,10 +18,7 @@ namespace PensionSystem.Services
             return companies != null ? await companies.OrderBy(x => x.Order).ToListAsync() : null;
         }
 
-        public async Task<List<Company>?> GetCompaniesByMonth(DateOnly month, int PDUIId)
-        {
-            return [];
-        }
+
 
         public async Task<List<SelectOptions>> GetOptions()
         {

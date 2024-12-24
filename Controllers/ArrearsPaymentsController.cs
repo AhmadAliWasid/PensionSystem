@@ -33,7 +33,8 @@ namespace PensionSystem.Controllers
             if (cContext != null)
             {
                 ViewData["ArrearsDemandId"] = new SelectList(await _AD.GetOptions(_sessionHelper.GetUserPDUId()), "Value", "Text");
-                var ArrearsPayments = await cContext.Include(x => x.Pensioner)
+                var ArrearsPayments = await cContext
+                    .Include(x => x.Pensioner)
                     .Include(y => y.ArrearsDemand)
                     .OrderBy(y => y.Pensioner.PPOSystem)
                     .ToListAsync();
@@ -78,6 +79,13 @@ namespace PensionSystem.Controllers
             JsonResponseHelper helper = new();
             if (ModelState.IsValid)
             {
+                var demand = await _AD.GetById(vM.ArrearsDemandId);
+                if (demand != null && demand.IsPaid) {
+                    helper.RText = "Demand is locked"!;
+                    helper.RCode = 0;
+                    return Json(helper);
+
+                }
                 var (IsSaved, Message) = vM.Id == 0 ? await _AP.Insert(vM) : await _AP.Update(vM);
                 helper.RCode = IsSaved ? 1 : 0;
                 helper.RText = Message;

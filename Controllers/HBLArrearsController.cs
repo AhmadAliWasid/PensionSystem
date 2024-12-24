@@ -13,34 +13,21 @@ using PensionSystem.ViewModels;
 namespace PensionSystem.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
-    public class HBLArrearsController : Controller
+    public class HBLArrearsController(ApplicationDbContext context, IHBLArrears hBLArrears,
+        IPensioner pensioner,
+        ICheque cheque,
+        IArrearsDemand arrearsDemand, IArrearsPayment arrearsPayment,
+        IBranch branch, SessionHelper sessionHelper, IBank bank) : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IHBLArrears _hblArrears;
-        private readonly IPensioner _pensioner;
-        private readonly ICheque _cheque;
-        private readonly IArrearsDemand _arrearsDemand;
-        private readonly IArrearsPayment _arrearsPayment;
-        private readonly IBranch _branch;
-        private readonly IBank _bank;
-        private readonly SessionHelper _sessionHelper;
-
-        public HBLArrearsController(ApplicationDbContext context, IHBLArrears hBLArrears,
-            IPensioner pensioner,
-            ICheque cheque,
-            IArrearsDemand arrearsDemand, IArrearsPayment arrearsPayment,
-            IBranch branch, SessionHelper sessionHelper, IBank bank)
-        {
-            _context = context;
-            _hblArrears = hBLArrears;
-            _pensioner = pensioner;
-            _cheque = cheque;
-            _arrearsDemand = arrearsDemand;
-            _arrearsPayment = arrearsPayment;
-            _branch = branch;
-            _sessionHelper = sessionHelper;
-            _bank = bank;
-        }
+        private readonly ApplicationDbContext _context = context;
+        private readonly IHBLArrears _hblArrears = hBLArrears;
+        private readonly IPensioner _pensioner = pensioner;
+        private readonly ICheque _cheque = cheque;
+        private readonly IArrearsDemand _arrearsDemand = arrearsDemand;
+        private readonly IArrearsPayment _arrearsPayment = arrearsPayment;
+        private readonly IBranch _branch = branch;
+        private readonly IBank _bank = bank;
+        private readonly SessionHelper _sessionHelper = sessionHelper;
 
         // GET: HBLArrears
         public async Task<IActionResult> Index()
@@ -50,7 +37,7 @@ namespace PensionSystem.Controllers
                 HBLArrears = await _hblArrears.Get()
             };
             ViewData["ArrearsDemandId"] = new SelectList(await _arrearsDemand.GetUnpaidOptions(_sessionHelper.GetUserPDUId()), "Value", "Text");
-            ViewData["ChequeId"] = new SelectList(await _cheque.GetOptionsUnpaid(2), "Value", "Text");
+            ViewData["ChequeId"] = new SelectList(await _cheque.GetOptionsUnpaid(2, _sessionHelper.GetUserPDUId()), "Value", "Text");
             ViewData["BankId"] = new SelectList(await _bank.GetOptions(), "Value", "Text");
             return View(model);
         }
@@ -77,7 +64,7 @@ namespace PensionSystem.Controllers
         // GET: HBLArrears/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["ChequeId"] = new SelectList(await _cheque.GetOptionsUnpaidTwoCats(2, 3), "Value", "Text");
+            ViewData["ChequeId"] = new SelectList(await _cheque.GetOptionsUnpaidTwoCats(2, 3, _sessionHelper.GetUserPDUId()), "Value", "Text");
             ViewData["PensionerId"] = new SelectList(await _pensioner.GetOptions(_sessionHelper.GetUserPDUId()), "Value", "Text");
             ViewData["BranchId"] = new SelectList(await _branch.GetOptions(), "Value", "Text");
             return View();

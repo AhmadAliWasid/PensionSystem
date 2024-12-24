@@ -41,7 +41,7 @@ namespace PensionSystem.Interfaces
         /// 2002. Marriage Grant
         /// </summary>
         /// <returns></returns>
-        public Task<IEnumerable<ChequeOption>> GetOptionsUnpaid(int catId);
+        public Task<IEnumerable<ChequeOption>> GetOptionsUnpaid(int catId,int PDUId);
 
         /// <summary>
         /// Get the options of Cheques for option
@@ -52,7 +52,7 @@ namespace PensionSystem.Interfaces
         /// 2002. Marriage Grant
         /// </summary>
         /// <returns></returns>
-        public Task<IEnumerable<ChequeOption>> GetOptionsUnpaidTwoCats(int catId1, int catId2);
+        public Task<IEnumerable<ChequeOption>> GetOptionsUnpaidTwoCats(int catId1, int catId2,int PDUId);
 
         /// <summary>
         /// Get the List of Last 1000 Cheques
