@@ -7,28 +7,23 @@ using PensionSystem.Data;
 using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
+using AutoMapper;
+using PensionSystem.Entities.DTOs;
+using WebAPI.ViewModels;
 
-namespace PensionSystem.Controllers
+namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
-    public class ChequesController : Controller
+    public class ChequesController(ApplicationDbContext context, ICheque cheque,
+        IChequeCategory chequeCategory, IMapper mapper, SessionHelper sessionHelper, IHttpClientFactory httpClientFactory, IConfiguration configuration) : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ICheque _cheque;
-        private readonly IChequeCategory _chequeCategory;
-        private readonly SessionHelper _sessionHelper;
-        private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IConfiguration _configuration;
-        public ChequesController(ApplicationDbContext context, ICheque cheque,
-            IChequeCategory chequeCategory, SessionHelper sessionHelper, IHttpClientFactory httpClientFactory, IConfiguration configuration)
-        {
-            _context = context;
-            _cheque = cheque;
-            _chequeCategory = chequeCategory;
-            _sessionHelper = sessionHelper;
-            _httpClientFactory = httpClientFactory;
-            _configuration = configuration;
-        }
+        private readonly ApplicationDbContext _context = context;
+        private readonly ICheque _cheque = cheque;
+        private readonly IChequeCategory _chequeCategory = chequeCategory;
+        private readonly SessionHelper _sessionHelper = sessionHelper;
+        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
+        private readonly IConfiguration _configuration = configuration;
+        private readonly IMapper _mapper = mapper;
 
         // GET: Cheques
         [HttpGet]
@@ -133,6 +128,22 @@ namespace PensionSystem.Controllers
         {
             return PartialView("_List",
                 await _cheque.GetList(_sessionHelper.GetUserPDUId()));
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetPV(int Id)
+        {
+            var record = new ChequeDTO();
+            _mapper.Map(await _cheque.GetById(Id), record);
+            var pvVM = new PVViewModel() { };
+            pvVM.ChequeDTOs = record;
+            pvVM.SessionViewModel = new SessionViewModel()
+            {
+                AMStamp = _sessionHelper.GetAMStamp(),
+                BaseStamp = _sessionHelper.GetBaseStamp(),
+                DMStamp = _sessionHelper.GetDMStamp(),
+            };
+            return PartialView("_PV", pvVM);
+
         }
     }
 }

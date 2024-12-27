@@ -51,27 +51,6 @@
     <!-- /.modal-dialog -->
 </div>
 <script>
-    function MarkItPaid(Id, element) {
-        if (Id != "") {
-            $.ajax({
-                type: "POST",
-                url: "@Url.Action("MarkItPaid")",
-                data: { Id: Id },
-                dataType: "text",
-                success: function (msg) {
-                    if (msg) {
-                        $(element).hide();
-                        $(element).parent().html("Paid");
-                    }
-                },
-                error: function (req, status, error) {
-                    alert(error);
-                }
-            });
-        }
-        else {
-            alert("no record selected")
-        }
-    }
+
 </script>
 

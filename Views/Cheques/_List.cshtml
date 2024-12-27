@@ -46,6 +46,7 @@
                                             }
                                             else
                                             {
+                                                <button class="btn btn-primary" onclick="GetPV(@item.Id)"><span class=" fa fa-lock">PV</span></button>
                                                 <button class="btn  btn-warning " onclick="MarkItPaid(@item.Id,this)"><span class="fa fa-lock"></span> Locked It</button>
                                                 <button asp-action="Edit" class="btn btn-warning" onclick="AddOrUpdate(@item.Id)"><i class="fa-solid fa-pen-to-square"></i> Edit</button>
                                                 <a asp-action="Delete" class="btn btn-danger" asp-route-id="@item.Id"><span class="fa fa-trash"></span> Delete</a>
@@ -91,8 +92,29 @@
         </div>
     </div>
 </div>
+<div id="contentPV">
+</div>
 <script>
-    function MarkItPaid(Id, element) {
+        function GetPV(Id) {
+        if (Id != "") {
+            $.ajax({
+                type: "GET",
+                url: "@Url.Action("GetPV")",
+                data: { Id: Id },
+                dataType: "text",
+                success: function (msg) {
+                    $("#contentPV").html(msg);
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
+        }
+        else {
+            alert("no record selected")
+        }
+    }
+        function MarkItPaid(Id, element) {
         if (Id != "") {
             $.ajax({
                 type: "POST",

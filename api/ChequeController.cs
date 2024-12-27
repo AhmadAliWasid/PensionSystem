@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using PensionSystem.DTOs;
+using PensionSystem.Entities.DTOs;
 using PensionSystem.Interfaces;
 
 namespace PensionSystem.api
