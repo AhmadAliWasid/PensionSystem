@@ -58,12 +58,12 @@ builder.Services.AddScoped<IUserPDU, UserPDUService>();
 builder.Services.AddScoped<ICashBook, CashBookService>();
 builder.Services.AddScoped<IWWFSanction, WWFSanctionService>();
 builder.Services.AddScoped<IWWFReimbursment, WWFReimbursmentService>();
+builder.Services.AddScoped<SessionHelper>();
 builder.Services.AddHttpClient();
 // automapper
 // Add AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 // scoped
-builder.Services.AddScoped<SessionHelper>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddMvc()
         .AddSessionStateTempDataProvider();

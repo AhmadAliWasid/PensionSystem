@@ -1,10 +1,23 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Pension.Entities.Helpers
 {
     public static class UserFormat
     {
+        public static string GetStringFormat(string text, int requiredLength)
+        {
+            if (text.Length < requiredLength)
+            {
+                int totalPadding = requiredLength - text.Length;
+                int padLeft = totalPadding / 2;
+                int padRight = totalPadding - padLeft;
+
+                text = text.PadLeft(text.Length + padLeft, '_').PadRight(requiredLength, '_');
+            }
+            return text;
+        }
         public static string GetCNIC(string? CNIC)
         {
             if (CNIC == null) return "";

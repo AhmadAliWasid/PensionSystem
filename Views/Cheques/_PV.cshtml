@@ -1,12 +1,13 @@
 ﻿@using Pension.Entities.Helpers
 @using PensionSystem.Helpers
 @model WebAPI.ViewModels.PVViewModel
-<link href="~/css/print.css" type="text/css" rel="stylesheet" media="all" />
+
 @if (Model != null)
 {
 
     <div id="printDiv">
         <link href="/lib/print/print.min.css" rel="stylesheet" type="text/css" />
+        <link href="~/css/print.css" type="text/css" rel="stylesheet" media="all" />
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" media="all" />
         <div class="card-body">
             <div class="row">

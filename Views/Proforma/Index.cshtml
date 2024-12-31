@@ -78,7 +78,7 @@
                 data: { "id": id },
                 success: function (response) {
                     $("#form").html(response);
-                    @* printProforma(); *@
+                    printProforma();
                 },
                 failure: function (response) {
                     var err = eval("(" + xhr.responseText + ")");

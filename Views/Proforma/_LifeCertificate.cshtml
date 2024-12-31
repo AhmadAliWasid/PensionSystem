@@ -3,33 +3,33 @@
 
 @if (Model != null)
 {
+    string guardianName = string.Empty; ;
+    if (Model.Relation.Name != null && Model.Relation.Name.Equals("Self"))
+    {
+        guardianName = Model.FatherName;
+    }
+    else
+    {
+        guardianName = Model.Name;
+    }
     <div id="printDiv" style="width: 700px;max-width: 700px;padding:5px; font-size:12px;">
-        @if (Model != null)
-        {
-            string guardianName = string.Empty;
-            <div id="page">
-                <div id="p1" style="overflow: hidden; position: relative; background-color: white; width: 935px; height: 1210px;">
-                    <div class="text-container">
-                        <h2 class="text-center text-underline" style="text-decoration:underline;">ALIVE CERTIFICATE</h2>
-                        <h3 class="text-center text-underline" style="text-decoration:underline;">(VALID FOR SIX MONTHS ONLY)</h3>
-                        <p class="text-justify" style="line-height:30px; font-size:80px;">
-                            it is certified that <u style="">@Model.Claimant</u>  S/O, Wd/O, D/O,M/O <br />
-                            @if (Model.Relation.Name != null && Model.Relation.Name.Equals("Self"))
-                            {
-                                guardianName = Model.FatherName;
-                            }
-                            else
-                            {
-                                guardianName = Model.Name;
-                            }
-                            <u>@guardianName</u> having CNIC No. <u>@Model.ClaimantCNIC </u> <br />
-                            bearing PPO No. @Model.PPONumber Mobile # <u>@Model.Mobile</u> resident of <br />
-                            <u>@Model.Address</u> called on me as on ___________________________________ and he/she is ALIVE.
-                        </p>
-                    </div>
-                </div>
+        <div id="page first-page">
+            <div class="row">
+                <h2 class="text-center text-underline" style="text-decoration:underline;">ALIVE CERTIFICATE</h2>
+                <h3 class="text-center text-underline" style="text-decoration:underline;">(VALID FOR SIX MONTHS ONLY)</h3>
+                <p class="text-justify" style="line-height:30px; font-size:200px;">
+                    it is certified that Mr/Mst/Miss. <u style="">@UserFormat.GetStringFormat(Model.Claimant, 50)</u>  S/O, Wd/O, D/O,M/O
+                    <u>@UserFormat.GetStringFormat(guardianName, 30)</u> having CNIC No. <u>@UserFormat.GetStringFormat(Model.ClaimantCNIC, 40) </u>
+                    bearing PPO No. @Model.PPONumber Mobile # <u>@Model.Mobile</u> resident of
+                    <u>@Model.Address</u> called on me as on ___________________________________ and he/she is ALIVE.
+                </p>
             </div>
-        }
+
+            <div class="row" style="margin-top:10px; display:flow;">
+
+                <img src="~/img/attestation.png" width="100%" alt="attestation" />
+            </div>
+        </div>
     </div>
 }
 else
