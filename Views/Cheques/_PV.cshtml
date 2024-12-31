@@ -40,27 +40,27 @@
 
             </div>
 
-            <div class="">
+            <div class="row">
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Division :</th>
+                            <th class="text-end">Division :</th>
                             <th colspan="2">@Model.SessionViewModel.BaseStamp</th>
-                            <th></th>
-                            <th>PV No.</th>
+                            <th style="border-top:none;border-bottom:none;"></th>
+                            <th class="text-end">PV No.</th>
                             <th></th>
 
                         </tr>
                         <tr>
-                            <th rowspan="2" style=" vertical-align: middle;">Payee :</th>
+                            <th rowspan="2" style=" vertical-align: middle;" class="text-end">Payee :</th>
                             <th colspan="2" rowspan="2" style=" vertical-align: middle;">@Model.ChequeDTOs.Name</th>
-                            <th></th>
-                            <th>Cheque Date.</th>
+                            <th style="border-top:none;border-bottom:none;"></th>
+                            <th class="text-end">Cheque Date.</th>
                             <th>@UserFormat.GetDate(Model.ChequeDTOs.Date)</th>
                         </tr>
                         <tr>
-                            <th></th>
-                            <th>Cheque Number.</th>
+                            <th style="border-top:none;border-bottom:none;"></th>
+                            <th class="text-end">Cheque Number.</th>
                             <th>@Model.ChequeDTOs.Number</th>
                         </tr>
                     </thead>
@@ -70,7 +70,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th width="40%">Particulars</th>
+                            <th class="col-6">Particulars</th>
                             <th>Details</th>
                             <th>Code</th>
                             <th>Amount</th>

@@ -109,7 +109,8 @@
                     <th>PPO </th>
                     <th>Claimant</th>
                     <th>CNIC</th>
-                    @* <th>Bank</th> *@
+                    <th>Br.Name</th>
+                    <th>Br.Code</th>
                     <th>Ac#</th>
                     <th>MP</th>
                     <th>CMA</th>
@@ -132,8 +133,9 @@
                         {
                             <td colspan="3">N/A</td>
                         }
-                        @* <td>@item.Branch.Bank.ShortName (@item.Branch.Name)</td> *@
-                        <td>@item.Branch.Code-@item.AccountNumber</td>
+                        <td>@item.Branch.Name</td>
+                        <td>@item.Branch.Code</td>
+                        <td>@item.AccountNumber</td>
                         <td>@UserFormat.GetAmount(item.MonthlyPension)</td>
                         <td>@UserFormat.GetAmount(item.CMA)</td>
                         <td>@UserFormat.GetAmount(item.OrderlyAllowance)</td>
@@ -227,7 +229,7 @@
                         },
 
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8,9]
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8,9,10]
                         },
                         title: '',
                         message: '',
