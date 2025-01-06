@@ -18,25 +18,25 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label asp-for="From" class="control-label"></label>
-                <input asp-for="From" class="form-control" type="date" />
+                <input asp-for="From" onblur="monthCalculator" class="form-control" type="date" />
                 <span asp-validation-for="From" class="text-danger"></span>
             </div>
         </div>
         <div class="col-md-6 form-group">
             <label asp-for="To" class="control-label"></label>
-            <input asp-for="To" class="form-control" type="date" />
+            <input asp-for="To" onblur="monthCalculator" class="form-control" type="date" />
             <span asp-validation-for="To" class="text-danger"></span>
         </div>
     </div>
     <div class="row">
         <div class="col-md-4 form-group">
             <label asp-for="Months" class="control-label"></label>
-            <input asp-for="Months" class="form-control" />
+            <input asp-for="Months" class="form-control" onchange="calculateTotal()" />
             <span asp-validation-for="Months" class="text-danger"></span>
         </div>
         <div class="col-md-4 form-group">
             <label asp-for="Rate" class="control-label"></label>
-            <input asp-for="Rate" class="form-control" />
+            <input asp-for="Rate" class="form-control" onchange="calculateTotal()" />
             <span asp-validation-for="Rate" class="text-danger"></span>
         </div>
         <div class="col-md-4 form-group">
@@ -66,13 +66,45 @@
         </div>
         <div class="col-md-9">
             <div class="form-group">
-                @if(Model.Id != 0){
+                @if (string.IsNullOrEmpty(Model.Remarks))
+                {
                     Model.Remarks = "-";
                 }
                 <label asp-for="Remarks" class="control-label"></label>
-                <input asp-for="Remarks" class="form-control"  />
+                <input asp-for="Remarks" class="form-control" />
                 <span asp-validation-for="Remarks" class="text-danger"></span>
             </div>
         </div>
     </div>
 </form>
+<script>
+        function calculateTotal() {
+            var months = parseFloat(document.getElementById('Months').value);
+            var rate = parseFloat(document.getElementById('Rate').value);
+            var amount = document.getElementById('Amount');
+
+            if (!isNaN(months) && !isNaN(rate)) {
+                var total = months * rate;
+                amount.value = total.toFixed(2); // Ensure two decimal places
+            }
+        }
+    function monthCalculator()
+    {
+        var fromDate = new Date(document.getElementById('From').value);
+        var toDate = new Date(document.getElementById('To').value);
+        var months = document.getElementById('Months');
+        if (fromDate && toDate && !isNaN(fromDate) && !isNaN(toDate))
+        {
+            var yearDiff = toDate.getFullYear() - fromDate.getFullYear();
+            var monthDiff = toDate.getMonth() - fromDate.getMonth();
+            // If the day of the month for "from" is the first and "to" is the last day of the month
+            var fromIsFirst = fromDate.getDate() === 1;
+            var toIsLast = [31, 30].includes(toDate.getDate()) || toDate.getDate() === (new Date(toDate.getFullYear(), toDate.getMonth() + 1, 0)).getDate();
+            var totalMonths = yearDiff * 12 + monthDiff; if (fromIsFirst && toIsLast)
+            { totalMonths += 1; }
+            months.value = totalMonths; 
+        }
+        }
+
+
+</script>

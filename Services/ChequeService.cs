@@ -93,8 +93,8 @@ namespace PensionSystem.Services
                 return null;
             return await cContext
                 .Where(x => x.Date.Month == Month.Month && x.Date.Year == Month.Year && x.PDUId == PDUIId)
-                .OrderByDescending(c => c.Date)
-                .ThenByDescending(c => c.Number)
+                .OrderBy(c => c.Date)
+                .ThenBy(c => c.Number)
                 .ToListAsync();
         }
 
