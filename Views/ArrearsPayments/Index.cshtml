@@ -1,26 +1,133 @@
 ﻿@using Pension.Entities.Helpers
+@model PensionSystem.Entities.DTOs.ArrearPaymentDTO
 @{
     ViewData["Title"] = "Pension Arrears ";
     ViewData["SubTitle"] = "Payments";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 
 <div class="card">
     <div class="card-header">
-        <div class="row">
-            <div class="col-md-2">
-                <button class="btn btn-primary" onclick="AddOrUpdate(0)"><i class="fa fa-plus"></i> Add New Crud</button>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <select id="ArrearsDemandId" class="form-control" asp-items="ViewBag.ArrearsDemandId"></select>
+        <div class="card-title">
+            <h3>Add/Edit Arrear Payment</h3>
+        </div>
+    </div>
+    <div class="card-body">
+
+        <form id="CreateUpdate">
+            <div id="ErrorMesssage"></div>
+            <input asp-for="Id" type="hidden" />
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="ArrearsDemandId" class="control-label"></label>
+                        <select asp-for="ArrearsDemandId" class="form-control" asp-items="ViewBag.ArrearsDemandId" onchange="getDemandList()"></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Month" class="control-label"></label>
+                        <input asp-for="Month" type="month" class="form-control" />
+                        <span asp-validation-for="Month" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="PensionerId" class="control-label"></label>
+                        <select asp-for="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
+                        <span asp-validation-for="PensionerId" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-2">
-                <button class="btn btn-info" id="GetDemandList"><i class="fa fa-list"></i> Get Demand</button>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="MP" class="control-label"></label>
+                        <input asp-for="MP" class="form-control" onblur="calculateNet()" />
+                        <span asp-validation-for="MP" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="CMA" class="control-label"></label>
+                        <input asp-for="CMA" class="form-control" onblur="calculateNet()" />
+                        <span asp-validation-for="CMA" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Orderly" class="control-label"></label>
+                        <input asp-for="Orderly" class="form-control" onblur="calculateNet()" />
+                        <span asp-validation-for="Orderly" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="NetPension" class="control-label"></label>
+                        <input asp-for="NetPension" onblur="CalculateAmount()" class="form-control" />
+                        <span asp-validation-for="NetPension" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-2">
-                <button class="btn btn-info" id="ClearDemandButton"><i class="fa fa-list"></i> Clear </button>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="FromMonth" class="control-label"></label>
+                        <input asp-for="FromMonth" onchange="calculateMonths()" onblur="CalculateAmount()" onfocusout="CheckValidity()" type="date" class="form-control" />
+                        <span asp-validation-for="FromMonth" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="ToMonth" class="control-label"></label>
+                        <input asp-for="ToMonth" type="date" onchange="calculateMonths()" onblur="CalculateAmount()" onfocusout="CheckValidity()" class="form-control" />
+                        <span asp-validation-for="ToMonth" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="NumberOfMonths" class="control-label"></label>
+                        <input asp-for="NumberOfMonths" class="form-control" onblur="CalculateAmount()" />
+                        <span asp-validation-for="NumberOfMonths" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Total" class="control-label"></label>
+                        <input asp-for="Total" class="form-control" />
+                        <span asp-validation-for="Total" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="card-footer">
+            <div class="">
+                <button type="button" class="btn btn-primary" onclick="Save()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <select id="ArrearsDemandId" class="form-control" asp-items="ViewBag.ArrearsDemandId" onchange="getDemandList()"></select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-info" id="ClearDemandButton"><i class="fa fa-list"></i> Clear Demand</button>
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-primary" onclick="AddOrUpdate(0)"><i class="fa fa-plus"></i> Add New Crud</button>
             </div>
         </div>
     </div>
@@ -68,9 +175,6 @@
 </div>
 <script>
     $(document).ready(function (e) {
-        $("#GetDemandList").click(function (e) {
-            getDemandList();
-        });
         $("#ClearDemandButton").click(function (e) {
             var ArrearsDemandId = $("#ArrearsDemandId").val();
             if (ArrearsDemandId != "") {
@@ -96,7 +200,83 @@
                 });
             }
         });
+        $("#PensionerId").change(function (e) {
+            var pensionerId = $(this).val();
+            if (pensionerId != null) {
+                $.ajax({
+                    type: "POST",
+                    url: "@Url.Action("GetInfo")",
+                    data: { "id": pensionerId },
+                    success: function (response) {
+                        if (response != null) {
+                            $("#MP").val(response.MonthlyPension);
+                            $("#CMA").val(response.CMA);
+                            $("#Orderly").val(response.OrderelyAllowence);
+                            $("#NetPension").val(response.Total);
+                            CalucateTotal();
+                        }
+                    },
+                    failure: function (response) {
+                        alert(response.responseText);
+                    },
+                    error: function (response) {
+                        alert(response.responseText);
+                    }
+                });
+            }
+        });
     });
+    function calculateMonths() {
+        var fromDate = new Date(document.getElementById("FromMonth").value);
+        var toDate = new Date(document.getElementById("ToMonth").value);
+        if (fromDate && toDate && !isNaN(fromDate) && !isNaN(toDate))
+        { var months = (toDate.getFullYear() - fromDate.getFullYear()) * 12; months -= fromDate.getMonth(); months += toDate.getMonth();
+            // Check if toDate is after the end of the fromDate month
+            if (toDate.getDate() >= fromDate.getDate()) { months++; } // Ensure the months value is non-negative
+            months = months > 0 ? months : 0;
+            document.getElementById("NumberOfMonths").value = months;
+        }
+    }
+     function calculateNet() {
+        var MP = $("#MP").val();
+        var CMA = $("#CMA").val();
+        var Orderly = $("#Orderly").val();
+        MP = parseInt(MP);
+        CMA = parseInt(CMA);
+        Orderly = parseInt(Orderly);
+        $("#NetPension").val(MP+CMA+Orderly);
+    }
+        function CalucateTotal() {
+        var From = $("#FromMonth").val();
+        var To = $("#ToMonth").val();
+        if (From != "" && To != "") {
+            $.ajax({
+                type: "POST",
+                url: "@Url.Action("CalculateMonths", "WWFBill")",
+                data: { StartingMonth: From, EndingMonth: To },
+                dataType: "text",
+                success: function (msg) {
+                    $("#NumberOfMonths").val(msg);
+                    CalculateAmount();
+                },
+                error: function (req, status, error) {
+                    console.log(msg);
+                }
+            });
+        }
+        else {
+            $('#btnSubmit').prop('disabled', true);
+        }
+    }
+
+    function CalculateAmount() {
+        var Months = $("#NumberOfMonths").val();
+        var NetAmount = $("#NetPension").val();
+        Months = parseInt(Months);
+        NetAmount = parseInt(NetAmount);
+        var Total = Months * NetAmount;
+        $("#Total").val(Total);
+    }
     function getDemandList() {
         var ArrearsDemandId = $("#ArrearsDemandId").val();
         if (ArrearsDemandId != "") {

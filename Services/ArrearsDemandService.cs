@@ -61,9 +61,9 @@ namespace WebAPI.Services
             return null;
         }
 
-        public Task<ArrearsDemand?> GetById(object id)
+        public async Task<ArrearsDemand?> GetById(object id)
         {
-            throw new NotImplementedException();
+            return await Table.FirstOrDefaultAsync(x => x.Id == (int)id);
         }
 
         public async Task<ArrearsDemand?> GetByNumber(int number)

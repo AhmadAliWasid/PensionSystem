@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pension.Entities.Helpers;
 using PensionSystem.Data;
+using PensionSystem.Entities.DTOs;
 using PensionSystem.Entities.Models;
 using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
@@ -29,25 +30,14 @@ namespace PensionSystem.Controllers
         // GET: ArrearsPayments
         public async Task<IActionResult> Index()
         {
-            var cContext = _context.ArrearsPayments;
-            if (cContext != null)
+            ViewData["ArrearsDemandId"] = new SelectList(await _AD.GetOptions(_sessionHelper.GetUserPDUId()), "Value", "Text");
+            ViewData["PensionerId"] = new SelectList(await _IP.GetOptions(_sessionHelper.GetUserPDUId()), "Value", "Text");
+            return View(new ArrearPaymentDTO()
             {
-                ViewData["ArrearsDemandId"] = new SelectList(await _AD.GetOptions(_sessionHelper.GetUserPDUId()), "Value", "Text");
-                var ArrearsPayments = await cContext
-                    .Include(x => x.Pensioner)
-                    .Include(y => y.ArrearsDemand)
-                    .OrderBy(y => y.Pensioner.PPOSystem)
-                    .ToListAsync();
-                ArrearsPaymentViewModel model = new()
-                {
-                    ArrearsPayments = ArrearsPayments
-                };
-                return View(model);
-            }
-            else
-            {
-                return View();
-            }
+                FromMonth = DateTime.Now,
+                ToMonth = DateTime.Now,
+                Month = DateTime.Now,
+            });
         }
         public async Task<IActionResult> Crud(int id)
         {
@@ -80,7 +70,8 @@ namespace PensionSystem.Controllers
             if (ModelState.IsValid)
             {
                 var demand = await _AD.GetById(vM.ArrearsDemandId);
-                if (demand != null && demand.IsPaid) {
+                if (demand != null && demand.IsPaid)
+                {
                     helper.RText = "Demand is locked"!;
                     helper.RCode = 0;
                     return Json(helper);
