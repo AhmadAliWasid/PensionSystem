@@ -9,6 +9,7 @@
     decimal BankCommision = 0;
     decimal ClosingBalance = 0;
     decimal OpeningBalance = 0;
+    decimal cashOutWithCheque = 0;
     decimal tempClosingBalance = 0;
     int totalCompanies = 0;
     if (Model.CashBookCompanyVMs != null)
@@ -132,6 +133,8 @@
                             if (Entry != null)
                             {
                                 tempClosingBalance -= Entry.Amount;
+                                // its the cheque determined balance
+                                cashOutWithCheque += Entry.Amount;
                                 <tr>
                                     <td></td>
                                     <td>@Entry.Date.ToString("dd-MM-yyyy")</td>
@@ -321,7 +324,7 @@
                 <th></th>
                 <th></th>
                 <th></th>
-                <th>@UserFormat.GetAmount((selfPension + familyPension))</th>
+                <th>@UserFormat.GetAmount(cashOutWithCheque)</th>
                 <th>@UserFormat.GetAmount(BankCommision)</th>
                 <th>@UserFormat.GetAmount(TotalCommutation) </th>
                 <th>@UserFormat.GetAmount((selfPension))</th>
