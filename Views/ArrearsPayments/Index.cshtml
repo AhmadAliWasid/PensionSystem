@@ -14,7 +14,6 @@
         </div>
     </div>
     <div class="card-body">
-
         <form id="CreateUpdate">
             <div id="ErrorMesssage"></div>
             <input asp-for="Id" type="hidden" />
@@ -110,7 +109,7 @@
         </form>
         <div class="card-footer">
             <div class="">
-                <button type="button" class="btn btn-primary" onclick="Save()">Save</button>
+                <button type="button" class="btn btn-primary" onclick="SaveArrearPayment()">Save</button>
             </div>
         </div>
     </div>
@@ -166,7 +165,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="Save()">Save changes</button>
+                <button type="button" class="btn btn-primary" onclick="SaveArrearPayment()">Save changes</button>
             </div>
         </div>
         <!-- /.modal-content -->
@@ -226,6 +225,15 @@
             }
         });
     });
+        function SaveArrearPayment() {
+        var formData = $("#CreateUpdate").serialize();
+        $.post("@Url.Action("Save")", formData, function() {
+            getDemandList();
+        }).fail(function(req, status, error) {
+            alert(error);
+        });
+    }
+
     function calculateMonths() {
         var fromDate = new Date(document.getElementById("FromMonth").value);
         var toDate = new Date(document.getElementById("ToMonth").value);

@@ -309,18 +309,25 @@ namespace PensionSystem.Services
                 return "Error";
             try
             {
-                var myContext = _context.PensionerPayments;
+                var myContext = _context
+                    .PensionerPayments;
                 if (myContext == null)
                     return "Error";
-                var monthlyPensionDemand = await _context.MonthlyPensionDemands.FindAsync(DemandId);
+                var monthlyPensionDemand = await _context
+                    .MonthlyPensionDemands.FindAsync(DemandId);
                 if (monthlyPensionDemand == null)
                     return "Error";
                 // making sure the cheque exists
 
-                var demandList = await myContext.Include(p => p.Pensioner).Include(b => b.Pensioner.Branch)
-                                                         .Where(x => x.MonthlyPensionDemandId == DemandId
+                var demandList = await myContext
+                    .Include(p => p.Pensioner)
+                    .Include(b => b.Pensioner.Branch)
+                    .Where(x => x.MonthlyPensionDemandId == DemandId
                                                          && x.Pensioner.Branch.BankId == BankId
-                                                         && x.NetPension > 0).ToListAsync();
+                                                         && x.CertificateVerified
+                                                         && x.PhysicallyVerified
+                                                         && x.NetPension > 0)
+                                                         .ToListAsync();
                 if (demandList == null)
                     return "Error";
                 var hblContext = _context.HBLPayments;

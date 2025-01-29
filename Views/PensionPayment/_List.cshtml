@@ -7,6 +7,7 @@
     int relationId = 0;
     decimal difference = 0;
     decimal TotalDifference = 0;
+    decimal netPayable = 0;
     int serial = 1;
     <div class="card">
         <div class="card-header">
@@ -73,6 +74,8 @@
                     <thead>
                         <tr>
                             <th>Action</th>
+                            <th>Certificate</th>
+                            <th>Physically</th>
                             <th>S#</th>
                             <th>PPO#</th>
                             <th>Claimant</th>
@@ -83,12 +86,10 @@
                             <th>CMA</th>
                             <th>Orderly</th>
                             <th>Recovery</th>
-                            <th>Net</th>
-                            @*                             <th>Last Month</th>
-                        <th>Difference</th> *@
+                            <th>Total</th>
+                            <th>Payable</th>
                             <th>Remarks</th>
-                            <th>Certificate</th>
-                            <th>Physically</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -105,6 +106,26 @@
                             relationId = item.Pensioner.RelationId;
                             <tr style='color: @((item.CertificateVerified || item.NetPension == 0)? "green": "red")'>
                                 <td><button class="btn btn-sm btn-warning" onclick="getUpdate(@item.Id)"><i class="fa fa-edit"></i> Edit</button></td>
+                                <td>
+                                    @if (!item.CertificateVerified)
+                                    {
+                                        <button type="button" class="btn bg-gradient-primary btn-sm" onclick="VerifyCertificate(@item.Id,this)"><i class="fas fa-check-square"></i> Verify</button>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-green"><i class="fas fa-check-square"></i> Verified</div>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.PhysicallyVerified)
+                                    {
+                                        <span>Verified</span>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn bg-gradient-warning btn-sm" onclick="VerifyPhysically(@item.Id,this)"><i class="fas fa-check-circle"></i> Verify</button>
+                                    }
+                                </td>
                                 <td>@serial</td>
                                 <td>@item.Pensioner.PPOSystem</td>
                                 <td>
@@ -135,6 +156,15 @@
                                 <td>@UserFormat.GetAmount(item.OrderelyAllowence)</td>
                                 <td>@UserFormat.GetAmount(item.Deduction)</td>
                                 <td>@UserFormat.GetAmount(item.NetPension)</td>
+                                @if (item.CertificateVerified && item.PhysicallyVerified)
+                                {
+                                    netPayable += item.NetPension;
+                                    <td>@UserFormat.GetAmount(item.NetPension)</td>
+                                }
+                                else
+                                {
+                                    <td>-</td>
+                                }
                                 @* remarks column *@
                                 <td>
                                     @if (difference > 0)
@@ -148,26 +178,6 @@
                                     @UserFormat.GetAmount(difference)
                                 </td>
 
-                                <td>
-                                    @if (!item.CertificateVerified)
-                                    {
-                                        <button type="button" class="btn btn-block bg-gradient-primary" onclick="VerifyCertificate(@item.Id,this)"><i class="fas fa-check-square"></i> Verify</button>
-                                    }
-                                    else
-                                    {
-                                        <div class="text-green"><i class="fas fa-check-square"></i> Verified</div>
-                                    }
-                                </td>
-                                <td>
-                                    @if (item.PhysicallyVerified)
-                                    {
-                                        <span>Verified</span>
-                                    }
-                                    else
-                                    {
-                                        <button type="button" class="btn btn-block bg-gradient-warning" onclick="VerifyPhysically(@item.Id,this)"><i class="fas fa-check-circle"></i> Verify</button>
-                                    }
-                                </td>
                             </tr>
                             serial++;
                             difference = 0;
@@ -187,12 +197,11 @@
                                     <th>CMA : @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.CMA))</th>
                                     <th>Orderly : @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.OrderelyAllowence))</th>
                                     <th>Deduction : @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.Deduction))</th>
-                                    <th>Total : @UserFormat.GetAmount(Total)</th>
-                                    @* /* <th>Last Month : @UserFormat.GetAmount(Model.LastMonthList.Sum(x => x.NetPension))</th> */
-                            <th>Difference : @UserFormat.GetAmount(Difference)</th>*@
+                                    <th>Total : @UserFormat.GetAmount(netPayable)</th>
+
                                 </tr>
                                 <tr>
-                                    <th colspan="7">Rupees : @Calculation.ConvertAmount((double)Total)</th>
+                                    <th colspan="7">Rupees : @Calculation.ConvertAmount((double)netPayable)</th>
                                 </tr>
                             }
                         </thead>
@@ -293,7 +302,7 @@
                         title: '',
                         message: '',
                         exportOptions: {
-                            columns: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,12]
+                            columns: [ 3, 4, 5, 6, 7, 8, 9, 10, 11,12,13,14,15]
                         }
                     },
                     'excel',

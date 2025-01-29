@@ -159,24 +159,6 @@
             }
         });
     });
-    function getDemand() {
-        var ArrearsDemandId = $("#ArrearsDemandId").val();
-        if (ArrearsDemandId != "" && ArrearsDemandId != 0) {
-            awaitHtmlElement("#demandList");
-            $.ajax({
-                type: "GET",
-                url: "@Url.Action("GetDemandList")",
-                data: { demandId: ArrearsDemandId },
-                dataType: "text",
-                success: function (msg) {
-                    $("#demandList").html(msg);
-                },
-                error: function (req, status, error) {
-                    $("#demandList").html("<div class='alert alert-danger'>res: " + req + " status :" + status + " error : " + error + "</div>");
-                }
-            });
-        }
-    }
     function CalucateTotal() {
         var From = $("#FromMonth").val();
         var To = $("#ToMonth").val();
