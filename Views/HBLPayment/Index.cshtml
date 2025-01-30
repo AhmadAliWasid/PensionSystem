@@ -12,39 +12,8 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="control-label">Month</label>
-                        <input type="month" class="form-control" id="month" name="month" min="2021-08" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM")" max="@DateTime.Now.ToString("yyyy-MM")">
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <label class="control-label">Click For Month</label>
-                    <button type="button" class="btn btn-primary form-control" id="button-get-list">Get by Month</button>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
                         <label class="control-label">Demand</label>
-                        <select asp-for="DemandId" class="form-control" asp-items="ViewBag.DemandId"></select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="control-label">Click</label>
-                        <button type="button" class="btn btn-primary form-control" id="btnGetDemand">Get By Demand</button>
-                    </div>
-                </div>
-
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="control-label">Cheque No</label>
-                        <select asp-for="ChequeId" class="form-control" asp-items="ViewBag.ChequeId"></select>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label class="control-label">Click</label>
-                        <button type="button" class="btn btn-primary form-control" id="btnGetByCheque">Get by Cheque</button>
+                        <select asp-for="DemandId" class="form-control" asp-items="ViewBag.DemandId" onchange="getDemandList(this)"></select>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -55,8 +24,14 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label class="control-label">Pay</label>
-                        <button type="button" class="btn btn-primary form-control" id="btnPayNow">PayNow</button>
+                        <label class="control-label">Cheque</label>
+                        <select asp-for="ChequeId" class="form-control" asp-items="ViewBag.ChequeId" onchange="getCheque(this)"></select>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label class="control-label"></label>
+                        <button type="button" class="btn btn-primary form-control" id="btnPayNow">Add To Cheque</button>
                     </div>
                 </div>
             </div>
@@ -82,60 +57,6 @@
 
 <script>
     $(document).ready(function (e) {
-        $("#button-get-list").click(function (e) {
-            var date = $("#month").val();
-            if (date != "") {
-                awaitHtmlElement("#content");
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("GetList")",
-                    data: { month: date },
-                    dataType: "text",
-                    success: function (msg) {
-                        $("#content").html(msg);
-                    },
-                    error: function (req, status, error) {
-                        alert(error);
-                    }
-                });
-            }
-        });
-        $("#btnGetDemand").click(function (e) {
-            var DemandId = $("#DemandId").val();
-            if (DemandId != "") {
-                awaitHtmlElement("#content");
-                $.ajax({
-                    type: "GET",
-                    url: "@Url.Action("GetListByDemandId","PensionPayment")",
-                    data: { monthlyPensionDemandId: DemandId },
-                    dataType: "text",
-                    success: function (msg) {
-                        $("#content").html(msg);
-                    },
-                    error: function (req, status, error) {
-                        $("#content").html(error);
-                    }
-                });
-            }
-        });
-        $("#btnGetByCheque").click(function (e) {
-            var ChequeId = $("#ChequeId").val();
-            if (ChequeId != "") {
-                awaitHtmlElement("#content");
-                $.ajax({
-                    type: "GET",
-                    url: "@Url.Action("GetByChequeId")",
-                    data: { ChequeId: ChequeId },
-                    dataType: "text",
-                    success: function (msg) {
-                        $("#content").html(msg);
-                    },
-                    error: function (req, status, error) {
-                        $("#content").html(eval(req) + " " + error + " " + status);
-                    }
-                });
-            }
-        });
         $("#btnPayNow").click(function (e) {
             var ChequeId = $("#ChequeId").val();
             var DemandId = $("#DemandId").val();
@@ -162,6 +83,42 @@
         });
 
     });
+    function getCheque(element){
+          var ChequeId = $(element).val();
+            if (ChequeId != "") {
+                awaitHtmlElement("#content");
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetByChequeId")",
+                    data: { ChequeId: ChequeId },
+                    dataType: "text",
+                    success: function (msg) {
+                        $("#content").html(msg);
+                    },
+                    error: function (req, status, error) {
+                        $("#content").html(eval(req) + " " + error + " " + status);
+                    }
+                });
+            }
+    }
+    function getDemandList(element){
+            var DemandId = $(element).val();
+            if (DemandId != "") {
+                awaitHtmlElement("#content");
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("GetListByDemandId", "PensionPayment")",
+                    data: { monthlyPensionDemandId: DemandId },
+                    dataType: "text",
+                    success: function (msg) {
+                        $("#content").html(msg);
+                    },
+                    error: function (req, status, error) {
+                        $("#content").html(error);
+                    }
+                });
+            }
+    }
     function SendSMSByChequeId() {
         var ChequeId = $("#ChequeId").val();
         if (window.confirm("Are You Sure to Sent SMS To All Pensioner")) {

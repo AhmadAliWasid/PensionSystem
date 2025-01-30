@@ -30,7 +30,12 @@ namespace Pension.Entities.Helpers
                 return "N/A";
             }
         }
-
+        public static string GetCurrentDate()
+        {
+            DateTime dateTime = DateTime.UtcNow;
+            dateTime = dateTime.AddHours(5);
+            return dateTime.ToString("yyyy-MM-dd");
+        }
         public static string GetDate(DateTime? dateTime)
         {
             if (dateTime.HasValue)

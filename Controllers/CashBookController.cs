@@ -8,7 +8,7 @@ using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
 
-namespace PensionSystem.Controllers
+namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
     public class CashBookController : Controller
