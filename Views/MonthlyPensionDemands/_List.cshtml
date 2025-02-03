@@ -1,39 +1,41 @@
 ﻿@using Pension.Entities.Helpers
 @using PensionSystem.Entities.DTOs
-@model List<MPDemandDTO>
+@model PensionSystem.ViewModels.MonthlyPensionDemandVM
 
 @{
     Layout = null;
 }
-
-@if (Model != null)
+@if (Model != null && Model.MonthlyPensionDemands != null && Model.PensionerPayments != null)
 {
-    <table class="table">
+    var demands = Model.MonthlyPensionDemands;
+    var payments = Model.PensionerPayments;
+    <table class="table table-bordered" id="data-table">
         <thead>
             <tr>
-                <th>Description</th>
                 <th>Number</th>
                 <th>Date</th>
+                <th>Description</th>
                 <th>Amount</th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in demands)
             {
                 <tr>
-                    <td>@item.Description</td>
                     <td>@item.Number</td>
                     <td>@UserFormat.GetDate(item.Date)</td>
+                    <td>@item.Description</td>
                     <td>
-                        -
+                        @UserFormat.GetAmount(payments
+                                 .Where(c => c.MonthlyPensionDemandId == item.Id).Sum(x => x.NetPension))
                     </td>
                     <td>
                         <button onclick="Print(@item.Id)" class="btn btn-info btn-flat btn-sm"><i class="fa fa-print"></i> Print</button>
                         @if (!(item.Date > DateTime.Now.Date.AddDays(2)))
                         {
-                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn-warning btn btn-flat"> Edit</a>
-                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-info btn btn-flat"> Details </a>
+                            <button class="btn btn-sm btn-warning"><span class="fa fa-lock"></span> Lock</button>
+                            <button class="btn-warning btn btn-sm " onclick="AddOrUpdate(@item.Id)"><span class="fa fa-pencil"></span> Edit</button>
                             <a asp-action="Delete" asp-route-id="@item.Id" class="btn-danger btn btn-flat"> Delete </a>
                         }
                     </td>
@@ -41,6 +43,53 @@
             }
         </tbody>
     </table>
+    <script>
+                function Print(sDemandId) {
+            if (sDemandId != "") {
+                awaitHtmlElement("#content");
+                $.ajax({
+                    type: "GET",
+                    url: "@Url.Action("Print")",
+                    data: { id: sDemandId },
+                    dataType: "text",
+                    success: function (msg) {
+                        $("#content").html(msg);
+                    },
+                    error: function (req, status, error) {
+                        $("#content").html("<div class='alert alert-danger'>res: " + req + " status :" + status + " error : " + error + "</div>");
+                    }
+                });
+            }
+        }
+        $(document).ready(function () {
+            $('#data-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        customize: function (win) {
+                            $(win.document.body).append($("#table-footer").html()); //after the table
+                            $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                        },
+                        exportOptions: {
+                            columns: [0, 1, 2, 3]
+                        },
+                        title: 'SS&TL Division PESCO Mardan',
+                        message: '<div class="text-center">List of Pensioner for the month of </div>',
+                    },
+                    'excel',
+                    'copy',
+                    'csv',
+                    'pdf'
+                ],
+                "paging": true,
+                "lengthChange": false,
+                "searching": true,
+                "ordering": false,
+                "info": true,
+            });
+        });
+    </script>
 }
 
 

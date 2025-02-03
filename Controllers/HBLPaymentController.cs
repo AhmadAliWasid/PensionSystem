@@ -371,10 +371,10 @@ namespace PensionSystem.Controllers
                 return NotFound("Empty Demand");
 
             decimal DemandAmount = listPensionPayment
-                .Where(x => x.Pensioner.Branch.BankId == BankId)
+                .Where(x => x.Pensioner.Branch.BankId == BankId && x.CertificateVerified == true && x.PhysicallyVerified == true)
                 .Sum(x => x.NetPension);
             if (DemandAmount > cheque.Amount)
-                return NotFound("Demand Amount can not be greater then Cheque Amount <br> Demand : " + UserFormat.GetAmount(DemandAmount) + " ");
+                return NotFound("Bank Amount of the selected Demand  can not be greater then Cheque Amount <br> Demand : " + UserFormat.GetAmount(DemandAmount) + " ");
 
             var result = await _hBLPayments
                 .PayDemandByCheque(ChequeId, DemandId, BankId);

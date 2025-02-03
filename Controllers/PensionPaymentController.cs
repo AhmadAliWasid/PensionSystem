@@ -112,9 +112,9 @@ namespace PensionSystem.Controllers
             Month = Month.AddMonths(-1);
             var lastMonthList = await _pensionPayment.GetByMonth(Month);
             var verified = list
-                .Where(x => x.CertificateVerified == true && x.PhysicallyVerified == true);
+                                        .Where(x => x.CertificateVerified == true && x.PhysicallyVerified == true);
             var notVerified = list
-                .Where(x => x.CertificateVerified == false && x.PhysicallyVerified == false);
+                             .Where(x => x.CertificateVerified == false || x.PhysicallyVerified == false);
             PensionerPaymentViewModel model = new()
             {
                 PayablesThisMonth = list,
@@ -126,8 +126,8 @@ namespace PensionSystem.Controllers
                 LastMonthList = lastMonthList
             };
             var bankVm = new List<BankDemandVM>();
-            var bankList = list.Where(c => c.CertificateVerified == true)
-                .GroupBy(x => x.Pensioner.Branch.Bank).ToList();
+            var bankList = list.Where(c => c.CertificateVerified == true && c.PhysicallyVerified == true)
+                                     .GroupBy(x => x.Pensioner.Branch.Bank).ToList();
             foreach (var bank in bankList)
             {
                 bankVm.Add(new BankDemandVM

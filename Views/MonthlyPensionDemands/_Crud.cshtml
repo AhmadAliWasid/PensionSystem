@@ -1,0 +1,45 @@
+﻿@using PensionSystem.Entities.DTOs
+@model MPDemandDTO
+@{
+    Layout = null;
+}
+  <div>
+    <form id="Create">
+        <div class="row ">
+            <input type="hidden" value="@Model.Id" class="form-control" />
+            <div class="col-md-12 text-danger text-bold" id="ErrorDiv">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label asp-for="@Model.Number"></label>
+                    <input asp-for="@Model.Number" class="form-control" />
+                    <span asp-validation-for="@Model.Number"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label asp-for="@Model.Description"></label>
+                    <input asp-for="@Model.Description" class="form-control" />
+                    <span asp-validation-for="@Model.Description"></span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label asp-for="@Model.Date"></label>
+                    <input asp-for="@Model.Date" class="form-control" value="@DateTime.Now.Date.ToString("yyyy-MM-dd")" />
+                    <span asp-validation-for="@Model.Date"></span>
+                </div>
+            </div>
+        </div>
+    </form>
+  </div>
+      
+
+
+<!-- /.modal-content -->

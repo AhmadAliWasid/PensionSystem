@@ -100,13 +100,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
         $(document).ready(function (e) {
-            $('input[type="date"]').change(function() {
-                var date = $(this).val();
-                if (date) {
-                    var formattedDate = moment(date, "MM/DD/YYYY").format("DD-MM-YYYY");
-                    $(this).val(formattedDate);
-                }
-            });
+            // $('input[type="date"]').change(function() {
+            //     var date = $(this).val();
+            //     if (date) {
+            //         var formattedDate = moment(date, "MM/DD/YYYY").format("DD-MM-YYYY");
+            //         $(this).val(formattedDate);
+            //     }
+            // });
             setInterval(function () {
                 $.ajax({
                     url: '@Url.Action("DummyRequest", "Home")',
@@ -197,7 +197,7 @@
                     $("#content").html(msg);
                 },
                 error: function (req, status, error) {
-                    alert(error);
+                   alert(error + "/n" + req + "/n" + status);
                 }
             });
         }
@@ -214,7 +214,7 @@
                             LoadList();
                         },
                         error: function (req, status, error) {
-                            alert(error);
+                            alert(error + "/n" + req + "/n" + status);
                         }
                     });
                 }

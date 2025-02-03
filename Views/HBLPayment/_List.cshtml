@@ -19,6 +19,7 @@
             <table class="table" id="table-show">
                 <thead>
                     <tr>
+                        <th>S# </th>
                         <th>PPO </th>
                         <th>Pensioner</th>
                         <th>Claimant</th>
@@ -34,9 +35,11 @@
                 <tbody>
                     @if (gList != null)
                     {
+                        int s = 1;
                         @foreach (var item in gList)
                         {
                             <tr>
+                                <td>@s</td>
                                 @if (item.Pensioner != null)
                                 {
                                     <td>@item.Pensioner.PPOSystem</td>
@@ -66,6 +69,7 @@
 
                                 </td>
                             </tr>
+                            s++;
                         }
                     }
                 </tbody>
@@ -106,6 +110,7 @@
         <table id="office-copy" class="table">
             <thead>
                 <tr>
+                    <th>S#</th>
                     <th>PPO </th>
                     <th>Claimant</th>
                     <th>CNIC</th>
@@ -120,29 +125,38 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.HBLPaymentsList)
+                @if (Model.HBLPaymentsList.Count() > 0)
                 {
-                    <tr>
-                        @if (item.Pensioner != null)
-                        {
-                            <td>@item.Pensioner.PPOSystem</td>
-                            <td>@item.Pensioner.Claimant  </td>
-                            <td>@item.Pensioner.ClaimantCNIC</td>
-                        }
-                        else
-                        {
-                            <td colspan="3">N/A</td>
-                        }
-                        <td>@item.Branch.Name</td>
-                        <td>@item.Branch.Code</td>
-                        <td>@item.AccountNumber</td>
-                        <td>@UserFormat.GetAmount(item.MonthlyPension)</td>
-                        <td>@UserFormat.GetAmount(item.CMA)</td>
-                        <td>@UserFormat.GetAmount(item.OrderlyAllowance)</td>
-                        <td>@UserFormat.GetAmount(item.Deduction)</td>
-                        <td>@UserFormat.GetAmount(item.Total)</td>
-                    </tr>
+
+                    int s = 1;
+                    @foreach (var item in Model.HBLPaymentsList)
+                    {
+
+                        <tr>
+                            <td>@s</td>
+                            @if (item.Pensioner != null)
+                            {
+                                <td>@item.Pensioner.PPOSystem</td>
+                                <td>@item.Pensioner.Claimant  </td>
+                                <td>@item.Pensioner.ClaimantCNIC</td>
+                            }
+                            else
+                            {
+                                <td colspan="3">N/A</td>
+                            }
+                            <td>@item.Branch.Name</td>
+                            <td>@item.Branch.Code</td>
+                            <td>@item.AccountNumber</td>
+                            <td>@UserFormat.GetAmount(item.MonthlyPension)</td>
+                            <td>@UserFormat.GetAmount(item.CMA)</td>
+                            <td>@UserFormat.GetAmount(item.OrderlyAllowance)</td>
+                            <td>@UserFormat.GetAmount(item.Deduction)</td>
+                            <td>@UserFormat.GetAmount(item.Total)</td>
+                        </tr>
+                        s++;
+                    }
                 }
+
             </tbody>
         </table>
         @*footer*@
@@ -229,7 +243,7 @@
                         },
 
                         exportOptions: {
-                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8,9,10]
+                            columns: [0, 1, 2, 3, 4, 5, 6, 7, 8,9,10,11]
                         },
                         title: '',
                         message: '',

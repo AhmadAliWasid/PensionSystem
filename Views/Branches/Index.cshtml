@@ -27,22 +27,6 @@
     </div>
 </div>
 <script>
-    function AddOrUpdate(value) {
-        var Id = value;
-        $.ajax({
-            type: "GET",
-            url: "@Url.Action("Crud")",
-            data: { id: Id },
-            dataType: "text",
-            success: function (msg) {
-                $("#modal-default").modal("show");
-                $("#modal-body").html(msg);
-            },
-            error: function (req, status, error) {
-                alert(error);
-            }
-        });
-    }
     $(document).ready(function (e) {
         $("#btn-save").click(function (e) {
             var Form = $("#CreateUpdate");
@@ -85,20 +69,7 @@
             });
         }
 
-    }
-    function LoadList() {
-        $.ajax({
-            type: "GET",
-            url: "@Url.Action("Load")",
-            dataType: "text",
-            success: function (msg) {
-                $("#content").html(msg);
-            },
-            error: function (req, status, error) {
-                alert(error);
-            }
-        });
-    }
+    }}
 </script>
 <!-- /.card -->
 <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
@@ -121,7 +92,4 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 

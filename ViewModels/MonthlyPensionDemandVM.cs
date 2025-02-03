@@ -1,10 +1,11 @@
-﻿using PensionSystem.Entities.Models;
+﻿using PensionSystem.Entities.DTOs;
+using PensionSystem.Entities.Models;
 
 namespace PensionSystem.ViewModels
 {
     public class MonthlyPensionDemandVM
     {
-        public List<MonthlyPensionDemand>? monthlyPensionDemands { get; set; }
+        public List<MPDemandDTO>? MonthlyPensionDemands { get; set; }
         public List<PensionerPayment>? PensionerPayments { get; set; }
     }
 

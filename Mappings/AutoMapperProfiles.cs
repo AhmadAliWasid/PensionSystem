@@ -28,6 +28,8 @@ namespace WebAPI.Mappings
             CreateMap<CreateWWFReimbursmentDTO, WGReimbursment>().ReverseMap();
             CreateMap<CreateWWFReimbursmentDTO, WWFReimbursmentDTO>().ReverseMap();
             CreateMap<PensionerOptionDTO, Pensioner>().ReverseMap();
+            CreateMap<MPDemandDTO, MonthlyPensionDemand>().ReverseMap();
+            CreateMap<CommutationDTO, Commutation>().ReverseMap();
         }
 
     }

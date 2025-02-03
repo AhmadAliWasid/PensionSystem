@@ -10,8 +10,9 @@ using PensionSystem.ViewModels;
 using System.Text;
 using System.Text.Json;
 using PensionSystem.Entities.DTOs;
+using Azure;
 
-namespace PensionSystem.Controllers
+namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
     public class MonthlyPensionDemandsController(ApplicationDbContext context, IMonthlyPensionDemand demand, IHBLPayments hblPayments,
@@ -29,14 +30,9 @@ namespace PensionSystem.Controllers
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private readonly HttpClient _apiClient = httpClient;
         // GET: MonthlyPensionDemands
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var vm = new MonthlyPensionDemandVM
-            {
-                PensionerPayments = await _context.PensionerPayments.ToListAsync(),
-                monthlyPensionDemands = await _mpDemand.GetAll(_sessionHelper.GetUserPDUId())
-            };
-            return View(vm);
+            return View();
         }
 
         // GET: MonthlyPensionDemands/Details/5
@@ -59,86 +55,77 @@ namespace PensionSystem.Controllers
 
         // GET: MonthlyPensionDemands/Create
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Crud(int id)
         {
-            return PartialView("_Create");
+            if (id == 0)
+            {
+                return PartialView("_Crud", new MPDemandDTO());
+            }
+            else
+            {
+                try
+                {
+                    var client = _httpClientFactory.CreateClient();
+                    client.BaseAddress = _sessionHelper.GetUri();
+                    return PartialView("_Crud", await client.GetFromJsonAsync<UpdateMPDemandDTO>($"/api/MPDemand/{id}"));
+
+                }
+                catch (Exception exc)
+                {
+                    return BadRequest(exc.Message);
+                }
+
+            }
         }
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(CreateMPDemandDTO mPDemandDTO)
+        public async Task<JsonResult> Save(MPDemandDTO mPDemandDTO)
         {
+            var res = new JsonResponseHelper();
             if (ModelState.IsValid)
             {
-                mPDemandDTO.PDUId = _sessionHelper.GetUserPDUId();
-                var httpRequest = new HttpRequestMessage()
+                if (mPDemandDTO.Id != 0)
                 {
-                    Method = HttpMethod.Post,
-                    RequestUri = new Uri($"{_sessionHelper.GetUri()}api/MPDemand"),
-                    Content = new StringContent(JsonSerializer.Serialize(mPDemandDTO), Encoding.UTF8, "application/json")
-                };
-                var response = await _apiClient.SendAsync(httpRequest);
-                var r = await response.Content.ReadFromJsonAsync<CreateMPDemandDTO>();
-                return r != null ? Ok(r) : BadRequest(r);
+                    mPDemandDTO.PDUId = _sessionHelper.GetUserPDUId();
+                    var httpRequest = new HttpRequestMessage()
+                    {
+                        Method = HttpMethod.Post,
+                        RequestUri = new Uri($"{_sessionHelper.GetUri()}api/MPDemand"),
+                        Content = new StringContent(JsonSerializer.Serialize(mPDemandDTO), Encoding.UTF8, "application/json")
+                    };
+                    var response = await _apiClient.SendAsync(httpRequest);
+                    var r = await response.Content.ReadFromJsonAsync<CreateMPDemandDTO>();
+                    if (r == null)
+                        res.RCode = 0;
+                    else
+                        res.RCode = 1;
+                }
+                else
+                {
+                    mPDemandDTO.PDUId = _sessionHelper.GetUserPDUId();
+                    var httpRequest = new HttpRequestMessage()
+                    {
+                        Method = HttpMethod.Put,
+                        RequestUri = new Uri($"{_sessionHelper.GetUri()}api/MPDemand/{mPDemandDTO.Id}"),
+                        Content = new StringContent(JsonSerializer.Serialize(mPDemandDTO), Encoding.UTF8, "application/json")
+                    };
+                    var response = await _apiClient.SendAsync(httpRequest);
+                    var r = await response.Content.ReadFromJsonAsync<CreateMPDemandDTO>();
+                    if (r == null)
+                        res.RCode = 0;
+                    else
+                        res.RCode = 1;
+
+
+                }
             }
             else
             {
                 ModelState.AddModelError("error", "Invalid Data");
-                return BadRequest(ModelState);
-            }
-        }
 
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
-            try
-            {
-                var client = _httpClientFactory.CreateClient();
-                client.BaseAddress = _sessionHelper.GetUri();
-                var response = await client.GetFromJsonAsync<UpdateMPDemandDTO>($"/api/MPDemand/{id}");
-                return View(response);
             }
-            catch (Exception exc)
-            {
-                return BadRequest(exc.Message);
-            }
-        }
-
-        // POST: MonthlyPensionDemands/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,
-            [Bind("Id,Description,Number,Date")] MonthlyPensionDemand monthlyPensionDemand)
-        {
-            if (id != monthlyPensionDemand.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    monthlyPensionDemand.PDUId = _sessionHelper.GetUserPDUId();
-                    _context.Update(monthlyPensionDemand);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MonthlyPensionDemandExists(monthlyPensionDemand.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(monthlyPensionDemand);
+            return Json(res);
         }
 
         // GET: MonthlyPensionDemands/Delete/5
@@ -210,16 +197,20 @@ namespace PensionSystem.Controllers
         [HttpGet]
         public async Task<IActionResult> Load()
         {
-            // getting all regions from web api
-            var list = new List<MPDemandDTO>();
+            // getting i
             try
             {
+                var list = new List<MPDemandDTO>();
                 var client = _httpClientFactory.CreateClient();
-                string uri = _sessionHelper.GetUri() + "/api/MPDemand";
-                var response = await client.GetAsync(uri);
+                var response = await client.GetAsync(_sessionHelper.GetUri() + "api/MPDemand/GetByPDUId(" + _sessionHelper.GetUserPDUId() + ")");
                 response.EnsureSuccessStatusCode();
                 list.AddRange(await response.Content.ReadFromJsonAsync<IEnumerable<MPDemandDTO>>());
-                return PartialView("_list", list);
+                var vm = new MonthlyPensionDemandVM
+                {
+                    PensionerPayments = await _context.PensionerPayments.ToListAsync(),
+                    MonthlyPensionDemands = list
+                };
+                return PartialView("_list", vm);
             }
             catch (Exception exc)
             {

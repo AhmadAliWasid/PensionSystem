@@ -77,7 +77,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @for (int i = 0; i < 10; i++)
+
+                        <tr style="height:40px;">
+                            <td>
+                                @Model.ChequeDTOs.ChequeCategory.Name
+                                @if (Model.ChequeDTOs.ChequeCategoryId == 1)
+                                {
+                                    <span>For The Month Of @UserFormat.GetMonthYear(Model.ChequeDTOs.Date)</span>
+                                }
+                            </td>
+                            <td></td>
+                            <td></td>
+                            @if (Model.ChequeDTOs.ChequeCategoryId == 1)
+                            {
+                                <td>@UserFormat.GetAmount(Model.ChequeDTOs.Amount)</td>
+                            }
+                            else
+                            {
+                                <td></td>
+
+                            }
+                        </tr>
+                        @for (int i = 0; i < 9; i++)
                         {
                             <tr style="height:40px;">
                                 <td></td>

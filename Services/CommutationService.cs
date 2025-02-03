@@ -32,13 +32,22 @@ namespace PensionSystem.Services
         {
             return await Table
                 .Include(x => x.Pensioner)
+                .Include(c => c.Cheque)
+                .Where(y => y.Cheque.PDUId == PDUId)
                 .OrderByDescending(x => x.Month)
                 .Take(pageSize).ToListAsync();
         }
 
-        public Task<Commutation?> GetById(object id)
+        public async Task<Commutation?> GetById(object id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await Table.Where(x => x.Id == (int)id).FirstOrDefaultAsync();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<List<Commutation>> GetCommutations()

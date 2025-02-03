@@ -1,7 +1,4 @@
-﻿@using Pension.Entities.Helpers
-@model PensionSystem.ViewModels.MonthlyPensionDemandVM
-
-@{
+﻿@{
     ViewData["Title"] = "Demands";
     ViewData["SubTitle"] = "Main";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -10,10 +7,6 @@
     <div class="card-header">
         <h3 class="card-title">
             @ViewData["Title"]
-            <button class="btn btn-primary btn-sm" onclick="$.get('@Url.Action("Create")', function(data) { $('#modal-default').html(data);$('#modal-default').modal('show'); })">
-                <i class="fa fa-plus">
-                </i> Create New
-            </button>
         </h3>
         <div class="card-tools">
             <!-- Collapse Button -->
@@ -31,103 +24,34 @@
         </div>
     </div>
     <div class="card-body">
-        @if (Model != null && Model.monthlyPensionDemands != null && Model.PensionerPayments != null)
-        {
-            var demands = Model.monthlyPensionDemands;
-            var payments = Model.PensionerPayments;
-            <table class="table table-bordered" id="data-table">
-                <thead>
-                    <tr>
-                        <th>Number</th>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Amount</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in demands)
-                    {
-                        <tr>
-                            <td>@item.Number</td>
-                            <td>@UserFormat.GetDate(item.Date)</td>
-                            <td>@item.Description</td>
-                            <td>
-                                @UserFormat.GetAmount(payments
-                                         .Where(c => c.MonthlyPensionDemandId == item.Id).Sum(x => x.NetPension))
-                            </td>
-                            <td>
-                                <button onclick="Print(@item.Id)" class="btn btn-info btn-flat btn-sm"><i class="fa fa-print"></i> Print</button>
-                                @if (!(item.Date > DateTime.Now.Date.AddDays(2)))
-                                {
-                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-warning btn btn-flat"> Edit</a>
-                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn-info btn btn-flat"> Details </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-danger btn btn-flat"> Delete </a>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-            <script>
-                $(document).ready(function () {
-                    $('#data-table').DataTable({
-                        dom: 'Bfrtip',
-                        buttons: [
-                            {
-                                extend: 'print',
-                                customize: function (win) {
-                                    $(win.document.body).append($("#table-footer").html()); //after the table
-                                    $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
-                                },
-                                exportOptions: {
-                                    columns: [0, 1, 2, 3]
-                                },
-                                title: 'SS&TL Division PESCO Mardan',
-                                message: '<div class="text-center">List of Pensioner for the month of </div>',
-                            },
-                            'excel',
-                            'copy',
-                            'csv',
-                            'pdf'
-                        ],
-                        "paging": true,
-                        "lengthChange": false,
-                        "searching": true,
-                        "ordering": false,
-                        "info": true,
-                    });
-                });
-            </script>
-        }
     </div>
     <div class="card-footer">
     </div>
 </div>
 <div id="content">
 </div>
+<!-- /.card -->
 <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">
-    >
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Create/Update</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="Save()">Save changes</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
     <!-- /.modal-dialog -->
 </div>
-<script>
-    function Print(sDemandId) {
-        if (sDemandId != "") {
-            awaitHtmlElement("#content");
-            $.ajax({
-                type: "GET",
-                url: "@Url.Action("Print")",
-                data: { id: sDemandId },
-                dataType: "text",
-                success: function (msg) {
-                    $("#content").html(msg);
-                },
-                error: function (req, status, error) {
-                    $("#content").html("<div class='alert alert-danger'>res: " + req + " status :" + status + " error : " + error + "</div>");
-                }
-            });
-        }
-    }
-</script>
+
+
 
 
