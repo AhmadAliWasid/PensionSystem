@@ -13,3 +13,19 @@ function formatStringDate(myDate) {
     const yourDate = new Date(myDate)
     return yourDate.toISOString().split('T')[0]
 }
+function calculateMonthsBetween(fromDate, toDate) {
+    if (fromDate instanceof Date && toDate instanceof Date && !isNaN(fromDate) && !isNaN(toDate)) {
+        var months = (toDate.getFullYear() - fromDate.getFullYear()) * 12;
+        months -= fromDate.getMonth();
+        months += toDate.getMonth();
+        // Check if toDate is after the end of the fromDate month
+        if (toDate.getDate() >= fromDate.getDate()) {
+            months++;
+        }
+        // Ensure the months value is non-negative
+        months = months > 0 ? months : 0;
+        return months;
+    } else {
+        return 0;
+    }
+}

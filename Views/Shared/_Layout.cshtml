@@ -20,7 +20,7 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
-
+    <script src="~/js/site.js"></script>
     <!-- Bootstrap 4 -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" media="all" />
     <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -85,7 +85,7 @@
     </div>
 
     <!-- AdminLTE for demo purposes -->
-    <script src="~/js/site.js"></script>
+	<script src="~/js/site.js"></script>
     <script src="_framework/blazor.server.js"></script>
     <!-- DataTables  & Plugins -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -100,13 +100,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script>
         $(document).ready(function (e) {
-            // $('input[type="date"]').change(function() {
-            //     var date = $(this).val();
-            //     if (date) {
-            //         var formattedDate = moment(date, "MM/DD/YYYY").format("DD-MM-YYYY");
-            //         $(this).val(formattedDate);
-            //     }
-            // });
             setInterval(function () {
                 $.ajax({
                     url: '@Url.Action("DummyRequest", "Home")',
