@@ -6,6 +6,6 @@ namespace WebAPI.Interfaces
 {
     public interface IWWFSanction : ICrud<WWFSanction>
     {
-        public Task<IEnumerable<SelectOptions>> GetOptions();
+        public Task<IEnumerable<SelectOptions>> GetOptions(int PDUId);
     }
 }

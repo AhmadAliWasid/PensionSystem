@@ -33,11 +33,12 @@ namespace WebAPI.Controllers
 
             if (id == 0)
             {
-                ViewData["WWFSanctionId"] = new SelectList(await _wWFSanction.GetOptions(), "Value", "Text");
+                ViewData["WWFSanctionId"] = new SelectList(await _wWFSanction.GetOptions(_sessionHelper.GetUserPDUId()), "Value", "Text");
                 var r = new WWFReimbursmentDTO
                 {
                     From = DateOnly.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
-                    To = DateOnly.Parse(DateTime.Now.ToString("yyyy-MM-dd"))
+                    To = DateOnly.Parse(DateTime.Now.ToString("yyyy-MM-dd")),
+                    ChequeDate = DateOnly.Parse(DateTime.Now.ToString("yyyy-MM-dd"))
                 };
                 return PartialView("_Crud", r);
             }
@@ -48,7 +49,7 @@ namespace WebAPI.Controllers
                 var r = await client.GetFromJsonAsync<WWFReimbursmentDTO>($"api/WWFReimbursment/{id}");
                 if (r != null)
                 {
-                    ViewData["WWFSanctionId"] = new SelectList(await _wWFSanction.GetOptions(), "Value", "Text", r.WWFSanctionId);
+                    ViewData["WWFSanctionId"] = new SelectList(await _wWFSanction.GetOptions(_sessionHelper.GetUserPDUId()), "Value", "Text", r.WWFSanctionId);
                     return PartialView("_Crud", r);
                 }
                 else

@@ -50,10 +50,11 @@ namespace WebAPI.Services
             }
         }
 
-        public async Task<IEnumerable<SelectOptions>> GetOptions()
+        public async Task<IEnumerable<SelectOptions>> GetOptions(int PDUId)
         {
             var options = new List<SelectOptions>();
-            var relations = await Table.ToListAsync();
+            var relations = await Table
+                .Where(x => x.PDUId == PDUId).ToListAsync();
             options.Add(new SelectOptions { Value = 0, Text = "Select Option" });
             if (relations != null)
             {
