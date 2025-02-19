@@ -35,7 +35,6 @@ namespace WebAPI.Controllers
             return View();
         }
 
-        // GET: MonthlyPensionDemands/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -43,8 +42,7 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
 
-            var monthlyPensionDemand = await _context.MonthlyPensionDemands
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var monthlyPensionDemand = await _mpDemand.GetById(id);
             if (monthlyPensionDemand == null)
             {
                 return NotFound();

@@ -46,14 +46,14 @@
     <script>
                 function Print(sDemandId) {
             if (sDemandId != "") {
-                awaitHtmlElement("#content");
+                awaitHtmlElement("#printDiv");
                 $.ajax({
                     type: "GET",
                     url: "@Url.Action("Print")",
                     data: { id: sDemandId },
                     dataType: "text",
                     success: function (msg) {
-                        $("#content").html(msg);
+                        $("#printDiv").html(msg);
                     },
                     error: function (req, status, error) {
                         $("#content").html("<div class='alert alert-danger'>res: " + req + " status :" + status + " error : " + error + "</div>");

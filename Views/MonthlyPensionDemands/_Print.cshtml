@@ -4,15 +4,9 @@
 @if (Model.MonthlyPensionDemand != null)
 {
     decimal TotalLastPESCO = 0;
-    decimal TotalLastNTDC = 0;
-    decimal TotalLastTESCO = 0;
-    decimal TotalLastGENCO = 0;
     decimal TotalOtherDISCO = 0;
     decimal NetExpenditureInLastMonth = 0;
     decimal MonthlyLastPESCO = 0;
-    decimal MonthlyLastNTDC = 0;
-    decimal MonthlyLastTESCO = 0;
-    decimal MonthlyLastGENCO = 0;
     decimal MonthlTotalOtherDISCOs = 0;
     decimal MonthlyTotal = 0;
     decimal DemandAmount = 0;
@@ -26,50 +20,34 @@
     {
         MonthlyLastPESCO = Model.HBLPayments.Where(c => c.Pensioner.Company.ShortName == "PESCO"
         && c.Month.Month == LastMonth.Month && c.Month.Year == LastMonth.Year).Sum(x => x.Total);
-        MonthlyLastNTDC = Model.HBLPayments.Where(c => c.Pensioner.Company.ShortName == "NTDC"
+        MonthlTotalOtherDISCOs = Model.HBLPayments.Where(c => c.Pensioner.Company.ShortName != "PESCO"
         && c.Month.Month == LastMonth.Month && c.Month.Year == LastMonth.Year).Sum(x => x.Total);
-        MonthlyLastGENCO = Model.HBLPayments.Where(c => c.Pensioner.Company.ShortName == "GENCO-III"
-        && c.Month.Month == LastMonth.Month && c.Month.Year == LastMonth.Year).Sum(x => x.Total);
-        MonthlyLastTESCO = Model.HBLPayments.Where(c => c.Pensioner.Company.ShortName == "TESCO"
-        && c.Month.Month == LastMonth.Month && c.Month.Year == LastMonth.Year).Sum(x => x.Total);
-        MonthlTotalOtherDISCOs = MonthlyLastNTDC + MonthlyLastGENCO + MonthlyLastTESCO;
-        MonthlyTotal = MonthlyLastPESCO + MonthlyLastGENCO + MonthlyLastTESCO + MonthlyLastNTDC;
+        MonthlyTotal = MonthlyLastPESCO + MonthlTotalOtherDISCOs;
     }
     /// arrears
     decimal ArrearsLastPESCO = 0;
-    decimal ArrearsLastNTDC = 0;
-    decimal ArrearsLastTESCO = 0;
-    decimal ArrearsLastGENCO = 0;
+    decimal ArrearsLastOtherDISCOs = 0;
     decimal TotalArrears = 0;
     if (Model.HBLArrears != null)
     {
         ArrearsLastPESCO = Model.HBLArrears.Where(c => c.Pensioner.Company.ShortName == "PESCO").Sum(x => x.Amount);
-        ArrearsLastNTDC = Model.HBLArrears.Where(c => c.Pensioner.Company.ShortName == "NTDC").Sum(x => x.Amount);
-        ArrearsLastGENCO = Model.HBLArrears.Where(c => c.Pensioner.Company.ShortName == "GENCO-III").Sum(x => x.Amount);
-        ArrearsLastTESCO = Model.HBLArrears.Where(c => c.Pensioner.Company.ShortName == "TESCO").Sum(x => x.Amount);
-        TotalArrears = ArrearsLastPESCO + ArrearsLastNTDC + ArrearsLastGENCO + ArrearsLastTESCO;
+        ArrearsLastOtherDISCOs = Model.HBLArrears.Where(c => c.Pensioner.Company.ShortName == "NTDC").Sum(x => x.Amount);
+        TotalArrears = ArrearsLastPESCO + ArrearsLastOtherDISCOs;
     }
 
     /// commutations
     decimal CommutationsLastPESCO = 0;
-    decimal CommutationsLastNTDC = 0;
-    decimal CommutationsLastTESCO = 0;
-    decimal CommutationsLastGENCO = 0;
+    decimal CommutationsLastOtherDiscos = 0;
     decimal TotalCommutations = 0;
     if (Model.Commutations != null)
     {
         CommutationsLastPESCO = Model.Commutations.Where(c => c.Pensioner.Company.ShortName == "PESCO").Sum(x => x.Amount);
-        CommutationsLastNTDC = Model.Commutations.Where(c => c.Pensioner.Company.ShortName == "NTDC").Sum(x => x.Amount);
-        CommutationsLastGENCO = Model.Commutations.Where(c => c.Pensioner.Company.ShortName == "GENCO-III").Sum(x => x.Amount);
-        CommutationsLastTESCO = Model.Commutations.Where(c => c.Pensioner.Company.ShortName == "TESCO").Sum(x => x.Amount);
-        TotalCommutations = CommutationsLastGENCO + CommutationsLastNTDC + CommutationsLastTESCO + CommutationsLastPESCO;
+        CommutationsLastOtherDiscos = Model.Commutations.Where(c => c.Pensioner.Company.ShortName != "PESCO").Sum(x => x.Amount);
+        TotalCommutations = CommutationsLastOtherDiscos + CommutationsLastPESCO;
     }
     // total
     TotalLastPESCO = MonthlyLastPESCO + ArrearsLastPESCO + CommutationsLastPESCO;
-    TotalLastNTDC = MonthlyLastNTDC + ArrearsLastNTDC + CommutationsLastNTDC;
-    TotalLastTESCO = MonthlyLastTESCO + ArrearsLastTESCO + CommutationsLastTESCO;
-    TotalLastGENCO = MonthlyLastGENCO + ArrearsLastGENCO + CommutationsLastGENCO;
-    TotalOtherDISCO = TotalLastNTDC + TotalLastGENCO + TotalLastTESCO;
+    TotalOtherDISCO = MonthlTotalOtherDISCOs + ArrearsLastOtherDISCOs + CommutationsLastOtherDiscos;
     NetExpenditureInLastMonth = MonthlyTotal + TotalCommutations + TotalArrears;
     @*<link type="text/css" href="~/css/LegalLandscape.css" rel="stylesheet" media="All" />*@
     <link href="~/css/print.css" type="text/css" rel="stylesheet" media="All" />
@@ -101,7 +79,6 @@
     <div class="card">
         <div id="printDiv">
             <div class="row">
-
                 <h3 class="text-center text-bold">PESHAWAR ELECTRIC SUPPLY COMPANY</h3>
             </div>
             <div class="row">
@@ -114,7 +91,9 @@
                         </tr>
                     </thead>
                 </table>
-                <table class="table custom-table">
+            </div>
+            <div class="row">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>NAME OF OFFICE</th>
@@ -211,11 +190,11 @@
                             </tr>
                             <tr>
                                 <td>DISCOS</td>
-                                <td>@UserFormat.GetAmount(CommutationsLastNTDC)</td>
+                                <td>@UserFormat.GetAmount(CommutationsLastOtherDiscos)</td>
                                 <td>@UserFormat.GetAmount(MonthlTotalOtherDISCOs)</td>
                                 <td></td>
                                 <td></td>
-                                <td>@UserFormat.GetAmount((ArrearsLastNTDC + ArrearsLastTESCO + ArrearsLastGENCO))</td>
+                                <td>@UserFormat.GetAmount((ArrearsLastOtherDISCOs))</td>
                                 <td>@UserFormat.GetAmount(TotalOtherDISCO)</td>
                             </tr>
                             <tr>
@@ -241,9 +220,8 @@
                 type: 'html',
                 header: null,
                 targetStyles: ['*'],
-                scanStyles: true,,
-                maxWidth:
-                    css: ['css/print.css', 'dist/css/adminlte.css', 'css/LegalLandscape.css'],
+                scanStyles: true,
+                css: ['css/print.css', 'dist/css/adminlte.css', 'css/LegalLandscape.css'],
                 documentTitle: "Monthly Demand"
             });
         }
