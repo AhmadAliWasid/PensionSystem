@@ -44,15 +44,15 @@ namespace PensionSystem.Controllers
             JsonResponseHelper helper = new();
             if (ModelState.IsValid)
             {
-                var response = await _branch.Save(vM);
-                if (response.IsSaved)
+                var (IsSaved, Message) = await _branch.Save(vM);
+                if (IsSaved)
                 {
                     helper.RCode = 1;
                 }
                 else
                 {
                     helper.RCode = 0;
-                    helper.RText = response.Message;
+                    helper.RText = Message;
                 }
             }
             else
