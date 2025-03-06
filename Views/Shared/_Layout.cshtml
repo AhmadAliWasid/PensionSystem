@@ -150,11 +150,10 @@
             });
         }
         function AddOrUpdate(value) {
-            var Id = value;
             $.ajax({
                 type: "GET",
                 url: "@Url.Action("Crud")",
-                data: { id: Id },
+                data: { id: value },
                 dataType: "text",
                 success: function (msg) {
                     $("#modal-default").modal("show");

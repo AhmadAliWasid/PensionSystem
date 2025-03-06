@@ -1,5 +1,4 @@
 ﻿using PensionSystem.Entities.Models;
-using PensionSystem.Interfaces;
 using PensionSystem.ViewModels;
 
 namespace WebAPI.Interfaces

@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PensionSystem.DTOs;
 using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
 using PensionSystem.Services;
+using PensionSystem.Entities.DTOs;
 
 namespace PensionSystem.api
 {

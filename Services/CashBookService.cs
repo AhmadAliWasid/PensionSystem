@@ -2,17 +2,14 @@
 using PensionSystem.Data;
 using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
+using WebAPI.Interfaces;
 
 namespace PensionSystem.Services
 {
-    public class CashBookService : ICashBook
+    public class CashBookService(ApplicationDbContext context) : ICashBook
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context = context;
 
-        public CashBookService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
         public IQueryable<CashBook> Table => _context.Set<CashBook>();
 
         public Task<bool> Delete(CashBook entity)
@@ -34,10 +31,13 @@ namespace PensionSystem.Services
                 .ToListAsync();
         }
 
-        public CashBook GetById(object id)
+
+
+        public async Task<CashBook?> GetById(object id)
         {
-            throw new NotImplementedException();
+          return  await _context.CashBook.Where(x => x.Id == (int)id).FirstOrDefaultAsync();
         }
+
         public async Task<List<CashBook>?> GetByMonth(DateTime Month, int PDUId)
         {
             var cContext = _context.CashBook;
@@ -68,14 +68,22 @@ namespace PensionSystem.Services
             }
         }
 
-        public Task<(bool IsSaved, string Message)> Update(CashBook entity)
+        public async Task<(bool IsSaved, string Message)> Update(CashBook entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var cContext = _context.CashBook;
+                if (cContext == null)
+                    return (false, "unable to fetch table");
+                cContext.Update(entity);
+                await _context.SaveChangesAsync();
+                return (true, "ok");
+            }
+            catch (Exception exc)
+            {
+                return (false, exc.Message);
+            }
         }
 
-        Task<CashBook?> ICrud<CashBook>.GetById(object id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

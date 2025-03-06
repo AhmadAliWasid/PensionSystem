@@ -2,11 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Pension.Entities.Helpers;
-using PensionSystem.DTOs;
 using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
+using PensionSystem.Data.Migrations;
+using System.Threading.Tasks;
+using PensionSystem.Entities.DTOs;
+using AutoMapper;
 
 namespace WebAPI.Controllers
 {
@@ -21,9 +24,9 @@ namespace WebAPI.Controllers
         private readonly ICompany _company;
         private readonly SessionHelper _sessionHelper;
         private readonly HttpClient _apiClient;
-
+        private readonly IMapper _mapper;
         public CashBookController(ICashBook cashBook, IHBLPayments hBLPayments, ICheque cheque,
-            IHBLArrears hBLArrears, ICommutation commutation, ICompany company, SessionHelper sessionHelper, HttpClient apiClient)
+            IHBLArrears hBLArrears, ICommutation commutation, ICompany company, SessionHelper sessionHelper, HttpClient apiClient, IMapper mapper)
         {
             _cashBook = cashBook;
             _hBLPayments = hBLPayments;
@@ -34,6 +37,7 @@ namespace WebAPI.Controllers
             _sessionHelper = sessionHelper;
             _apiClient = apiClient;
             _apiClient.BaseAddress = _sessionHelper.GetUri();
+            _mapper = mapper;
         }
 
         public IActionResult Index()
@@ -42,13 +46,27 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult Crud()
+        public async Task<IActionResult> Crud(int id)
         {
-            return PartialView("_crud");
+            if (id == 0)
+                return PartialView("_crud", new CashBookDTO() { Month = DateTime.Now });
+            else
+            {
+                var r = await _cashBook.GetById(id);
+                if (r == null)
+                    return NotFound();
+                else
+                {
+                    var record = _mapper.Map<CashBookDTO>(r);
+                    return PartialView("_crud", record);
+                }
+            }
+
         }
 
+
         [HttpPost]
-        public async Task<JsonResult> Save(CashBookCreateVM model)
+        public async Task<JsonResult> Save(CashBookDTO model)
         {
             JsonResponseHelper helper = new();
             if (ModelState.IsValid)
@@ -63,12 +81,24 @@ namespace WebAPI.Controllers
                         TransactionType = model.TransactionType,
                         PDUId = _sessionHelper.GetUserPDUId()
                     };
-                    var (IsSaved, Message) = await _cashBook.Insert(cashBook);
-                    if (IsSaved)
+                    if (model.Id == 0)
                     {
-                        helper.RCode = 1;
+
+                        var (IsSaved, Message) = await _cashBook.Insert(cashBook);
+                        if (IsSaved)
+                        {
+                            helper.RCode = 1;
+                        }
+                    }
+                    else
+                    {
+                        //update
+                        cashBook.Id = model.Id;
+                        var (IsSaved, Message) = await _cashBook.Update(cashBook);
                     }
                 }
+
+
                 catch (Exception exc)
                 {
                     helper.RCode = 0;

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using PensionSystem.DTOs;
 using PensionSystem.Entities.DTOs;
 using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
@@ -30,6 +29,7 @@ namespace WebAPI.Mappings
             CreateMap<PensionerOptionDTO, Pensioner>().ReverseMap();
             CreateMap<MPDemandDTO, MonthlyPensionDemand>().ReverseMap();
             CreateMap<CommutationDTO, Commutation>().ReverseMap();
+            CreateMap<CashBookDTO, CashBook>().ReverseMap();
         }
 
     }

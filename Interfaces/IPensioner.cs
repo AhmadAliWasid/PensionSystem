@@ -1,6 +1,7 @@
 ﻿using PensionSystem.Entities.DTOs;
 using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
+using WebAPI.Interfaces;
 
 namespace PensionSystem.Interfaces
 {

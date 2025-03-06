@@ -1,6 +1,6 @@
 ﻿using PensionSystem.Entities.Models;
 
-namespace PensionSystem.Interfaces
+namespace WebAPI.Interfaces
 {
     public interface ICrud<T> where T : class
     {

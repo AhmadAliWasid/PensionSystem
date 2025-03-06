@@ -1,5 +1,6 @@
 ﻿@using Pension.Entities.Helpers;
-@model List<PensionSystem.DTOs.CashBookDTO>
+@using PensionSystem.Entities.DTOs
+@model List<CashBookDTO>
 @{
     Layout = null;
 }
@@ -25,17 +26,13 @@
                         <td>@UserFormat.GetDate(item.Month)</td>
                         <td>@item.Particulars</td>
                         <td>@UserFormat.GetAmount(item.Amount)</td>
-                        @{
-                            var currentDate = DateTime.Now;
-                            var twoMonthsAgo = currentDate.AddMonths(-2);
-                        }
-                        @if (item.Month.Month <= twoMonthsAgo.Month && item.Month.Year <= twoMonthsAgo.Year)
+                        @if (item.Month <= DateTime.Now.AddMonths(-2))
                         {
                             <td>Locked</td>
                         }
                         else
                         {
-                            <td><button class="btn btn-danger btn-sm">Delete</button></td>
+                            <td><button class="btn btn-warning btn-sm" onclick="AddOrUpdate(@item.Id)">Edit</button>|<button class="btn btn-danger btn-sm">Delete</button></td>
                         }
 
                     </tr>

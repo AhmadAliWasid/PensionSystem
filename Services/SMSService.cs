@@ -1,6 +1,7 @@
 ﻿using PensionSystem.Data;
 using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
+using WebAPI.Interfaces;
 
 namespace PensionSystem.Services
 {

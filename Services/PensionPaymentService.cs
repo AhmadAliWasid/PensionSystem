@@ -4,6 +4,7 @@ using PensionSystem.Data;
 using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
+using WebAPI.Interfaces;
 
 namespace PensionSystem.Services
 {
