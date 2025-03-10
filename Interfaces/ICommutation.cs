@@ -20,7 +20,7 @@ namespace PensionSystem.Interfaces
         /// <param name="startingDate"></param>
         /// <param name="endingDate"></param>
         /// <returns></returns>
-        public Task<List<Commutation>> GetCommutationsByDates(DateTime startingDate, DateTime endingDate,int PDUId);
+        public Task<List<Commutation>> GetCommutationsByDates(DateTime startingDate, DateTime endingDate, int PDUId);
         /// <summary>
         /// Get Commutations by Month
         /// </summary>
@@ -32,6 +32,12 @@ namespace PensionSystem.Interfaces
         /// </summary>
         /// <param name="Month"></param>
         /// <returns></returns>
-        public Task<List<Commutation>> GetCommutationsByMonth(DateOnly Month,int PDUId);
+        public Task<List<Commutation>> GetCommutationsByMonth(DateOnly Month, int PDUId);
+        /// <summary>
+        /// Get List of Commutation by Cheque ID
+        /// </summary>
+        /// <param name="ChequeId"></param>
+        /// <returns></returns>
+        public Task<List<Commutation>> GetCommutationByCheque(int ChequeId);
     }
 }

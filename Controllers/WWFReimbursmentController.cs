@@ -11,6 +11,7 @@ using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
 using System.Text;
 using WebAPI.Interfaces;
+using WebAPI.ViewModels;
 
 namespace WebAPI.Controllers
 {
@@ -156,6 +157,27 @@ namespace WebAPI.Controllers
                 return Ok();
             else
                 return BadRequest();
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetPV(int id)
+        {
+            var vm = new PVViewModel();
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = _sessionHelper.GetUri();
+            var r = await client.GetFromJsonAsync<WWFReimbursmentDTO>($"api/WWFReimbursment/{id}");
+            if (r == null)
+                return NotFound();
+            vm.Number = r.ChequeNo;
+            vm.Amount = r.Amount;
+            vm.Date = new DateTime(r.ChequeDate,new TimeOnly());
+            vm.SessionViewModel = new SessionViewModel()
+            {
+                AMStamp = _sessionHelper.GetAMStamp(),
+                BaseStamp = _sessionHelper.GetBaseStamp(),
+                DMStamp = _sessionHelper.GetDMStamp(),
+            };
+            return PartialView("Cheques/_PV", vm);
+
         }
     }
 }

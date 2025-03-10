@@ -16,7 +16,12 @@ namespace WebAPI.ViewModels
     }
     public class PVViewModel
     {
-        public ChequeDTO ChequeDTOs { get; set; }
-        public SessionViewModel SessionViewModel { get; set; }
+        public string Payee { get; set; } = string.Empty;
+
+        public decimal Amount { get; set; }
+        public DateTime Date { get; set; }
+        public List<(string desc,decimal amount)> Description { get; set; } = [];
+        public int Number { get; set; }
+        public SessionViewModel? SessionViewModel { get; set; }
     }
 }

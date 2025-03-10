@@ -15,7 +15,7 @@ namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
     public class ChequesController(ApplicationDbContext context, ICheque cheque,
-        IChequeCategory chequeCategory, IMapper mapper, SessionHelper sessionHelper, IHttpClientFactory httpClientFactory, IConfiguration configuration) : Controller
+        IChequeCategory chequeCategory, IMapper mapper, SessionHelper sessionHelper, IHttpClientFactory httpClientFactory, IConfiguration configuration, ICommutation commutation, IHBLArrears hBLArrears) : Controller
     {
         private readonly ApplicationDbContext _context = context;
         private readonly ICheque _cheque = cheque;
@@ -24,7 +24,8 @@ namespace WebAPI.Controllers
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private readonly IConfiguration _configuration = configuration;
         private readonly IMapper _mapper = mapper;
-
+        private readonly ICommutation _commutation = commutation;
+        private readonly IHBLArrears _hblArrears = hBLArrears;
         // GET: Cheques
         [HttpGet]
         public IActionResult Index()
@@ -132,17 +133,46 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPV(int Id)
         {
-            var record = new ChequeDTO();
-            _mapper.Map(await _cheque.GetById(Id), record);
-            var pvVM = new PVViewModel() { };
-            pvVM.ChequeDTOs = record;
-            pvVM.SessionViewModel = new SessionViewModel()
+            var c = await _cheque.GetById(Id);
+            if (c == null || c.ChequeCategory == null)
+                return NotFound();
+            var VM = new PVViewModel
             {
-                AMStamp = _sessionHelper.GetAMStamp(),
-                BaseStamp = _sessionHelper.GetBaseStamp(),
-                DMStamp = _sessionHelper.GetDMStamp(),
+                Amount = c.Amount,
+                Date = c.Date,
+                Number = c.Number,
+                Payee = c.Name,
+                SessionViewModel = new SessionViewModel()
+                {
+                    AMStamp = _sessionHelper.GetAMStamp(),
+                    BaseStamp = _sessionHelper.GetBaseStamp(),
+                    DMStamp = _sessionHelper.GetDMStamp(),
+                }
             };
-            return PartialView("_PV", pvVM);
+            if (c.ChequeCategoryId == 1)
+            {
+                VM.Description.Add(new(c.ChequeCategory.Name + " for the month of " + c.Date.ToString("MM-yyyy"), c.Amount));
+            }
+            else
+            {
+                // we will add commutation 
+                var commutation = await _commutation.GetCommutationByCheque(c.Id);
+                if (commutation != null && commutation.Count > 0)
+                    VM.Description.Add(new(" Commutation ", commutation.Sum(x => x.Amount)));
+                // we will cheque if arrears
+                var arrears = await _hblArrears.GetArrearsByCheque(c.Id);
+                if (arrears.Count > 0)
+                {
+                    foreach (var item in arrears)
+                    {
+
+                        VM.Description.Add(new(item.Description, c.Amount));
+                        VM.Description.Add(new($"Period ({UserFormat.GetDate(item.FromMonth)} {UserFormat.GetDate(item.ToMonth)}) ", 0));
+                    }
+                }
+
+            }
+            return PartialView("_PV", VM);
 
         }
     }

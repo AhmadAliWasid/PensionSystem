@@ -2,9 +2,8 @@
 @using PensionSystem.Helpers
 @model WebAPI.ViewModels.PVViewModel
 
-@if (Model != null)
+@if (Model != null && Model.Description != null && Model.SessionViewModel != null)
 {
-
     <div id="printDiv">
         <link href="/lib/print/print.min.css" rel="stylesheet" type="text/css" />
         <link href="~/css/print.css" type="text/css" rel="stylesheet" media="all" />
@@ -53,15 +52,15 @@
                         </tr>
                         <tr>
                             <th rowspan="2" style=" vertical-align: middle;" class="text-end">Payee :</th>
-                            <th colspan="2" rowspan="2" style=" vertical-align: middle;">@Model.ChequeDTOs.Name</th>
+                            <th colspan="2" rowspan="2" style=" vertical-align: middle;">@Model.Payee</th>
                             <th style="border-top:none;border-bottom:none;"></th>
                             <th class="text-end">Cheque Date.</th>
-                            <th>@UserFormat.GetDate(Model.ChequeDTOs.Date)</th>
+                            <th>@UserFormat.GetDate(Model.Date)</th>
                         </tr>
                         <tr>
                             <th style="border-top:none;border-bottom:none;"></th>
                             <th class="text-end">Cheque Number.</th>
-                            <th>@Model.ChequeDTOs.Number</th>
+                            <th>@Model.Number</th>
                         </tr>
                     </thead>
                 </table>
@@ -77,28 +76,19 @@
                         </tr>
                     </thead>
                     <tbody>
-
-                        <tr style="height:40px;">
-                            <td>
-                                @Model.ChequeDTOs.ChequeCategory.Name
-                                @if (Model.ChequeDTOs.ChequeCategoryId == 1)
-                                {
-                                    <span>For The Month Of @UserFormat.GetMonthYear(Model.ChequeDTOs.Date)</span>
-                                }
-                            </td>
-                            <td></td>
-                            <td></td>
-                            @if (Model.ChequeDTOs.ChequeCategoryId == 1)
-                            {
-                                <td>@UserFormat.GetAmount(Model.ChequeDTOs.Amount)</td>
-                            }
-                            else
-                            {
+                        @foreach (var e in Model.Description)
+                        {
+                            <tr style="height:40px;">
+                                <td>
+                                    <span>@e.desc</span>
+                                </td>
                                 <td></td>
+                                <td></td>
+                                <td>@UserFormat.GetAmount(e.amount)</td>
+                            </tr>
+                        }
 
-                            }
-                        </tr>
-                        @for (int i = 0; i < 9; i++)
+                        @for (int i = 0; i < (9 - Model.Description.Count); i++)
                         {
                             <tr style="height:40px;">
                                 <td></td>
@@ -109,13 +99,13 @@
                         }
                         <tr>
                             <td colspan="3" class="text-end"><b>Total</b></td>
-                            <td><b>@UserFormat.GetAmount(Model.ChequeDTOs.Amount)</b></td>
+                            <td><b>@UserFormat.GetAmount(Model.Amount)</b></td>
                         </tr>
                     </tbody>
                     <tfoot>
                         <tr>
                             <th>Rupees:</th>
-                            <th colspan="3">@Calculation.ConvertAmount((double)Model.ChequeDTOs.Amount)</th>
+                            <th colspan="3">@Calculation.ConvertAmount((double)Model.Amount)</th>
                         </tr>
                         <tr>
                             <th>Documents Ref:</th>

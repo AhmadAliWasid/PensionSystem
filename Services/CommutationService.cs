@@ -50,6 +50,8 @@ namespace PensionSystem.Services
             }
         }
 
+        public async Task<List<Commutation>> GetCommutationByCheque(int ChequeId) => await Table.Where(x => x.ChequeId == ChequeId).ToListAsync();
+
         public async Task<List<Commutation>> GetCommutations()
         {
             var CommuationContext = _context.Commutations;
