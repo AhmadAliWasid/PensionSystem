@@ -22,7 +22,7 @@ namespace WebAPI.Controllers
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private readonly IWWFSanction _wWFSanction = wWFSanction;
 
-        // GET: ArrearsDemands
+
         public IActionResult Index()
         {
             return View();
@@ -133,6 +133,17 @@ namespace WebAPI.Controllers
                 var errorMessage = await response.Content.ReadAsStringAsync();
                 return BadRequest(errorMessage);
             }
+        }
+        [HttpGet]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = _sessionHelper.GetUri();
+            var r = await client.GetFromJsonAsync<WWFSanctionDTO>($"api/WWFSanction/{id}");
+            if (r == null)
+                return NotFound();
+            else
+                return Ok(r);
         }
     }
 }

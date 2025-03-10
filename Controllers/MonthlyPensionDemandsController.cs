@@ -35,21 +35,6 @@ namespace WebAPI.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var monthlyPensionDemand = await _mpDemand.GetById(id);
-            if (monthlyPensionDemand == null)
-            {
-                return NotFound();
-            }
-
-            return View(monthlyPensionDemand);
-        }
 
         // GET: MonthlyPensionDemands/Create
         [HttpGet]
@@ -57,7 +42,7 @@ namespace WebAPI.Controllers
         {
             if (id == 0)
             {
-                return PartialView("_Crud", new MPDemandDTO());
+                return PartialView("_Crud", new MPDemandDTO() { Date = DateTime.Now });
             }
             else
             {
@@ -83,7 +68,7 @@ namespace WebAPI.Controllers
             var res = new JsonResponseHelper();
             if (ModelState.IsValid)
             {
-                if (mPDemandDTO.Id != 0)
+                if (mPDemandDTO.Id == 0)
                 {
                     mPDemandDTO.PDUId = _sessionHelper.GetUserPDUId();
                     var httpRequest = new HttpRequestMessage()

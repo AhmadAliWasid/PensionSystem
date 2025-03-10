@@ -45,9 +45,18 @@ namespace WebAPI.api
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateMPDemandDTO updateMPDemandDTO)
         {
-            var r = _mapper.Map<MonthlyPensionDemand>(updateMPDemandDTO);
-            var result = await _mpDemand.Update(r);
-            return result.IsSaved ? Ok(result) : BadRequest(result);
+            try
+            {
+                var r = _mapper.Map<MonthlyPensionDemand>(updateMPDemandDTO);
+                var result = await _mpDemand.Update(r);
+                return result.IsSaved ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception exc)
+            {
+
+                return BadRequest(exc.Message);
+            }
+
         }
     }
 }

@@ -122,12 +122,21 @@ namespace PensionSystem.Services
             {
                 return (false, exc.Message);
             }
-            
+
         }
 
-        public Task<(bool IsSaved, string Message)> Update(MonthlyPensionDemand entity)
+        public async Task<(bool IsSaved, string Message)> Update(MonthlyPensionDemand entity)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _context.Update(entity);
+                await _context.SaveChangesAsync();
+                return (true, "ok");
+            }
+            catch (Exception exc)
+            {
+                return (false, exc.Message);
+            }
         }
     }
 }
