@@ -3,8 +3,9 @@ using PensionSystem.Data;
 using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
 using WebAPI.Interfaces;
+using PensionSystem.Entities.Helpers;
 
-namespace PensionSystem.Services
+namespace WebAPI.Services
 {
     public class CashBookService(ApplicationDbContext context) : ICashBook
     {
@@ -31,11 +32,26 @@ namespace PensionSystem.Services
                 .ToListAsync();
         }
 
+        public async Task<List<BankCharge>?> GetBankChargesBetweenMonths(DateTime startingMonth, DateTime endingMonth, int pduId)
+        {
+            var result = await Table
+                .Where(x => x.Month.Date >= startingMonth.Date && x.Month.Date <= endingMonth.Date &&
+                            x.PDUId == pduId && x.TransactionType == TransactionType.Debit)
+                .GroupBy(x => new { x.Month.Year, x.Month.Month })
+                .Select(group => new BankCharge
+                {
+                    Month = new DateTime(group.Key.Year, group.Key.Month, 1),
+                    Charges = group.Sum(item => item.Amount)
+                })
+                .ToListAsync();
+
+            return result?.Any() == true ? result : null;
+        }
 
 
         public async Task<CashBook?> GetById(object id)
         {
-          return  await _context.CashBook.Where(x => x.Id == (int)id).FirstOrDefaultAsync();
+            return await _context.CashBook.Where(x => x.Id == (int)id).FirstOrDefaultAsync();
         }
 
         public async Task<List<CashBook>?> GetByMonth(DateTime Month, int PDUId)

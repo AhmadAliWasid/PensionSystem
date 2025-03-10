@@ -1,332 +1,118 @@
 ﻿@using Pension.Entities.Helpers
 @model PensionSystem.ViewModels.ConsolidatedSummaryModel
-@if (Model != null)
+
+@if (Model != null && Model.HBLPayments != null && Model.Session != null && Model.AllPensioners != null && Model.Months != null)
 {
-    @if (Model.HBLPayments != null && Model.Session != null)
-    {
-        @if (Model.HBLPayments.Count() > 0)
-        {
-            decimal[] monthlyTotal = { 0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m, 0m };
-            decimal yearlyGrandTotal = 0;
-            decimal yearlyTotal = 0;
-            decimal MonthlyPaid = 0;
-            decimal ArrearsInMonth = 0;
-            decimal CommutationsInMonth = 0;
-            decimal MonthlyTotal = 0;
-            // joining both pensioners from arrears and from monthly payments
-            var PArrears = Model.HBLArrears;
-            var Commutations = Model.Commutations;
-            @*consolidated summary of pensioner*@
-            <div class="row">
-                @*table header*@
-                <div id="table-header-office">
-                    <h3 class="text-center">PESHAWAR ELECTRIC SUPPLY COMPANY LIMITED</h3>
-                    <h4 class="text-center">@Model.Session.DMStamp @Model.Session.BaseStamp</h4>
-                    <h5 class="text-center">Consolidated List Of Pensioner </h5>
-                </div>
-                @*</div>*@
-                <div style="">
-                    <div class="col-md-12">
-                        <table class="table" id="example">
-                            <thead>
-                                <tr>
-                                    <th>PPO </th>
-                                    <th>Claimant </th>
-                                    @if (Model.Months != null)
-                                    {
-                                        @foreach (var month in Model.Months)
-                                        {
-                                            int monthNumber = month.Month.Month;
-                                            <th>@month.Month.ToString("MM-yyyy")</th>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <th>Unable to Find HBL Payment Months</th>
-                                    }
-                                    @*<th>G.Total</th>*@
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @if (Model.AllPensioners != null)
-                                {
-                                    @foreach (var item in Model.AllPensioners)
-                                    {
-                                        yearlyTotal = 0;
-                                        <tr>
-                                            <td>@item.PPOSystem</td>
-                                            <td>@item.Claimant </td>
-                                            @*// print for each month*@
-                                            @if (Model.Months != null)
-                                            {
-                                                @foreach (var month in Model.Months)
-                                                {
-                                                    int singleMonth = month.Month.Month;
-                                                    int singleYear = month.Month.Year;
-                                                    ArrearsInMonth = 0;
-                                                    CommutationsInMonth = 0;
-                                                    MonthlyTotal = 0;
-                                                    MonthlyPaid = 0;
-                                                    var singlePayment = Model.HBLPayments.Where(x => x.PensionerId == item.PensionerId
-                                                    && x.Month.Month == singleMonth && x.Month.Year == singleYear).SingleOrDefault();
-                                                    <td>
-                                                        @if (singlePayment != null)
-                                                        {
-                                                            MonthlyPaid = singlePayment.Total;
-                                                            MonthlyTotal += MonthlyPaid;
-                                                            if (MonthlyPaid > 0)
-                                                            {
-                                                                <span>@UserFormat.GetAmount(MonthlyPaid)</span>
-                                                            }
-                                                        }
-                                                        @if (PArrears != null)
-                                                        {
-                                                            ArrearsInMonth = PArrears.Where(x => x.PensionerId == item.PensionerId
-                                                            && x.Month.Month == singleMonth && x.Month.Year == singleYear).Sum(y => y.Amount);
-                                                            MonthlyTotal += ArrearsInMonth;
-                                                            if (ArrearsInMonth >= 1)
-                                                            {
-                                                                <span>
-                                                                    @if (MonthlyPaid > 0)
-                                                                    {
-                                                                        <br />
-                                                                        <i>&amp;</i>
-                                                                    }
-                                                                    @UserFormat.GetAmount(ArrearsInMonth) (A)
-                                                                </span>
-                                                            }
-                                                        }
-                                                        @if (Commutations != null)
-                                                        {
-                                                            CommutationsInMonth = Commutations.Where(x => x.PensionerId == item.PensionerId
-                                                            && x.Month.Month == singleMonth && x.Month.Year == singleYear).Sum(y => y.Amount);
-                                                            MonthlyTotal += CommutationsInMonth;
-                                                            if (CommutationsInMonth >= 1)
-                                                            {
-                                                                <span>
-                                                                    @if (MonthlyPaid > 0 || ArrearsInMonth > 0)
-                                                                    {
-                                                                        <br />
-                                                                        <i>&amp;</i>
-                                                                    }
-                                                                    @UserFormat.GetAmount(CommutationsInMonth) (C)
-                                                                </span>
-                                                            }
-                                                        }
-                                                    </td>
-                                                    monthlyTotal[singleMonth] += MonthlyTotal;
-                                                    yearlyTotal += MonthlyTotal;
-                                                }
-                                                yearlyGrandTotal += yearlyTotal;
-                                            }
 
-                                            @*<td>@UserFormat.GetAmount(yearlyTotal)</td>*@
-                                        </tr>
-                                    }
-                                }
-                                <tr>
-                                    <td></td>
-                                    <td class="text-bold">Total</td>
-                                    @if (Model.Months != null)
-                                    {
-                                        @foreach (var month in Model.Months)
-                                        {
-                                            int monthNumber = month.Month.Month;
-                                            <td class="text-bold text-lg">@UserFormat.GetAmount(monthlyTotal[monthNumber])</td>
+    var monthlyTotal = new Dictionary<int, decimal>();
+    decimal yearlyGrandTotal = 0;
 
-                                        }
-                                        <th>@UserFormat.GetAmount(yearlyGrandTotal)</th>
-                                    }
-                                    else
-                                    {
-                                        <td>No Months detail</td>
-                                    }
-                                </tr>
-                            </tbody>
-                        </table>
-                        @*footer*@
-                        <div id="table-footer">
-                            <div class="container" style="margin-top: 200px;">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <p class="text-center">@Model.Session.AMStamp</p>
-                                        <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
-                                    </div>
-                                    <div class="col-6">
-                                        <div>
-                                            <p class="text-center">@Model.Session.DMStamp</p>
-                                            <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-
-            @*// table for those full pensioner excel*@
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table" id="data-table">
-                        <thead>
-                            <tr>
-                                <th>PPO </th>
-                                <th>Claimant</th>
-
-                                @if (Model.Months != null)
-                                {
-                                    @foreach (var month in Model.Months)
-                                    {
-                                        int monthNumber = month.Month.Month;
-                                        <th>@month.Month.ToString("MM-yyyy")</th>
-                                    }
-                                }
-                                else
-                                {
-                                    <th>Unable to Find HBL Payment Months</th>
-                                }
-                                <th>G.Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model.AllPensioners != null)
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table" id="data-table">
+                <thead>
+                    <tr>
+                        <th>PPO</th>
+                        <th>Claimant</th>
+                            @foreach (var month in Model.Months)
                             {
-                                @foreach (var item in Model.AllPensioners)
-                                {
-                                    yearlyTotal = 0;
-                                    <tr>
-                                        <th>@item.PPOSystem</th>
-                                        <th>@item.Claimant </th>
-                                        @if (Model.Months != null)
-                                        {
-                                            @foreach (var month in Model.Months)
-                                            {
-                                                int singleMonth = month.Month.Month;
-                                                int singleYear = month.Month.Year;
-                                                singleMonth = month.Month.Month;
-                                                singleYear = month.Month.Year;
-                                                ArrearsInMonth = 0;
-                                                CommutationsInMonth = 0;
-                                                MonthlyTotal = 0;
-                                                var monthlyPay = Model.HBLPayments
-                                                .Where(x => x.PensionerId == item.PensionerId && x.Month.Month == singleMonth && x.Month.Year == singleYear)
-                                                .FirstOrDefault();
-                                                if (monthlyPay != null)
-                                                {
-                                                    MonthlyTotal += monthlyPay.Total;
-                                                }
-
-
-                                                if (PArrears != null)
-                                                {
-                                                    ArrearsInMonth = PArrears
-                                                    .Where(x => x.PensionerId == item.PensionerId && x.Month.Month == singleMonth && x.Month.Year == singleYear)
-                                                    .Sum(y => y.Amount);
-                                                    MonthlyTotal += ArrearsInMonth;
-                                                }
-                                                if (Commutations != null)
-                                                {
-                                                    CommutationsInMonth = Commutations
-                                                    .Where(x => x.PensionerId == item.PensionerId && x.Month.Month == singleMonth && x.Month.Year == singleYear)
-                                                    .Sum(y => y.Amount);
-                                                    MonthlyTotal += CommutationsInMonth;
-                                                }
-                                                yearlyTotal += MonthlyTotal;
-                                                <th>@UserFormat.GetAmount(MonthlyTotal)</th>
-                                            }
-                                        }
-                                        <td>@UserFormat.GetAmount(yearlyTotal)</td>
-                                    </tr>
-                                }
-
-                                @if (Model.Months != null)
-                                {
-
-                                    <tr>
-                                        <th>Total</th>
-                                        <th></th>
-                                        @foreach (var month in Model.Months)
-                                        {
-                                            int monthNumber = month.Month.Month;
-
-                                            <th class="text-bold text-lg">@UserFormat.GetAmount(monthlyTotal[monthNumber])</th>
-                                        }
-                                        <th>@UserFormat.GetAmount(yearlyGrandTotal)</th>
-                                    </tr>
-                                }
+                                <th>@month.Month.ToString("MM-yyyy")</th>
                             }
-                        </tbody>
+                        <th>G.Total</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-                    </table>
-                </div>
-            </div>
-            <script>
-                $('#example').DataTable({
-                    dom: 'Bfrtip',
-                    buttons: [
+                    @foreach (var pensioner in Model.AllPensioners)
+                    {
+                        decimal yearlyTotal = 0;
+                        <tr>
+                            <td>@pensioner.PPOSystem</td>
+                            <td>@pensioner.Claimant</td>
+                            @foreach (var month in Model.Months)
+                            {
+                                decimal monthlyTotalAmount = 0;
+                                var monthKey = month.Month.Month + (month.Month.Year * 100); // Unique key for year+month.
+
+                                // Monthly Payments
+                                var payment = Model.HBLPayments.FirstOrDefault(x => x.PensionerId == pensioner.PensionerId &&
+                                x.Month.Month == month.Month.Month &&
+                                x.Month.Year == month.Month.Year);
+                                if (payment != null)
+                                    monthlyTotalAmount += payment.Total;
+
+                                // Arrears
+                                if (Model.HBLArrears != null)
+                                    monthlyTotalAmount += Model.HBLArrears.Where(x => x.PensionerId == pensioner.PensionerId &&
+                                    x.Month.Month == month.Month.Month &&
+                                    x.Month.Year == month.Month.Year)
+                                    .Sum(x => x.Amount);
+
+                                // Commutations
+                                if (Model.Commutations != null)
+                                    monthlyTotalAmount += Model.Commutations.Where(x => x.PensionerId == pensioner.PensionerId &&
+                                    x.Month.Month == month.Month.Month &&
+                                    x.Month.Year == month.Month.Year)
+                                    .Sum(x => x.Amount);
+
+                                yearlyTotal += monthlyTotalAmount;
+                                monthlyTotal[monthKey] = monthlyTotal.GetValueOrDefault(monthKey, 0) + monthlyTotalAmount;
+
+                                <td>@UserFormat.GetAmount(monthlyTotalAmount)</td>
+                            }
+                            <td>@UserFormat.GetAmount(yearlyTotal)</td>
+                        </tr>
+                    }
+
+                   
+                    @if (Model.BankCharges != null && Model.BankCharges.Any())
+                    {
+                        decimal totalBankCharges = 0;
+
+                        <tr>
+                            <td>Bank Charges</td>
+                            <td></td>
+                            @foreach (var month in Model.Months)
+                            {
+                                var monthKey = month.Month.Month + (month.Month.Year * 100); // Same key for year+month.
+                                var bankCharge = Model.BankCharges.Where(x => x.Month.Month == month.Month.Month &&
+                                x.Month.Year == month.Month.Year)
+                                .Sum(x => x.Charges);
+                                totalBankCharges += bankCharge;
+                                monthlyTotal[monthKey] = monthlyTotal.GetValueOrDefault(monthKey, 0) + bankCharge;
+
+                                <td>@UserFormat.GetAmount(bankCharge)</td>
+                            }
+                            <td>@UserFormat.GetAmount(totalBankCharges)</td>
+                        </tr>
+                    }
+
+                
+                    <tr>
+                        <td>Total</td>
+                        <td></td>
+                        @foreach (var month in Model.Months)
                         {
-                            extend: 'print',
-                            footer: false,
-                            customize: function (win) {
-                                $(win.document.body).prepend($('#table-header-office').html()); // before table
-                                $(win.document.body).append($("#table-footer").html()); //after the table
-                            },
-                            'title': '',
-                        },
-                        'excel',
-                        'copy',
-                        'csv',
-                        'pdf'
-                    ],
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": true,
-                    "ordering": false,
-                    "info": true,
-                    "responsive": true,
-                    "scrollX": true,
-                    "scrollY": true,
-                });
-                $('#data-table').DataTable({
-                    dom: 'Bfrtip',
-                    buttons: [
-                        {
-                            extend: 'print',
-                            footer: false,
-                            customize: function (win) {
-                                $(win.document.body).prepend($('#table-header-office').html()); // before table
-                                $(win.document.body).append($("#table-footer").html()); //after the table
-                                $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
-                            },
-                            'title': '',
-                        },
-                        'excel',
-                        'copy',
-                        'csv',
-                        'pdf'
-                    ],
-                    "paging": true,
-                    "lengthChange": false,
-                    "searching": true,
-                    "ordering": false,
-                    "info": true,
-                });
-            </script>
-        }
-        else
-        {
-            <div class="alert alert-danger">No Record found in said dates!</div>
-        }
-    }
-    else
-    {
-        <div class="alert alert-danger">No Record found in said dates!</div>
-    }
+                            var monthKey = month.Month.Month + (month.Month.Year * 100); // Same key for year+month.
+                            yearlyGrandTotal += monthlyTotal.GetValueOrDefault(monthKey, 0);
+
+                            <td class="text-bold text-lg">@UserFormat.GetAmount(monthlyTotal.GetValueOrDefault(monthKey, 0))</td>
+                        }
+                        <td>@UserFormat.GetAmount(yearlyGrandTotal)</td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $('#data-table').DataTable({
+            dom: 'Bfrtip',
+            buttons: ['print', 'excel', 'copy', 'csv', 'pdf'],
+            paging: true,
+            searching: true,
+            responsive: true
+        });
+    </script>
 }
-else
-{
-    <div class="alert alert-danger">No Pensioner Found!</div>
-}
+

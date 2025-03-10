@@ -10,7 +10,7 @@ using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
 using System.Data;
 
-namespace PensionSystem.Controllers
+namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
     public class HBLPaymentController(ApplicationDbContext applicationDbContext,
@@ -21,7 +21,9 @@ namespace PensionSystem.Controllers
         IPensionPayment pensionPayment,
         IPensioner pensioner,
         IBank bank,
-        IBranch branch, SessionHelper sessionHelper) : Controller
+        IBranch branch,
+        ICashBook cashBook,
+        SessionHelper sessionHelper) : Controller
     {
         private readonly ApplicationDbContext _context = applicationDbContext;
         private readonly IHBLArrears _hBLArrears = hBLArrearsService;
@@ -33,6 +35,7 @@ namespace PensionSystem.Controllers
         private readonly IPensioner _pensioner = pensioner;
         private readonly IBank _bank = bank;
         private readonly IBranch _branch = branch;
+        private readonly ICashBook _cashBook = cashBook;
         private readonly SessionHelper _sessionHelper = sessionHelper;
 
         public async Task<IActionResult> Index()
@@ -197,6 +200,7 @@ namespace PensionSystem.Controllers
             }
             model.HBLArrears = hblArrears;
             model.Commutations = await _commutation.GetCommutationsByDates(StartingDate, EndingDate, _sessionHelper.GetUserPDUId());
+            model.BankCharges = await _cashBook.GetBankChargesBetweenMonths(StartingDate, EndingDate, _sessionHelper.GetUserPDUId());
             model.Session = new SessionViewModel()
             {
                 AMStamp = _sessionHelper.GetAMStamp(),

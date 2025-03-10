@@ -1,6 +1,7 @@
 ﻿using PensionSystem.Helpers;
 using PensionSystem.Entities.Models;
 using System.ComponentModel.DataAnnotations;
+using PensionSystem.Entities.Helpers;
 
 namespace PensionSystem.ViewModels
 {
@@ -33,5 +34,9 @@ namespace PensionSystem.ViewModels
         public List<HBLPaymentPensioner>? AllPensioners { get; set; }
 
         public SessionViewModel? Session { get; set; }
+        /// <summary>
+        /// Bank Charges of the given PDUI
+        /// </summary>
+        public List<BankCharge>? BankCharges { get; set; }
     }
 }
