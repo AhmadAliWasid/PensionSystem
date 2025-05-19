@@ -6,18 +6,31 @@
 
     var monthlyTotal = new Dictionary<int, decimal>();
     decimal yearlyGrandTotal = 0;
-
     <div class="row">
+        <div id="table-header">
+            <div class="container">
+
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="text-center">@Model.Session.DMStamp @Model.Session.BaseStamp</h4>
+                        <h5 class="text-center">List Of Pensioner upto @UserFormat.GetMonthYear(Model.Months.OrderBy(x => x.Month).Last().Month)</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
         <div class="col-md-12">
             <table class="table" id="data-table">
                 <thead>
                     <tr>
                         <th>PPO</th>
                         <th>Claimant</th>
-                            @foreach (var month in Model.Months)
-                            {
-                                <th>@month.Month.ToString("MM-yyyy")</th>
-                            }
+                        @foreach (var month in Model.Months)
+                        {
+                            <th>@month.Month.ToString("MM-yyyy")</th>
+                        }
                         <th>G.Total</th>
                     </tr>
                 </thead>
@@ -64,7 +77,7 @@
                         </tr>
                     }
 
-                   
+
                     @if (Model.BankCharges != null && Model.BankCharges.Any())
                     {
                         decimal totalBankCharges = 0;
@@ -87,7 +100,7 @@
                         </tr>
                     }
 
-                
+
                     <tr>
                         <td>Total</td>
                         <td></td>
@@ -105,13 +118,59 @@
             </table>
         </div>
     </div>
+    <div id="table-footer">
+        <div class="container" style="margin-top: 70px;">
+            <div class="row">
+                <div class="col-6">
+                    <p class="text-center">@Model.Session.AMStamp</p>
+                    <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                </div>
+                <div class="col-6">
+                    <div>
+                        <p class="text-center">@Model.Session.DMStamp</p>
+                        <p class="text-center" style="margin-top: -20px;">@Model.Session.BaseStamp</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <script>
-        $('#data-table').DataTable({
-            dom: 'Bfrtip',
-            buttons: ['print', 'excel', 'copy', 'csv', 'pdf'],
-            paging: true,
-            searching: true,
-            responsive: true
+                $(document).ready(function () {
+            $('#data-table').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'print',
+                        footer: true,
+                        customize: function (win) {
+                            $(win.document.body).prepend($("#table-header").html()); //after the table
+                            $(win.document.body).append($("#table-footer").html()); //after the table
+                            $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
+                            var css = '@@page { size: landscape; }', head = win.document.head || win.document.getElementsByTagName('head')[0], style = win.document.createElement('style');
+                            style.type = 'text/css';
+                            style.media = 'print';
+                            if (style.styleSheet) {
+                                style.styleSheet.cssText = css;
+                            }
+                            else {
+                                style.appendChild(win.document.createTextNode(css));
+                            }
+                            head.appendChild(style);
+                        },
+                        title: '',
+                        message: '',
+                    },
+                    'excel',
+                    'copy',
+                    'csv',
+                    'pdf'
+                ],
+                "paging": true,
+                "lengthChange": true,
+                "searching": true,
+                "ordering": false,
+                "info": true,
+            });
         });
     </script>
 }

@@ -2,5 +2,14 @@
     .pagebreak {
         page-break-before: always;
     }
+    body {
+        margin: 0;
+        padding: 0;
+    }
+     .row, .table {
+        width: 100%; /* Ensures no space on the right */
+        margin: 0;
+        padding: 0;
+    }
     /* page-break-after works, as well */
 }

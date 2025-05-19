@@ -13,22 +13,19 @@
         guardianName = Model.Name;
     }
     <div id="printDiv" style="width: 700px;max-width: 700px;padding:5px; font-size:12px;">
-        <div id="page first-page">
-            <div class="row">
-                <h2 class="text-center text-underline" style="text-decoration:underline;">ALIVE CERTIFICATE</h2>
-                <h3 class="text-center text-underline" style="text-decoration:underline;">(VALID FOR SIX MONTHS ONLY)</h3>
-                <p class="text-justify" style="line-height:30px; font-size:200px;">
-                    it is certified that Mr/Mst/Miss. <u style="">@UserFormat.GetStringFormat(Model.Claimant, 50)</u>  S/O, Wd/O, D/O,M/O
-                    <u>@UserFormat.GetStringFormat(guardianName, 30)</u> having CNIC No. <u>@UserFormat.GetStringFormat(Model.ClaimantCNIC, 40) </u>
-                    bearing PPO No. @Model.PPONumber Mobile # <u>@Model.Mobile</u> resident of
-                    <u>@Model.Address</u> called on me as on ___________________________________ and he/she is ALIVE.
-                </p>
-            </div>
-
-            <div class="row" style="margin-top:10px; display:flow;">
-
-                <img src="~/img/attestation.png" width="100%" alt="attestation" />
-            </div>
+        <div class="margin:10px;">
+            <h2 class="text-center text-underline" style="text-decoration:underline;">ALIVE CERTIFICATE</h2>
+            <h3 class="text-center text-underline" style="text-decoration:underline;">(VALID FOR SIX MONTHS ONLY)</h3>
+            <p class="text-justify" style="line-height:30px; font-size:12px;">
+                it is certified that Mr/Mst/Miss. <b> <u style="">@UserFormat.GetStringFormat(Model.Claimant, 50)</u></b>  S/O, Wd/O, D/O,M/O
+                <b><u>@UserFormat.GetStringFormat(guardianName, 30)</u></b> having CNIC No.
+                <b><u>@UserFormat.GetStringFormat(Model.ClaimantCNIC, 40) </u></b>
+                bearing PPO No. @Model.PPONumber Mobile # <b> <u>@Model.Mobile</u></b> resident of
+                <b><u>@Model.Address</u></b> called on me as on ___________________________________ and he/she is ALIVE.
+            </p>
+        </div>
+        <div style="margin-top:100px">
+            <img src="~/img/attestation.png" width="100%" height="300" alt="attestation" />
         </div>
     </div>
 }
