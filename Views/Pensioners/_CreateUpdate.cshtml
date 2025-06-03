@@ -20,19 +20,20 @@
                     <input type="hidden" asp-for="Id" value="@Model.Id" />
                     <div class="row">
                         <div class="col-md-4">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label asp-for="PPOSystem" class="control-label"></label>
+                                    <input asp-for="PPOSystem" class="form-control" onblur="FillIfExist(this)" />
+                                    <span asp-validation-for="PPOSystem" class="text-danger"></span>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label asp-for="CompanyId" class="control-label"></label>
                                 <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
                                 <span asp-validation-for="CompanyId" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="PPOSystem" class="control-label"></label>
-                                <input asp-for="PPOSystem" class="form-control" />
-                                <span asp-validation-for="PPOSystem" class="text-danger"></span>
-                            </div>
-                        </div>
+                 
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label asp-for="PPONumber" class="control-label"></label>

@@ -1,0 +1,50 @@
+﻿@using Pension.Entities.Helpers
+@model PensionSystem.Entities.Models.Pensioner
+
+@if (Model != null)
+{
+    string guardianName = string.Empty; ;
+    if (Model.Relation.Name != null && Model.Relation.Name.Equals("Self"))
+    {
+        guardianName = Model.FatherName;
+    }
+    else
+    {
+        guardianName = Model.Name;
+    }
+    <div id="printDiv" style="width: 700px;max-width: 700px;padding:5px; font-size:12px;">
+        <div class="margin:10px;">
+            <h3 class="text-center text-underline" style="text-decoration:underline;">LAST PAYMENT CERTIFICATE</h3>
+            <p class="text-justify" style="line-height:30px; font-size:12px;">
+                it is certified that monthly pension has been paid to  Mr/Mst/Miss. <b> <u style="">@Model.Claimant</u></b>
+                vide PPO No. <u><b>@Model.PPONumber </b></u> upto ___________________________________.
+            </p>
+        </div>
+        <div style="margin:20px;">
+            <table class="table table-bordered ">
+                <thead>
+                    <tr>
+                        <th>MP</th>
+                        <th>CMA</th>
+                        <th>Orderly Allowance</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.MonthlyPension.ToString("N0")</td>
+                        <td>@Model.CMA.ToString("N0")</td>
+                        <td>@Model.OrderelyAllowence.ToString("N0")</td>
+                        <td>@Model.Total.ToString("N0")</td>
+                    </tr>
+            </table>
+        </div>
+        <div style="margin:20px;">
+
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">No Pensioner Found</div>
+}
