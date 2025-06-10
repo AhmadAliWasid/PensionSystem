@@ -1,179 +1,203 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pension.Entities.Helpers;
 using PensionSystem.Data;
+using PensionSystem.Entities.Models;
 using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
-using PensionSystem.Entities.Models;
-using AutoMapper;
-using PensionSystem.Entities.DTOs;
 using WebAPI.ViewModels;
 
 namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
-    public class ChequesController(ApplicationDbContext context, ICheque cheque,
-        IChequeCategory chequeCategory, IMapper mapper, SessionHelper sessionHelper, IHttpClientFactory httpClientFactory, IConfiguration configuration, ICommutation commutation, IHBLArrears hBLArrears) : Controller
+    public class ChequesController : Controller
     {
-        private readonly ApplicationDbContext _context = context;
-        private readonly ICheque _cheque = cheque;
-        private readonly IChequeCategory _chequeCategory = chequeCategory;
-        private readonly SessionHelper _sessionHelper = sessionHelper;
-        private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
-        private readonly IConfiguration _configuration = configuration;
-        private readonly IMapper _mapper = mapper;
-        private readonly ICommutation _commutation = commutation;
-        private readonly IHBLArrears _hblArrears = hBLArrears;
-        // GET: Cheques
+        private readonly ApplicationDbContext _context;
+        private readonly ICheque _cheque;
+        private readonly IChequeCategory _chequeCategory;
+        private readonly SessionHelper _sessionHelper;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
+        private readonly ICommutation _commutation;
+        private readonly IHBLArrears _hblArrears;
+
+        public ChequesController(
+            ApplicationDbContext context,
+            ICheque cheque,
+            IChequeCategory chequeCategory,
+            IMapper mapper,
+            SessionHelper sessionHelper,
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration,
+            ICommutation commutation,
+            IHBLArrears hblArrears)
+        {
+            _context = context;
+            _cheque = cheque;
+            _chequeCategory = chequeCategory;
+            _sessionHelper = sessionHelper;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
+            _mapper = mapper;
+            _commutation = commutation;
+            _hblArrears = hblArrears;
+        }
+
         [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
+
+        [HttpGet]
         public async Task<IActionResult> Crud(int id)
         {
+            ViewData["ChequeCategoryId"] = new SelectList(await _chequeCategory.GetOptions(), "Value", "Text");
             if (id == 0)
             {
-                ViewData["ChequeCategoryId"] = new SelectList(await _chequeCategory.GetOptions(), "Value", "Text");
-                var r = new Cheque
+                var cheque = new Cheque
                 {
                     Number = await _cheque.GetChequeNumber(_sessionHelper.GetUserPDUId())
                 };
-                return PartialView("_Crud", r);
+                return PartialView("_Crud", cheque);
             }
             else
             {
-                var r = await _cheque.GetById(id);
-                ViewData["ChequeCategoryId"] = new SelectList(await _chequeCategory.GetOptions(), "Value", "Text", r.ChequeCategoryId);
-                return PartialView("_Crud", r);
+                var cheque = await _cheque.GetById(id);
+                if (cheque == null)
+                    return NotFound();
+                ViewData["ChequeCategoryId"] = new SelectList(await _chequeCategory.GetOptions(), "Value", "Text", cheque.ChequeCategoryId);
+                return PartialView("_Crud", cheque);
             }
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<JsonResult> Save(Cheque cheque)
         {
-            JsonResponseHelper jsonResponseHelper = new();
-            if (ModelState.IsValid)
+            var jsonResponseHelper = new Pension.Entities.Helpers.JsonResponseHelper();
+            if (!ModelState.IsValid)
             {
-                cheque.PDUId = _sessionHelper.GetUserPDUId();
-                try
+                jsonResponseHelper.RText = "Invalid data.";
+                return Json(jsonResponseHelper);
+            }
+
+            cheque.PDUId = _sessionHelper.GetUserPDUId();
+            try
+            {
+                if (cheque.Id == 0)
                 {
-                    if (cheque.Id == 0)
-                    {
-                        var r = await _cheque.Insert(cheque);
-                        if (r.IsSaved)
-                            jsonResponseHelper.RCode = 1;
-                    }
-                    else
-                    {
-                        var r = await _cheque.Update(cheque);
-                        if (r.IsSaved)
-                            jsonResponseHelper.RCode = 1;
-                    }
+                    var result = await _cheque.Insert(cheque);
+                    if (result.IsSaved)
+                        jsonResponseHelper.RCode = 1;
                 }
-                catch (Exception exc)
+                else
                 {
-                    jsonResponseHelper.RText = exc.Message.ToString();
+                    var result = await _cheque.Update(cheque);
+                    if (result.IsSaved)
+                        jsonResponseHelper.RCode = 1;
                 }
+            }
+            catch (Exception exc)
+            {
+                jsonResponseHelper.RText = exc.Message;
             }
             return Json(jsonResponseHelper);
         }
 
-        // GET: Cheques/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
-                return NotFound();
-            }
+                return BadRequest();
 
             var cheque = await _context.Cheque
                 .Include(c => c.ChequeCategory)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (cheque == null)
-            {
                 return NotFound();
-            }
 
             return View(cheque);
         }
 
-        // POST: Cheques/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            Cheque? cheque = await _context.Cheque.FindAsync(id);
-            if (cheque != null)
-            {
-                _context.Cheque.Remove(cheque);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
-                return NotFound(); ;
-            }
+            var cheque = await _context.Cheque.FindAsync(id);
+            if (cheque == null)
+                return NotFound();
+
+            _context.Cheque.Remove(cheque);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
-        public async Task<bool> MarkItPaid(int Id = 0)
+        [ValidateAntiForgeryToken]
+        public async Task<JsonResult> MarkItPaid(int id)
         {
-            if (Id == 0)
-                return false;
-            return await _cheque.MarkItPay(Id);
+            if (id == 0)
+                return Json(false);
+
+            var result = await _cheque.MarkItPay(id);
+            return Json(result);
         }
+
         [HttpGet]
         public async Task<IActionResult> Load()
         {
-            return PartialView("_List",
-                await _cheque.GetList(_sessionHelper.GetUserPDUId()));
+            var cheques = await _cheque.GetList(_sessionHelper.GetUserPDUId());
+            return PartialView("_List", cheques);
         }
+
         [HttpGet]
-        public async Task<IActionResult> GetPV(int Id)
+        public async Task<IActionResult> GetPV(int id)
         {
-            var c = await _cheque.GetById(Id);
+            var c = await _cheque.GetById(id);
             if (c == null || c.ChequeCategory == null)
                 return NotFound();
-            var VM = new PVViewModel
+
+            var vm = new PVViewModel
             {
                 Amount = c.Amount,
                 Date = c.Date,
                 Number = c.Number,
                 Payee = c.Name,
-                SessionViewModel = new SessionViewModel()
+                SessionViewModel = new SessionViewModel
                 {
                     AMStamp = _sessionHelper.GetAMStamp(),
                     BaseStamp = _sessionHelper.GetBaseStamp(),
                     DMStamp = _sessionHelper.GetDMStamp(),
                 }
             };
+
             if (c.ChequeCategoryId == 1)
             {
-                VM.Description.Add(new(c.ChequeCategory.Name + " for the month of " + c.Date.ToString("MM-yyyy"), c.Amount));
+                vm.Description.Add(new(c.ChequeCategory.Name + " for the month of " + c.Date.ToString("MM-yyyy"), c.Amount));
             }
             else
             {
-                // we will add commutation 
                 var commutation = await _commutation.GetCommutationByCheque(c.Id);
                 if (commutation != null && commutation.Count > 0)
-                    VM.Description.Add(new(" Commutation ", commutation.Sum(x => x.Amount)));
-                // we will cheque if arrears
+                    vm.Description.Add(new("Commutation", commutation.Sum(x => x.Amount)));
+
                 var arrears = await _hblArrears.GetArrearsByCheque(c.Id);
                 if (arrears.Count > 0)
                 {
                     foreach (var item in arrears)
                     {
-
-                        VM.Description.Add(new(item.Description, c.Amount));
-                        VM.Description.Add(new($"Period ({UserFormat.GetDate(item.FromMonth)} {UserFormat.GetDate(item.ToMonth)}) ", 0));
+                        vm.Description.Add(new(item.Description, item.Amount));
+                        vm.Description.Add(new($"Period ({UserFormat.GetDate(item.FromMonth)} {UserFormat.GetDate(item.ToMonth)})", 0));
                     }
                 }
-
             }
-            return PartialView("_PV", VM);
-
+            return PartialView("_PV", vm);
         }
     }
 }
