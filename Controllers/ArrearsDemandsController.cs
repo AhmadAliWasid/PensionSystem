@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using Pension.Entities.Helpers;
 using PensionSystem.Data;
 using PensionSystem.Entities.DTOs;
 using PensionSystem.Helpers;
@@ -11,6 +10,7 @@ using PensionSystem.Interfaces;
 using PensionSystem.ViewModels;
 using System.Text;
 using System.Text.Json;
+using WebAPI.Helpers;
 
 namespace PensionSystem.Controllers
 {

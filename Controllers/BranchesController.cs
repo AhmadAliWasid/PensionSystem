@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Pension.Entities.Helpers;
 using PensionSystem.Interfaces;
 using PensionSystem.ViewModels;
+using WebAPI.Helpers;
 
 namespace PensionSystem.Controllers
 {

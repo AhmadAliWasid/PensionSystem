@@ -1,4 +1,4 @@
-﻿namespace Pension.Entities.Helpers
+﻿namespace WebAPI.Helpers
 {
     public class JsonResponseHelper
     {

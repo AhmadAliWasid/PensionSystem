@@ -98,7 +98,7 @@ namespace WebAPI.Services
         public DateOnly GetMonth(int demandId)
         {
             var demandContext = _context.ArrearsDemands;
-            if (demandContext != null)
+            if (demandContext != null && demandId != 0)
             {
                 var demand = demandContext.Where(x => x.Id == demandId).First();
                 return new DateOnly(demand.Date.Year, demand.Date.Month, demand.Date.Day);

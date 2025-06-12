@@ -9,7 +9,7 @@ using PensionSystem.Entities.Models;
 using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
 using WebAPI.ViewModels;
-
+using WebAPI.Helpers;
 namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
@@ -79,7 +79,7 @@ namespace WebAPI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<JsonResult> Save(Cheque cheque)
         {
-            var jsonResponseHelper = new Pension.Entities.Helpers.JsonResponseHelper();
+            var jsonResponseHelper = new JsonResponseHelper();
             if (!ModelState.IsValid)
             {
                 jsonResponseHelper.RText = "Invalid data.";
@@ -126,7 +126,6 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var cheque = await _context.Cheque.FindAsync(id);
@@ -139,7 +138,6 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<JsonResult> MarkItPaid(int id)
         {
             if (id == 0)

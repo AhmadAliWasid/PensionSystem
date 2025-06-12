@@ -14,67 +14,84 @@
     </div>
     <div class="card-body">
         <div class="row form-group">
-            <div class="col-md-3">
-                <label class="control-label">Demand</label>
-                <select class="form-control" id="ArrearsDemandId" name="ArrearsDemandId" asp-items="ViewBag.ArrearsDemandId"></select>
+            <div class="col-md-4">
+                <label for="ArrearsDemandId" class="control-label">Demand</label>
+                <select class="form-control" id="ArrearsDemandId" asp-items="ViewBag.ArrearsDemandId"></select>
             </div>
-            <div class="col-md-3">
-                <label>Bank</label>
-                <select class="form-control" id="BankId" name="BankId" asp-items="ViewBag.BankId"></select>
+            <div class="col-md-4">
+                <label for="BankId">Bank</label>
+                <select class="form-control" id="BankId" asp-items="ViewBag.BankId"></select>
             </div>
-            <div class="col-md-3">
-                <label>Month</label>
-                <input type="month" value="@DateTime.Now.ToString("yyyy-MM")"
-                       max="@DateTime.Now.ToString("yyyy-MM")" min="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM")"
-                       class="form-control" id="Month" name="Month" />
-            </div>
-            <div class="col-md-3">
-                <label class="control-label">Cheque</label>
-                <select class="form-control" id="ChequeId" name="ChequeId" asp-items="ViewBag.ChequeId"></select>
+            <div class="col-md-4">
+                <label for="ChequeId" class="control-label">Cheque</label>
+                <select class="form-control" id="ChequeId" asp-items="ViewBag.ChequeId"></select>
             </div>
         </div>
         <div class="row form-group">
-            <div class="col-md-2">
-                <button class="btn btn-flat btn-primary btn-block" onclick="PayArrearDemand()"><i class="fa fa-cash"></i> Pay Now</button>
+            <div class="col-md-4">
+                <button type="button" class="btn btn-flat btn-primary btn-block" id="payNowBtn">
+                    <i class="fa fa-cash"></i> Pay Now
+                </button>
             </div>
         </div>
     </div>
+</div>
+<div class="card">
+    <div class="card-body" id="content"></div>
+</div>
+
+@section Scripts {
     <script>
-        function PayArrearDemand() {
-            var ArrearDemandId = $("#ArrearsDemandId").val();
-            var BankId = $("#BankId").val();
-            var ChequeId = $("#ChequeId").val();
-            var Month = $("#Month").val();
-            if (ArrearDemandId != "" || BankId != "" || ChequeId != "" || Month != "") {
-                awaitHtmlElement("#content");
+        $(function () {
+            $('#payNowBtn').on('click', function () {
+                const arrearDemandId = $('#ArrearsDemandId').val();
+                const bankId = $('#BankId').val();
+                const chequeId = $('#ChequeId').val();
+                if (arrearDemandId && bankId && chequeId) {
+                    ajaxAction('@Url.Action("PayArrearDemand")', 'POST', {
+                        ArrearDemandId: arrearDemandId,
+                        BankId: bankId,
+                        ChequeId: chequeId
+                    }, function () {
+                        getCheque();
+                    });
+                } else {
+                    alert("Arrear, Bank, Cheque & Month are required fields.");
+                }
+            });
+
+            $('#ChequeId').on('change', getCheque);
+            $('#ArrearsDemandId').on('click', getDemandList);
+
+            function ajaxAction(url, type, data, onSuccess) {
                 $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("PayArrearDemand")",
-                    data: {
-                        ArrearDemandId: ArrearDemandId,
-                        BankId: BankId,
-                        ChequeId: ChequeId,
-                        Month: Month
-                    },
+                    type: type,
+                    url: url,
+                    data: data,
                     dataType: "text",
                     success: function (msg) {
-                        $("#content").html(msg.RText);
+                        if (onSuccess) onSuccess(msg);
+                        else $('#content').html(msg);
                     },
                     error: function (req, status, error) {
-                        alert(error);
+                        $('#content').html(error);
                     }
                 });
             }
-            else {
-                alert("Arrear, Bank, Cheque & Month are required Field");
+
+            function getCheque() {
+                const chequeId = $('#ChequeId').val();
+                if (chequeId) {
+                    ajaxAction('@Url.Action("GetCheque")', 'GET', { chequeId: chequeId });
+                }
             }
-        }
+
+            function getDemandList() {
+                const demandId = $('#ArrearsDemandId').val();
+                if (demandId) {
+                    ajaxAction('@Url.Action("GetDemandList", "ArrearsPayments")', 'GET', { demandId: demandId });
+                }
+            }
+        });
     </script>
-</div>
-<div class="card">
-    <div cite="card-body" id="content">
-    </div>
-
-</div>
-
-
+}

@@ -9,6 +9,7 @@ using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
 using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
+using WebAPI.Helpers;
 
 namespace PensionSystem.Controllers
 {
@@ -42,7 +43,6 @@ namespace PensionSystem.Controllers
             return View(model);
         }
 
-        // GET: HBLArrears/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -77,6 +77,7 @@ namespace PensionSystem.Controllers
             var jsH = new JsonResponseHelper();
             if (ModelState.IsValid)
             {
+                hBLArrears.Month = hBLArrears.Month.Date;
                 try
                 {
                     _context.Add(hBLArrears);
@@ -213,20 +214,22 @@ namespace PensionSystem.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> PayArrearDemand(int ArrearDemandId, int ChequeId, DateTime Month, int BankId)
+        public async Task<JsonResult> PayArrearDemand(int ArrearDemandId, int ChequeId, int BankId)
         {
             JsonResponseHelper jsonResponseHelper = new();
-            if (ArrearDemandId != 0 && ChequeId != 0 && BankId != 0 && Month.Date != DateTime.MinValue)
+            if (ArrearDemandId != 0 && ChequeId != 0 && BankId != 0)
             {
-                var listArrearsPayment = await _arrearsPayment
-                    .GetByDemandForPayment(ArrearDemandId, BankId);
-                string result = await _hblArrears.PayHBLArrearsInBulk(
-                    listArrearsPayment, ChequeId, Month);
-                jsonResponseHelper.RText = result;
-                if (result == string.Empty)
-                    jsonResponseHelper.RCode = 0;
-                else
-                    jsonResponseHelper.RCode = 1;
+                var listArrearsPayment = await _arrearsPayment.GetByDemandForPayment(ArrearDemandId, BankId);
+                var cheque = await _cheque.GetCheque(ChequeId);
+                if (cheque != null)
+                {
+                    string result = await _hblArrears.PayHBLArrearsInBulk(listArrearsPayment, ChequeId, cheque.Date);
+                    jsonResponseHelper.RText = result;
+                    if (result == string.Empty)
+                        jsonResponseHelper.RCode = 0;
+                    else
+                        jsonResponseHelper.RCode = 1;
+                }   
             }
             else
             {

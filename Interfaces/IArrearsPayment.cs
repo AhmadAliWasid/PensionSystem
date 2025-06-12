@@ -1,5 +1,5 @@
-﻿using Pension.Entities.Helpers;
-using PensionSystem.Entities.Models;
+﻿using PensionSystem.Entities.Models;
+using WebAPI.Helpers;
 using WebAPI.Interfaces;
 
 namespace PensionSystem.Interfaces
