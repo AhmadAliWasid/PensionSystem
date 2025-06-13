@@ -56,7 +56,11 @@ namespace PensionSystem.Controllers
         {
             return await GetPensionerPartialViewAsync(id, "_AccountOpening");
         }
-
+        [HttpGet]
+        public async Task<IActionResult> GetFreeSupply([FromQuery] int id)
+        {
+            return await GetPensionerPartialViewAsync(id, "_FreeSupply");
+        }
         // --- Private helpers ---
 
         private async Task<IActionResult> GetPensionerPartialViewAsync(int id, string partialViewName)

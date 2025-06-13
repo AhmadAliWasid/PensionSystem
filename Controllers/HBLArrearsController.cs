@@ -11,7 +11,7 @@ using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
 using WebAPI.Helpers;
 
-namespace PensionSystem.Controllers
+namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
     public class HBLArrearsController(ApplicationDbContext context, IHBLArrears hBLArrears,
@@ -77,7 +77,14 @@ namespace PensionSystem.Controllers
             var jsH = new JsonResponseHelper();
             if (ModelState.IsValid)
             {
-                hBLArrears.Month = hBLArrears.Month.Date;
+                var cheque = await _cheque.GetCheque(hBLArrears.ChequeId);
+                if(cheque == null)
+                {
+                    jsH.RCode = 0;
+                    jsH.RText = "Cheque not found!";
+                    return Json(jsH);
+                }
+                hBLArrears.Month = cheque.Date;
                 try
                 {
                     _context.Add(hBLArrears);

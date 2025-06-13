@@ -2,7 +2,7 @@
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace Pension.Entities.Helpers
+namespace WebAPI.Helpers
 {
     public static class UserFormat
     {
@@ -81,7 +81,7 @@ namespace Pension.Entities.Helpers
 
         public static IEnumerable<string> Split(this string str, int n)
         {
-            if (System.String.IsNullOrEmpty(str) || n < 1)
+            if (string.IsNullOrEmpty(str) || n < 1)
             {
                 throw new ArgumentException();
             }
@@ -126,7 +126,7 @@ namespace Pension.Entities.Helpers
         {
             if (Amount == 0)
                 return " - ";
-            return System.String.Format("{0:n0}", Amount);
+            return string.Format("{0:n0}", Amount);
         }
 
         public static string GetMonthYear(DateTime dateTime)
@@ -163,7 +163,7 @@ namespace Pension.Entities.Helpers
         /// <returns></returns>
         public static string GetChequeNumber(int chequeNumber)
         {
-            return System.String.Format("{0,22}", chequeNumber.ToString("D8"));
+            return string.Format("{0,22}", chequeNumber.ToString("D8"));
         }
 
         public static string GetMobilePK(string number)

@@ -31,6 +31,7 @@
                                 <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("Page")', @item.Id)"><i class="fas fa-print"></i> Page</button>
                                 <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("GetACO")', @item.Id)"><i class="fas fa-print"></i> ACO</button>
                                 <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("GetLPC")', @item.Id)"><i class="fas fa-print"></i> LPC</button>
+                                <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("GetFreeSupply")', @item.Id)"><i class="fas fa-print"></i> Free Supply</button>
                                 <a asp-action="PageSlip" class="btn bg-gradient-info" asp-route-id="@item.Id"><i class="fas fa-print"></i> Slip</a>
                             </td>
                         </tr>

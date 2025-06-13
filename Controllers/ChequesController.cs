@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Pension.Entities.Helpers;
 using PensionSystem.Data;
 using PensionSystem.Entities.Models;
 using PensionSystem.Helpers;
@@ -76,7 +75,6 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<JsonResult> Save(Cheque cheque)
         {
             var jsonResponseHelper = new JsonResponseHelper();

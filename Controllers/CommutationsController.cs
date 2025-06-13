@@ -71,6 +71,14 @@ namespace PensionSystem.Controllers
             JsonResponseHelper helper = new();
             if (ModelState.IsValid)
             {
+                var cheque = await _cheque.GetCheque(vM.ChequeId);
+                if (cheque == null)
+                {
+                    helper.RCode = 0;
+                    helper.RText = "Cheque not found!";
+                    return Json(helper);
+                }
+                vM.Month = cheque.Date;
                 if (vM.Id == 0)
                 {
                     var r = new Commutation()

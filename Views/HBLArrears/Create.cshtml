@@ -35,22 +35,15 @@
                         <span asp-validation-for="ToMonth" class="text-danger"></span>
                     </div>
                 </div>
-
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label asp-for="Month" class="control-label"></label>
-                        <input asp-for="Month" type="month" value="@DateTime.Now.ToString("yyyy-MM")" class="form-control" />
-                        <span asp-validation-for="Month" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="PensionerId" class="control-label"></label>
                         <select asp-for="PensionerId" class="form-control" asp-items="ViewBag.PensionerId"></select>
                     </div>
                 </div>
+            </div>
+            <div class="row">
+        
                 <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="Description" class="control-label"></label>
@@ -71,8 +64,6 @@
                         <span asp-validation-for="AccountNumber" class="text-danger"></span>
                     </div>
                 </div>
-            </div>
-            <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="Amount" class="control-label"></label>

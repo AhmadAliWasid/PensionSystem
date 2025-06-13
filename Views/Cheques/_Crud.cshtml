@@ -2,6 +2,11 @@
 
 @{
     Layout = null;
+    if(Model.Date == default(DateTime))
+    {
+        Model.Date = DateTime.Now;
+    }
+   
 }
 
 <form id="CreateUpdate">
@@ -29,8 +34,8 @@
             <div class="col-md-12">
                 <div class="form-group">
                     <label asp-for="Date" class="control-label"></label>
-                    <input asp-for="Date" min="@DateTime.Now.AddMonths(-2).ToString("yyyy-MM-dd")"
-                           value="@DateTime.Now.ToString("yyyy-MM-dd")" 
+                    <input asp-for="Date" 
+                          
                            max="@DateTime.Now.AddMonths(1).ToString("yyyy-MM-dd")" 
                            class="form-control" />
                     <span asp-validation-for="Date" class="text-danger"></span>
