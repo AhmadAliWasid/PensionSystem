@@ -1,32 +1,34 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Pension.Entities.Helpers;
 using PensionSystem.Data;
 using PensionSystem.DTOs;
+using PensionSystem.Entities.DTOs;
+using PensionSystem.Entities.Models;
 using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
-using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
-using System.Data;
 using System.Text;
 using System.Text.Json;
-using PensionSystem.Entities.DTOs;
 using WebAPI.Helpers;
 
-namespace PensionSystem.Controllers
+namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser")]
-    public class PensionersController(ApplicationDbContext context,
+    public class PensionersController(
+        ApplicationDbContext context,
         IRelation relation,
         ICompany company,
         IPensioner pensioner,
         IWebHostEnvironment webHostEnvironment,
-        IBank bank, IBranch branch, IPDU pDU,
+        IBank bank,
+        IBranch branch,
+        IPDU pDU,
         SessionHelper sessionHelper,
- IHttpClientFactory httpClientFactory, IConfiguration configuration) : Controller
+        IHttpClientFactory httpClientFactory,
+        IConfiguration configuration) : Controller
     {
         private readonly ApplicationDbContext _context = context;
         private readonly ICompany _company = company;
@@ -40,21 +42,20 @@ namespace PensionSystem.Controllers
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
         private readonly IConfiguration _configuration = configuration;
 
-        // GET: Pensioners
-        public IActionResult Index()
-        { return View(); }
+        /// <summary>
+        /// Pensioners main view.
+        /// </summary>
+        public IActionResult Index() => View();
 
         [HttpGet]
-        public IActionResult Files()
-        { return PartialView("_Files"); }
+        public IActionResult Files() => PartialView("_Files");
 
         [HttpGet]
-        public async Task<IActionResult> Increase()
-        { return View(await _pensioner.GetActive(_sessionHelper.GetUserPDUId())); }
+        public async Task<IActionResult> Increase() =>
+            View(await _pensioner.GetActive(_sessionHelper.GetUserPDUId()));
 
         [HttpGet]
-        public IActionResult BulkAddition()
-        { return View(); }
+        public IActionResult BulkAddition() => View();
 
         [HttpGet]
         public async Task<IActionResult> List()
@@ -72,7 +73,6 @@ namespace PensionSystem.Controllers
         {
             var vm = new PensionerViewModel
             {
-                // Use parsedPduId as needed
                 Pensioners = await _pensioner.GetInActiveList(_sessionHelper.GetUserPDUId()),
                 Branches = await _branch.GetAll()
             };
@@ -90,533 +90,329 @@ namespace PensionSystem.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSMSList()
-        { return PartialView("_SMSService", await _pensioner.GetSMSList(_sessionHelper.GetUserPDUId())); }
+        public async Task<IActionResult> GetSMSList() =>
+            PartialView("_SMSService", await _pensioner.GetSMSList(_sessionHelper.GetUserPDUId()));
 
+        [HttpGet]
         public async Task<IActionResult> CreateUpdate(int? id)
         {
-            PensionerDTO pM = new();
+            PensionerDTO dto = new();
             if (id == null || id == 0)
             {
-                ViewData["CompanyId"] = new SelectList(await _company.GetOptions(), "Value", "Text");
-                ViewData["RelationId"] = new SelectList(await _relation.GetOptions(), "Value", "Text");
-                ViewData["BankId"] = new SelectList(await _bank.GetOptions(), "Value", "Text");
-                return PartialView("_CreateUpdate", pM);
+                await PopulateSelectListsAsync();
+                return PartialView("_CreateUpdate", dto);
             }
-            else
-            {
-                var p = await _context.Pensioner
-                    .Include(x => x.Branch)
-                    .Where(x => x.Id == id)
-                    .FirstOrDefaultAsync();
-                if (p != null)
-                {
-                    pM.Id = p.Id;
-                    pM.PageNumber = p.PageNumber;
-                    pM.Name = p.Name;
-                    pM.Claimant = p.Claimant;
-                    pM.FatherName = p.FatherName;
-                    pM.Gender = p.Gender;
-                    pM.Spouse = p.Spouse;
-                    pM.Designation = p.Designation;
-                    pM.PPONumber = p.PPONumber;
-                    pM.PPOSystem = p.PPOSystem;
-                    pM.SanctionNumber = p.SanctionNumber;
-                    pM.SanctionDate = p.SanctionDate;
-                    pM.DOB = p.DOB;
-                    pM.DateOfRetirement = p.DateOfRetirement;
-                    pM.CompanyId = p.CompanyId;
-                    pM.Mobile = p.Mobile;
-                    pM.CNIC = p.CNIC;
-                    pM.ClaimantCNIC = p.ClaimantCNIC;
-                    pM.Address = p.Address;
-                    pM.IsActiveClaimant = p.IsActiveClaimant;
-                    pM.AccountNumber = p.AccountNumber;
-                    pM.MonthlyPension = p.MonthlyPension;
-                    pM.CMA = p.CMA;
-                    pM.OrderelyAllowence = p.OrderelyAllowence;
-                    pM.Total = p.Total;
-                    pM.Remarks = p.Remarks;
-                    pM.RelationId = p.RelationId;
-                    pM.BPS = p.BPS;
-                    pM.BranchId = p.BranchId;
-                    pM.DateOfAppointment = p.DateOfAppointment;
-                    pM.LastBasicPay = p.LastBasicPay;
-                    pM.AccountTitle = p.AccountTitle;
-                    pM.IsServiceActive = p.IsServiceActive;
-                    pM.RetiringOffice = p.RetiringOffice;
-                    pM.Commutation = p.Commutation;
-                    pM.MonthlyRecovery = p.MonthlyRecovery;
-                    pM.IBAN = p.IBAN;
-                    ViewData["CompanyId"] = new SelectList(await _company.GetOptions(), "Value", "Text", p.CompanyId);
-                    ViewData["RelationId"] = new SelectList(await _relation.GetOptions(), "Value", "Text", p.RelationId);
-                    ViewData["BankId"] = new SelectList(await _bank.GetOptions(), "Value", "Text", p.Branch.BankId);
-                    ViewData["BranchId"] = new SelectList(await _branch.GetOptions(), "Value", "Text", p.BranchId);
-                }
-                return PartialView("_CreateUpdate", pM);
-            }
+
+            var pensioner = await _context.Pensioner
+                .Include(x => x.Branch)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (pensioner == null)
+                return NotFound();
+
+            MapPensionerToDTO(pensioner, dto);
+            await PopulateSelectListsAsync(pensioner.CompanyId, pensioner.RelationId, pensioner.Branch?.BankId, pensioner.BranchId);
+
+            return PartialView("_CreateUpdate", dto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<JsonResult> Update([Bind("Id","CompanyId", "PageNumber", "PPONumber", "PPOSystem", "Name", "Designation", "BPS",
-            "FatherName","Mobile","CNIC","DOB","DateOfRetirement","RelationId","SanctionNumber","SanctionDate","Gender","Claimant","ClaimantCNIC","Spouse",
-            "Address","AccountNumber","MonthlyPension","CMA","OrderelyAllowence","Total",
-            "MonthlyRecovery","Remarks","IsActiveClaimant","BranchId","LastBasicPay",
-            "DateOfAppointment","AccountTitle","IsServiceActive","Commutation","RetiringOffice","IBAN")] PensionerDTO pM)
+        public async Task<JsonResult> Update([Bind("Id,CompanyId,PageNumber,PPONumber,PPOSystem,Name,Designation,BPS,FatherName,Mobile,CNIC,DOB,DateOfRetirement,RelationId,SanctionNumber,SanctionDate,Gender,Claimant,ClaimantCNIC,Spouse,Address,AccountNumber,MonthlyPension,CMA,OrderelyAllowence,Total,MonthlyRecovery,Remarks,IsActiveClaimant,BranchId,LastBasicPay,DateOfAppointment,AccountTitle,IsServiceActive,Commutation,RetiringOffice,IBAN")] PensionerDTO dto)
         {
-            JsonResponseHelper helper = new();
-            if (ModelState.IsValid)
+            var response = new JsonResponseHelper();
+
+            if (!ModelState.IsValid)
             {
-                if (pM.Id == 0)
-                {
-                    Pensioner p = new()
-                    {
-                        PageNumber = pM.PageNumber,
-                        Name = pM.Name,
-                        Claimant = pM.Claimant,
-                        FatherName = pM.FatherName,
-                        Gender = pM.Gender,
-                        Spouse = pM.Spouse,
-                        Designation = pM.Designation,
-                        PPONumber = pM.PPONumber,
-                        PPOSystem = pM.PPOSystem,
-                        SanctionNumber = pM.SanctionNumber,
-                        SanctionDate = pM.SanctionDate,
-                        DOB = pM.DOB,
-                        DateOfRetirement = pM.DateOfRetirement,
-                        CompanyId = pM.CompanyId,
-                        Mobile = pM.Mobile,
-                        CNIC = pM.CNIC,
-                        ClaimantCNIC = pM.ClaimantCNIC,
-                        Address = pM.Address,
-                        IsActiveClaimant = pM.IsActiveClaimant,
-                        AccountNumber = pM.AccountNumber,
-                        MonthlyPension = pM.MonthlyPension,
-                        CMA = pM.CMA,
-                        OrderelyAllowence = pM.OrderelyAllowence,
-                        Total = pM.Total,
-                        Remarks = pM.Remarks,
-                        RelationId = pM.RelationId,
-                        BPS = pM.BPS,
-                        LastBasicPay = pM.LastBasicPay,
-                        BranchId = pM.BranchId,
-                        DateOfAppointment = pM.DateOfAppointment,
-                        AccountTitle = pM.AccountTitle,
-                        IsServiceActive = pM.IsServiceActive,
-                        PDUId = _sessionHelper.GetUserPDUId(),
-                        Commutation = pM.Commutation,
-                        RetiringOffice = pM.RetiringOffice,
-                        MonthlyRecovery = pM.MonthlyRecovery,
-                        IBAN = pM.IBAN
-                    };
-                    await _context.AddAsync(p);
-                }
-                else
-                {
-                    var p = await _context.Pensioner.Where(x => x.Id == pM.Id).SingleOrDefaultAsync();
-                    if (p == null)
-                    {
-                        helper.RCode = 0;
-                        helper.RText = "Unable to find in DB";
-                        return Json(helper);
-                    }
-                    p.PageNumber = pM.PageNumber;
-                    p.Name = pM.Name;
-                    p.Claimant = pM.Claimant;
-                    p.FatherName = pM.FatherName;
-                    p.Gender = pM.Gender;
-                    p.Spouse = pM.Spouse;
-                    p.Designation = pM.Designation;
-                    p.PPONumber = pM.PPONumber;
-                    p.PPOSystem = pM.PPOSystem;
-                    p.SanctionNumber = pM.SanctionNumber;
-                    p.SanctionDate = pM.SanctionDate;
-                    p.DOB = pM.DOB;
-                    p.DateOfRetirement = pM.DateOfRetirement;
-                    p.CompanyId = pM.CompanyId;
-                    p.Mobile = pM.Mobile;
-                    p.CNIC = pM.CNIC;
-                    p.ClaimantCNIC = pM.ClaimantCNIC;
-                    p.Address = pM.Address;
-                    p.IsActiveClaimant = pM.IsActiveClaimant;
-                    p.AccountNumber = pM.AccountNumber;
-                    p.MonthlyPension = pM.MonthlyPension;
-                    p.CMA = pM.CMA;
-                    p.OrderelyAllowence = pM.OrderelyAllowence;
-                    p.Total = pM.Total;
-                    p.Remarks = pM.Remarks;
-                    p.RelationId = pM.RelationId;
-                    p.BPS = pM.BPS;
-                    p.LastBasicPay = pM.LastBasicPay;
-                    p.BranchId = pM.BranchId;
-                    p.DateOfAppointment = pM.DateOfAppointment;
-                    p.AccountTitle = pM.AccountTitle;
-                    p.IsServiceActive = pM.IsServiceActive;
-                    p.Commutation = pM.Commutation;
-                    p.RetiringOffice = pM.RetiringOffice;
-                    p.MonthlyRecovery = pM.MonthlyRecovery;
-                    p.IBAN = pM.IBAN;
-                    _context.Update(p);
-                }
-                try
-                {
-                    await _context.SaveChangesAsync();
-                    helper.RCode = 1;
-                }
-                catch (DbUpdateConcurrencyException exc)
-                {
-                    helper.RText = ExceptionHelper.GetDetail(exc);
-                }
+                response.RText = string.Join(" ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return Json(response);
+            }
+
+            if (dto.Id == 0)
+            {
+                var entity = MapDTOToPensioner(dto);
+                entity.PDUId = _sessionHelper.GetUserPDUId();
+                await _context.Pensioner.AddAsync(entity);
             }
             else
             {
-                IEnumerable<ModelError> allErrors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var item in allErrors)
+                var entity = await _context.Pensioner.FindAsync(dto.Id);
+                if (entity == null)
                 {
-                    helper.RText += item.ErrorMessage;
+                    response.RCode = 0;
+                    response.RText = "Unable to find in DB";
+                    return Json(response);
                 }
+                MapDTOToPensioner(dto, entity);
+                _context.Pensioner.Update(entity);
             }
-            return Json(helper);
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                response.RCode = 1;
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                response.RText = ExceptionHelper.GetDetail(ex);
+            }
+
+            return Json(response);
         }
 
-        // GET: Pensioners/Delete/5
-        [Authorize(Roles = "PDUUser")]
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var pensioner = await _context.Pensioner
                 .Include(p => p.Company)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (pensioner == null)
-            {
                 return NotFound();
-            }
 
             return View(pensioner);
         }
 
-        // POST: Pensioners/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var pensioner = await _context.Pensioner.FindAsync(id);
-            if (pensioner != null)
-            {
-                _context.Pensioner.Remove(pensioner);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            else
-            {
+            if (pensioner == null)
                 return View();
-            }
-        }
 
-        private bool PensionerExists(int id)
-        {
-            return _context.Pensioner.Any(e => e.Id == id);
-        }
-        [HttpGet]
-        public async Task<IActionResult> GetRestored()
-        {
-            return PartialView("_Restored", await _pensioner.GetRestored(_sessionHelper.GetUserPDUId()));
+            _context.Pensioner.Remove(pensioner);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
-        [HttpPost]
-        public async Task<bool> RestoreNow(int PensionerId)
-        {
-            // Retrieve the user-specific global variable from the session
+        public async Task<IActionResult> GetRestored() =>
+            PartialView("_Restored", await _pensioner.GetRestored(_sessionHelper.GetUserPDUId()));
 
-            return await _pensioner.RestoreNow(PensionerId);
-        }
+        [HttpGet, HttpPost]
+        public async Task<bool> RestoreNow(int pensionerId) =>
+            await _pensioner.RestoreNow(pensionerId);
 
         [HttpPost]
-        public async Task<JsonResult?> GetMaxPageNumber(int CompanyId)
+        public async Task<JsonResult> GetMaxPageNumber(int companyId)
         {
-            int MaxNumber = await _pensioner.GetMaxPageNumber(CompanyId);
-            MaxNumber++;
-            return Json(new { MaxNumber });
+            int maxNumber = await _pensioner.GetMaxPageNumber(companyId) + 1;
+            return Json(new { MaxNumber = maxNumber });
         }
 
         [HttpPost]
         public async Task<JsonResult> UploadFileOfRatesRevision(IFormFile file)
         {
-            JsonResponseHelper result = new();
+            var result = new JsonResponseHelper();
+
+            if (file == null || file.Length == 0)
+            {
+                result.RText = "File Not Selected";
+                return Json(result);
+            }
+
+            if (Path.GetExtension(file.FileName).ToLower() != ".csv")
+            {
+                result.RText = "Invalid file type";
+                return Json(result);
+            }
+
+            var rootFolder = Path.Combine(_hostingEnvironment.WebRootPath, "files", "rateRevisionFolder");
+            Directory.CreateDirectory(rootFolder);
+
+            var filePath = Path.Combine(rootFolder, Path.GetFileName(file.FileName));
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            if (file.Length <= 0)
+            {
+                result.RText = "File has no data";
+                return Json(result);
+            }
+
             try
             {
-                if (file == null || file.Length == 0)
+                using var reader = new StreamReader(filePath, Encoding.Default, false);
+                int rowNumber = 1;
+                string? currentLine;
+                while ((currentLine = await reader.ReadLineAsync()) != null)
                 {
-                    result.RText = "File Not Selected";
-                }
-
-                string fileExtension = Path.GetExtension(file.FileName);
-                if (fileExtension != ".csv")
-                    result.RText = "File Not Selected";
-
-                var rootFolder = Path.Combine(_hostingEnvironment.WebRootPath, "files", "rateRevisionFolder");
-                Directory.CreateDirectory(rootFolder); // Create directory if it doesn't exist
-
-                var fileName = Path.GetFileName(file.FileName);
-                var filePath = Path.Combine(rootFolder, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(fileStream);
-                }
-                if (file.Length <= 0)
-                    result.RText = "File has no data";
-
-                var pContext = _context.Pensioner;
-                if (pContext != null)
-                {
-                    // checking for each row
-                    using (var reader = new StreamReader(filePath, Encoding.Default, false))
+                    if (rowNumber != 1)
                     {
-                        int Id = 0;
-                        decimal MP = 0;
-                        decimal CMA = 0;
-                        decimal Orderly = 0;
-                        decimal Total = 0;
-                        int rowNumber = 1;
-                        string currentLine;
-                        while ((currentLine = reader.ReadLine()) != null)
+                        var values = currentLine.Split(',');
+                        if (values.Length < 5)
                         {
-                            // we will skip header row
-                            if (rowNumber != 1)
-                            {
-                                var values = currentLine.Split(',');
-                                Id = Convert.ToInt32(values[0]);
-                                MP = Convert.ToDecimal(values[1]);
-                                CMA = Convert.ToDecimal(values[2]);
-                                Orderly = Convert.ToDecimal(values[3]);
-                                Total = Convert.ToDecimal(values[4]);
-                                // modifing data in DB
-                                var currentP = await pContext.FindAsync(Id);
-                                if (currentP != null)
-                                {
-                                    currentP.MonthlyPension = MP;
-                                    currentP.CMA = CMA;
-                                    currentP.OrderelyAllowence = Orderly;
-                                    currentP.Total = Total;
-                                    pContext.Update(currentP);
-                                }
-                                else
-                                {
-                                    result.RText = Id + " this Id not found ind DB in row NUmber" + rowNumber;
-                                    return Json(result);
-                                }
-                            }
-
-                            rowNumber++;
+                            result.RText = $"Invalid data at row {rowNumber}";
+                            return Json(result);
                         }
+
+                        if (!int.TryParse(values[0], out int id) ||
+                            !decimal.TryParse(values[1], out decimal mp) ||
+                            !decimal.TryParse(values[2], out decimal cma) ||
+                            !decimal.TryParse(values[3], out decimal orderly) ||
+                            !decimal.TryParse(values[4], out decimal total))
+                        {
+                            result.RText = $"Invalid data at row {rowNumber}";
+                            return Json(result);
+                        }
+
+                        var pensioner = await _context.Pensioner.FindAsync(id);
+                        if (pensioner == null)
+                        {
+                            result.RText = $"{id} not found in DB at row {rowNumber}";
+                            return Json(result);
+                        }
+
+                        pensioner.MonthlyPension = mp;
+                        pensioner.CMA = cma;
+                        pensioner.OrderelyAllowence = orderly;
+                        pensioner.Total = total;
+                        _context.Pensioner.Update(pensioner);
                     }
-                    await _context.SaveChangesAsync();
-                    result.RText = "Ok";
-                    result.RCode = 1;
+                    rowNumber++;
                 }
-                else
-                { result.RText = "Error in DB"; }
+                await _context.SaveChangesAsync();
+                result.RText = "Ok";
+                result.RCode = 1;
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                result.RText = exc.Message.ToString();
+                result.RText = ex.Message;
             }
             return Json(result);
         }
 
         [HttpPost]
-        public async Task<bool> UpdateSMSServiceStatus(int PensionerId, bool Status)
-        {
-            return await _pensioner.UpdateSMSServiceStatus(PensionerId, Status);
-        }
+        public async Task<bool> UpdateSMSServiceStatus(int pensionerId, bool status) =>
+            await _pensioner.UpdateSMSServiceStatus(pensionerId, status);
 
         [HttpPost]
         public async Task<JsonResult> UploadFileOfBulkAdditionOfPensioner(IFormFile file)
         {
-            JsonResponseHelper result = new();
+            var result = new JsonResponseHelper();
+
+            if (file == null || file.Length == 0)
+            {
+                result.RText = "File Not Selected";
+                return Json(result);
+            }
+
+            if (Path.GetExtension(file.FileName).ToLower() != ".csv")
+            {
+                result.RText = "Invalid file type";
+                return Json(result);
+            }
+
+            var rootFolder = Path.Combine(_hostingEnvironment.WebRootPath, "files", "BulkAdditionOfPensionerFolder");
+            Directory.CreateDirectory(rootFolder);
+
+            var filePath = Path.Combine(rootFolder, Path.GetFileName(file.FileName));
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(fileStream);
+            }
+
+            if (file.Length <= 0)
+            {
+                result.RText = "File has no data";
+                return Json(result);
+            }
+
             try
             {
-                if (file == null || file.Length == 0)
-                {
-                    result.RText = "File Not Selected";
-                }
-
-                string fileExtension = Path.GetExtension(file.FileName);
-                if (fileExtension != ".csv")
-                    result.RText = "File Not Selected";
-
-                var rootFolder = Path.Combine(_hostingEnvironment.WebRootPath, "files", "BulkAdditionOfPensionerFolder");
-                Directory.CreateDirectory(rootFolder); // Create directory if it doesn't exist
-
-                var fileName = Path.GetFileName(file.FileName);
-                var filePath = Path.Combine(rootFolder, fileName);
-
-                using (var fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(fileStream);
-                }
-                if (file.Length <= 0)
-                {
-                    result.RText = "File has no data";
-                    return Json(result);
-                }
-
-                // checking for each row
                 using var reader = new StreamReader(filePath, Encoding.Default, false);
                 int rowNumber = 1;
-                string currentLine;
+                string? currentLine;
                 var pensionUploadVM = new List<PensionerUploadVM>();
-                while ((currentLine = reader.ReadLine()) != null)
+                while ((currentLine = await reader.ReadLineAsync()) != null)
                 {
-                    // we will skip header row
                     if (rowNumber != 1)
                     {
                         var values = currentLine.Split(',');
-                        // validating data
-                        if (ValidateRow(values, out int PUDId, out int PPONumber, out string Name,
-                                        out string Designation, out int BPS, out string Claimant,
-                                        out string ClaimantCNIC, out string CompanyShortName, out string BankShortName,
-                                        out string BranchCode, out string AccountNumber, out decimal MonthlyPension,
-                                        out decimal CMA, out decimal Orderly, out decimal Total))
+                        if (!ValidateRow(values, out int pduId, out int ppoNumber, out string name,
+                            out string designation, out int bps, out string claimant,
+                            out string claimantCnic, out string companyShortName, out string bankShortName,
+                            out string branchCode, out string accountNumber, out decimal monthlyPension,
+                            out decimal cma, out decimal orderly, out decimal total))
                         {
-                            // Process the validated data (e.g., modify the database)
-                            if (Name.Length > 19)
-                            {
-                                result.RText = $"PPO # {PPONumber}Name must not exceed 19 Characters";
-                                return Json(result);
-                            }
-                            if (Designation.Length > 50)
-                            {
-                                result.RText = $"PPO # {PPONumber} Designation " +
-                                    $"must not exceed 50 Characters";
-                                return Json(result);
-                            }
-                            if (AccountNumber.Length > 19)
-                            {
-                                result.RText = $"PPO # {PPONumber} Account Number " +
-                                    $"must not exceed 19 Characters";
-                                return Json(result);
-                            }
-                            if (Claimant.Length > 50)
-                            {
-                                result.RText = $"PPO # {PPONumber} Claimant " +
-                                    $"must not exceed 50 Characters";
-                                return Json(result);
-                            }
-                            if (ClaimantCNIC.Length > 15)
-                            {
-                                result.RText = $"PPO # {PPONumber} ClaimantCNIC " +
-                                    $"must not exceed 15 Characters";
-                                return Json(result);
-                            }
-                            pensionUploadVM.Add(new PensionerUploadVM()
-                            {
-                                PDUId = PUDId,
-                                PPONumber = PPONumber,
-                                Name = Name,
-                                Designation = Designation,
-                                BPS = BPS,
-                                CMA = CMA,
-                                AccountNumber = AccountNumber,
-                                BankShortName = BankShortName,
-                                BranchCode = BranchCode,
-                                Claimant = Claimant,
-                                ClaimantCNIC = ClaimantCNIC,
-                                CompanyShortName = CompanyShortName,
-                                MonthlyPension = MonthlyPension,
-                                Orderly = Orderly,
-                                Total = Total
-                            });
+                            result.RText = $"Invalid data in PPO Number {ppoNumber}";
+                            return Json(result);
                         }
-                        else
+
+                        if (name.Length > 19)
                         {
-                            result.RText = $"Invalid data in PPO Number {PPONumber}";
-                            Json(result);
+                            result.RText = $"PPO # {ppoNumber} Name must not exceed 19 Characters";
+                            return Json(result);
                         }
-                        // modifing data in DB
+                        if (designation.Length > 50)
+                        {
+                            result.RText = $"PPO # {ppoNumber} Designation must not exceed 50 Characters";
+                            return Json(result);
+                        }
+                        if (accountNumber.Length > 19)
+                        {
+                            result.RText = $"PPO # {ppoNumber} Account Number must not exceed 19 Characters";
+                            return Json(result);
+                        }
+                        if (claimant.Length > 50)
+                        {
+                            result.RText = $"PPO # {ppoNumber} Claimant must not exceed 50 Characters";
+                            return Json(result);
+                        }
+                        if (claimantCnic.Length > 15)
+                        {
+                            result.RText = $"PPO # {ppoNumber} ClaimantCNIC must not exceed 15 Characters";
+                            return Json(result);
+                        }
+
+                        pensionUploadVM.Add(new PensionerUploadVM
+                        {
+                            PDUId = pduId,
+                            PPONumber = ppoNumber,
+                            Name = name,
+                            Designation = designation,
+                            BPS = bps,
+                            CMA = cma,
+                            AccountNumber = accountNumber,
+                            BankShortName = bankShortName,
+                            BranchCode = branchCode,
+                            Claimant = claimant,
+                            ClaimantCNIC = claimantCnic,
+                            CompanyShortName = companyShortName,
+                            MonthlyPension = monthlyPension,
+                            Orderly = orderly,
+                            Total = total
+                        });
                     }
                     rowNumber++;
                 }
-                // it means data is correct now we will Upload it to DB
-                var (IsSaved, Message) = await _pensioner.AddToDBFromFile(pensionUploadVM);
-                result.RText = Message;
-                result.RCode = IsSaved ? 1 : 0;
-                return Json(result);
+
+                var (isSaved, message) = await _pensioner.AddToDBFromFile(pensionUploadVM);
+                result.RText = message;
+                result.RCode = isSaved ? 1 : 0;
             }
-            catch (Exception exc)
+            catch (Exception ex)
             {
-                result.RText = exc.Message.ToString();
+                result.RText = ex.Message;
             }
             return Json(result);
-        }
-
-        private static bool ValidateRow(string[] values, out int PUDId, out int PPONumber, out string Name,
-                           out string Designation, out int BPS, out string Claimant,
-                           out string ClaimantCNIC, out string CompanyName, out string BankName,
-                           out string BranchCode, out string AccountNumber, out decimal MP,
-                           out decimal CMA, out decimal Orderly, out decimal Total)
-        {
-            // Data type validation for each field
-            if (!int.TryParse(values[0], out PUDId) ||
-                !int.TryParse(values[1], out PPONumber) ||
-                !int.TryParse(values[4], out BPS) ||
-                !decimal.TryParse(values[11], out MP) ||
-                !decimal.TryParse(values[12], out CMA) ||
-                !decimal.TryParse(values[13], out Orderly) ||
-                !decimal.TryParse(values[14], out Total))
-            {
-                PPONumber = 0;
-                Name = "";
-                Designation = "";
-                BPS = 0;
-                Claimant = "";
-                ClaimantCNIC = "";
-                CompanyName = "";
-                BankName = "";
-                BranchCode = "";
-                AccountNumber = "";
-                MP = 0;
-                CMA = 0;
-                Orderly = 0;
-                Total = 0;
-                return false;
-            }
-
-            // Other validation checks (string lengths, patterns, etc.) for string fields
-            // ...
-
-            Name = values[2];
-            Designation = values[3];
-            Claimant = values[5];
-            ClaimantCNIC = values[6];
-            CompanyName = values[7];
-            BankName = values[8];
-            BranchCode = values[9];
-            AccountNumber = values[10];
-
-            // Perform additional validation checks for string fields
-            // ...
-
-            return true;
         }
 
         [HttpPost]
         public async Task<IActionResult> UploadFile(FileUploadDTO fileUploadDTO)
         {
             var client = _httpClientFactory.CreateClient();
-            // Access the BaseUrl from appsettings.json
             string baseUrl = _configuration["BaseUrl"];
-            var httpRequest = new HttpRequestMessage()
+            var httpRequest = new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
-                RequestUri = new Uri("" + baseUrl + "/api/Pensioner/Upload"),
+                RequestUri = new Uri($"{baseUrl}/api/Pensioner/Upload"),
                 Content = new StringContent(JsonSerializer.Serialize(fileUploadDTO), Encoding.UTF8, "application/json")
             };
             var response = await client.SendAsync(httpRequest);
@@ -625,13 +421,146 @@ namespace PensionSystem.Controllers
                 var r = await response.Content.ReadFromJsonAsync<FileUploadDTO>();
                 return Ok(r);
             }
-            else
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                // Log the responseContent for debugging
-                return BadRequest("Error: " + responseContent);
-            }
+            var responseContent = await response.Content.ReadAsStringAsync();
+            return BadRequest("Error: " + responseContent);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetPensionerByPPO(int PPO)
+        {
+            var pensioner = await _pensioner.GetByPPO(PPO);
+            if (pensioner == null)
+                return NotFound("Pensioner not found.");
+            return Ok(pensioner);
+        }
+
+        #region Helpers
+
+        private async Task PopulateSelectListsAsync(int? companyId = null, int? relationId = null, int? bankId = null, int? branchId = null)
+        {
+            ViewData["CompanyId"] = new SelectList(await _company.GetOptions(), "Value", "Text", companyId);
+            ViewData["RelationId"] = new SelectList(await _relation.GetOptions(), "Value", "Text", relationId);
+            ViewData["BankId"] = new SelectList(await _bank.GetOptions(), "Value", "Text", bankId);
+            ViewData["BranchId"] = new SelectList(await _branch.GetOptions(), "Value", "Text", branchId);
+        }
+
+        private static void MapPensionerToDTO(Pensioner source, PensionerDTO dest)
+        {
+            dest.Id = source.Id;
+            dest.PageNumber = source.PageNumber;
+            dest.Name = source.Name;
+            dest.Claimant = source.Claimant;
+            dest.FatherName = source.FatherName;
+            dest.Gender = source.Gender;
+            dest.Spouse = source.Spouse;
+            dest.Designation = source.Designation;
+            dest.PPONumber = source.PPONumber;
+            dest.PPOSystem = source.PPOSystem;
+            dest.SanctionNumber = source.SanctionNumber;
+            dest.SanctionDate = source.SanctionDate;
+            dest.DOB = source.DOB;
+            dest.DateOfRetirement = source.DateOfRetirement;
+            dest.CompanyId = source.CompanyId;
+            dest.Mobile = source.Mobile;
+            dest.CNIC = source.CNIC;
+            dest.ClaimantCNIC = source.ClaimantCNIC;
+            dest.Address = source.Address;
+            dest.IsActiveClaimant = source.IsActiveClaimant;
+            dest.AccountNumber = source.AccountNumber;
+            dest.MonthlyPension = source.MonthlyPension;
+            dest.CMA = source.CMA;
+            dest.OrderelyAllowence = source.OrderelyAllowence;
+            dest.Total = source.Total;
+            dest.Remarks = source.Remarks;
+            dest.RelationId = source.RelationId;
+            dest.BPS = source.BPS;
+            dest.BranchId = source.BranchId;
+            dest.DateOfAppointment = source.DateOfAppointment;
+            dest.LastBasicPay = source.LastBasicPay;
+            dest.AccountTitle = source.AccountTitle;
+            dest.IsServiceActive = source.IsServiceActive;
+            dest.RetiringOffice = source.RetiringOffice;
+            dest.Commutation = source.Commutation;
+            dest.MonthlyRecovery = source.MonthlyRecovery;
+            dest.IBAN = source.IBAN;
+        }
+
+        private static Pensioner MapDTOToPensioner(PensionerDTO dto, Pensioner? entity = null)
+        {
+            entity ??= new Pensioner();
+            entity.PageNumber = dto.PageNumber;
+            entity.Name = dto.Name;
+            entity.Claimant = dto.Claimant;
+            entity.FatherName = dto.FatherName;
+            entity.Gender = dto.Gender;
+            entity.Spouse = dto.Spouse;
+            entity.Designation = dto.Designation;
+            entity.PPONumber = dto.PPONumber;
+            entity.PPOSystem = dto.PPOSystem;
+            entity.SanctionNumber = dto.SanctionNumber;
+            entity.SanctionDate = dto.SanctionDate;
+            entity.DOB = dto.DOB;
+            entity.DateOfRetirement = dto.DateOfRetirement;
+            entity.CompanyId = dto.CompanyId;
+            entity.Mobile = dto.Mobile;
+            entity.CNIC = dto.CNIC;
+            entity.ClaimantCNIC = dto.ClaimantCNIC;
+            entity.Address = dto.Address;
+            entity.IsActiveClaimant = dto.IsActiveClaimant;
+            entity.AccountNumber = dto.AccountNumber;
+            entity.MonthlyPension = dto.MonthlyPension;
+            entity.CMA = dto.CMA;
+            entity.OrderelyAllowence = dto.OrderelyAllowence;
+            entity.Total = dto.Total;
+            entity.Remarks = dto.Remarks;
+            entity.RelationId = dto.RelationId;
+            entity.BPS = dto.BPS;
+            entity.LastBasicPay = dto.LastBasicPay;
+            entity.BranchId = dto.BranchId;
+            entity.DateOfAppointment = dto.DateOfAppointment;
+            entity.AccountTitle = dto.AccountTitle;
+            entity.IsServiceActive = dto.IsServiceActive;
+            entity.Commutation = dto.Commutation;
+            entity.RetiringOffice = dto.RetiringOffice;
+            entity.MonthlyRecovery = dto.MonthlyRecovery;
+            entity.IBAN = dto.IBAN;
+            return entity;
+        }
+
+        private static bool ValidateRow(string[] values, out int pduId, out int ppoNumber, out string name,
+            out string designation, out int bps, out string claimant,
+            out string claimantCnic, out string companyName, out string bankName,
+            out string branchCode, out string accountNumber, out decimal mp,
+            out decimal cma, out decimal orderly, out decimal total)
+        {
+            pduId = ppoNumber = bps = 0;
+            name = designation = claimant = claimantCnic = companyName = bankName = branchCode = accountNumber = string.Empty;
+            mp = cma = orderly = total = 0;
+
+            if (values.Length < 15 ||
+                !int.TryParse(values[0], out pduId) ||
+                !int.TryParse(values[1], out ppoNumber) ||
+                !int.TryParse(values[4], out bps) ||
+                !decimal.TryParse(values[11], out mp) ||
+                !decimal.TryParse(values[12], out cma) ||
+                !decimal.TryParse(values[13], out orderly) ||
+                !decimal.TryParse(values[14], out total))
+            {
+                return false;
+            }
+
+            name = values[2];
+            designation = values[3];
+            claimant = values[5];
+            claimantCnic = values[6];
+            companyName = values[7];
+            bankName = values[8];
+            branchCode = values[9];
+            accountNumber = values[10];
+
+            return true;
+        }
+
+        #endregion
     }
 }

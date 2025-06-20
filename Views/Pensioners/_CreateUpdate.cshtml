@@ -1,5 +1,4 @@
 ﻿@model PensionSystem.Entities.DTOs.PensionerDTO
-
 @{
     ViewData["Title"] = "Pensioner";
     ViewData["SubTitle"] = "Update";
@@ -19,27 +18,27 @@
                     <div asp-validation-summary="All" class="text-danger" id="ErrorDiv"></div>
                     <input type="hidden" asp-for="Id" value="@Model.Id" />
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label asp-for="PPOSystem" class="control-label"></label>
                                 <input asp-for="PPOSystem" class="form-control" onblur="FillIfExist(this)" />
                                 <span asp-validation-for="PPOSystem" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label asp-for="CompanyId" class="control-label"></label>
                                 <select asp-for="CompanyId" class="form-control" asp-items="ViewBag.CompanyId"></select>
                                 <span asp-validation-for="CompanyId" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label asp-for="PPONumber" class="control-label"></label>
                                 <input asp-for="PPONumber" class="form-control" />
                                 <span asp-validation-for="PPONumber" class="text-danger"></span>
                             </div>
-                        </div>               
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-3">
@@ -106,6 +105,37 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="LastBasicPay" class="control-label"></label>
+                                <input asp-for="LastBasicPay" class="form-control" />
+                                <span asp-validation-for="LastBasicPay" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="DateOfAppointment" class="control-label"></label>
+                                <input asp-for="DateOfAppointment" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
+                                <span asp-validation-for="DateOfAppointment" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Commutation" class="control-label"></label>
+                                <input asp-for="Commutation" class="form-control" />
+                                <span asp-validation-for="Commutation" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="RetiringOffice" class="control-label"></label>
+                                <input asp-for="RetiringOffice" class="form-control" />
+                                <span asp-validation-for="RetiringOffice" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    @* claimant detail *@
+                    <div class="row">
                         <div class="col-md-3 ">
                             <div class="form-group">
                                 <label asp-for="RelationId" class="control-label"></label>
@@ -167,36 +197,7 @@
                         </div>
 
                     </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label class="control-label" for="BankId">Bank</label>
-                                <select id="BankId" name="BankId" class="form-control" asp-items="ViewBag.BankId"></select>
-                                <span class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label asp-for="BranchId" class="control-label"></label>
-                                <select asp-for="BranchId" class="form-control" asp-items="ViewBag.BranchId"></select>
-                                <span asp-validation-for="BranchId" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label asp-for="AccountTitle" class="control-label"></label>
-                                <input asp-for="AccountTitle" class="form-control" />
-                                <span asp-validation-for="AccountTitle" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label asp-for="AccountNumber" class="control-label"></label>
-                                <input asp-for="AccountNumber" class="form-control" />
-                                <span asp-validation-for="AccountNumber" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
+                    
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
@@ -227,19 +228,44 @@
                             </div>
                         </div>
                     </div>
+                    @* bank section row *@
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label asp-for="LastBasicPay" class="control-label"></label>
-                                <input asp-for="LastBasicPay" class="form-control" />
-                                <span asp-validation-for="LastBasicPay" class="text-danger"></span>
+                                <label class="control-label" for="BankId">Bank</label>
+                                <select id="BankId" name="BankId" class="form-control" asp-items="ViewBag.BankId"></select>
+                                <span class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label asp-for="DateOfAppointment" class="control-label"></label>
-                                <input asp-for="DateOfAppointment" type="date" max="@DateTime.Now.ToString("yyyy-MM-dd")" class="form-control" />
-                                <span asp-validation-for="DateOfAppointment" class="text-danger"></span>
+                                <label asp-for="BranchId" class="control-label"></label>
+                                <select asp-for="BranchId" class="form-control" asp-items="ViewBag.BranchId"></select>
+                                <span asp-validation-for="BranchId" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="AccountTitle" class="control-label"></label>
+                                <input asp-for="AccountTitle" class="form-control" />
+                                <span asp-validation-for="AccountTitle" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="AccountNumber" class="control-label"></label>
+                                <input asp-for="AccountNumber" class="form-control" />
+                                <span asp-validation-for="AccountNumber" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="IBAN" class="control-label"></label>
+                                <input asp-for="IBAN" class="form-control" />
+                                <span asp-validation-for="IBAN" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -256,6 +282,7 @@
                                 <span asp-validation-for="Remarks" class="text-danger"></span>
                             </div>
                         </div>
+                  
                     </div>
                     <div class="row">
                         <div class="col-md-2 mb-4">
@@ -272,29 +299,6 @@
                                 <span asp-validation-for="IsServiceActive" class="text-danger"></span>
                             </div>
                         </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label asp-for="IBAN" class="control-label"></label>
-                                <input asp-for="IBAN" class="form-control" />
-                                <span asp-validation-for="IBAN" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label asp-for="Commutation" class="control-label"></label>
-                                <input asp-for="Commutation" class="form-control" />
-                                <span asp-validation-for="Commutation" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label asp-for="RetiringOffice" class="control-label"></label>
-                                <input asp-for="RetiringOffice" class="form-control" />
-                                <span asp-validation-for="RetiringOffice" class="text-danger"></span>
-                            </div>
-                        </div>
 
                     </div>
                 </form>
@@ -308,149 +312,181 @@
 
     <script src="~/plugins/inputmask/min/jquery.inputmask.bundle.min.js"></script>
     <script>
-        $(document).ready(function (e) {
-            $('#Mobile').inputmask('+99-999-9999999');
-            $('#CNIC').inputmask('99999-9999999-9');
-            $('#ClaimantCNIC').inputmask('99999-9999999-9');
-            //Datemask dd/mm/yyyy
-            $('#DOB').inputmask('dd-mm-yyyy', { 'placeholder': 'dd-mm-yyyy' });
+                $(document).ready(function (e) {
+                    $('#Mobile').inputmask('+99-999-9999999');
+                    $('#CNIC').inputmask('99999-9999999-9');
+                    $('#ClaimantCNIC').inputmask('99999-9999999-9');
+                    //Datemask dd/mm/yyyy
+                    $('#DOB').inputmask('dd-mm-yyyy', { 'placeholder': 'dd-mm-yyyy' });
 
-            $("#SaveButton").click(function (e) {
-                submitForm();
-            });
-            $("#CMA").on('keypress', function (e) {
-                if (e.which == 13) {
-                    submitForm();
-                }
-            });
-            $("#RelationId").change(function (e) {
-                var Text = $("#RelationId option:selected").text();
-                if (Text == "Self") {
-                    $("#Claimant").attr("readonly", true);
-                    $("#ClaimantCNIC").attr("readonly", true);
-                    $("#Spouse").attr("readonly", true);
-                    $("#Claimant").val($("#Name").val());
-                    $("#ClaimantCNIC").val($("#CNIC").val());
-                    $("#Spouse").val("");
-                }
-                else if (Text == "Widow") {
-                    $("#Claimant").attr("readonly", false);
-                    $("#ClaimantCNIC").attr("readonly", false);
-                    $("#Spouse").attr("readonly", true);
-                    $("#Claimant").val("");
-                    $("#ClaimantCNIC").val("");
-                    $("#Spouse").val($("#Name").val());
-                }
-                else if (Text == "Daughter") {
-                    $("#Claimant").attr("readonly", false);
-                    $("#ClaimantCNIC").attr("readonly", false);
-                    $("#Spouse").attr("readonly", true);
-                    $("#Claimant").val("");
-                    $("#ClaimantCNIC").val("");
-                    $("#Spouse").val("");
-                }
-                else if (Text == "Son") {
-                    $("#Claimant").attr("readonly", false);
-                    $("#ClaimantCNIC").attr("readonly", false);
-                    $("#Spouse").attr("readonly", true);
-                    $("#Claimant").val("");
-                    $("#ClaimantCNIC").val("");
-                    $("#Spouse").val("");
-                }
-                else {
-                    $("#Claimant").attr("readonly", false);
-                    $("#ClaimantCNIC").attr("readonly", false);
-                    $("#Spouse").attr("readonly", false);
-                    $("#Claimant").val("");
-                    $("#ClaimantCNIC").val("");
-                    $("#Spouse").val("");
-                }
-            });
+                    $("#SaveButton").click(function (e) {
+                        submitForm();
+                    });
+                    $("#CMA").on('keypress', function (e) {
+                        if (e.which == 13) {
+                            submitForm();
+                        }
+                    });
+                    $("#RelationId").change(function (e) {
+                        var Text = $("#RelationId option:selected").text();
+                        if (Text == "Self") {
+                            $("#Claimant").attr("readonly", true);
+                            $("#ClaimantCNIC").attr("readonly", true);
+                            $("#Spouse").attr("readonly", true);
+                            $("#Claimant").val($("#Name").val());
+                            $("#ClaimantCNIC").val($("#CNIC").val());
+                            $("#Spouse").val("");
+                        }
+                        else if (Text == "Widow") {
+                            $("#Claimant").attr("readonly", false);
+                            $("#ClaimantCNIC").attr("readonly", false);
+                            $("#Spouse").attr("readonly", true);
+                            $("#Claimant").val("");
+                            $("#ClaimantCNIC").val("");
+                            $("#Spouse").val($("#Name").val());
+                        }
+                        else if (Text == "Daughter") {
+                            $("#Claimant").attr("readonly", false);
+                            $("#ClaimantCNIC").attr("readonly", false);
+                            $("#Spouse").attr("readonly", true);
+                            $("#Claimant").val("");
+                            $("#ClaimantCNIC").val("");
+                            $("#Spouse").val("");
+                        }
+                        else if (Text == "Son") {
+                            $("#Claimant").attr("readonly", false);
+                            $("#ClaimantCNIC").attr("readonly", false);
+                            $("#Spouse").attr("readonly", true);
+                            $("#Claimant").val("");
+                            $("#ClaimantCNIC").val("");
+                            $("#Spouse").val("");
+                        }
+                        else {
+                            $("#Claimant").attr("readonly", false);
+                            $("#ClaimantCNIC").attr("readonly", false);
+                            $("#Spouse").attr("readonly", false);
+                            $("#Claimant").val("");
+                            $("#ClaimantCNIC").val("");
+                            $("#Spouse").val("");
+                        }
+                    });
 
-            $("#CompanyId").change(function (e) {
-                var cId = $(this).val();
-                if (cId != null && cId != 0) {
+                    $("#CompanyId").change(function (e) {
+                        var cId = $(this).val();
+                        if (cId != null && cId != 0) {
+                            $.ajax({
+                                type: "POST",
+                                url: "@Url.Action("GetMaxPageNumber")",
+                                data: { "CompanyId": cId },
+                                success: function (response) {
+                                    if (response != null) {
+                                        $("#PageNumber").val(response.MaxNumber);
+                                    }
+                                },
+                                failure: function (response) {
+                                    alert(response.responseText);
+                                },
+                                error: function (response) {
+                                    alert(response.responseText);
+                                }
+                            });
+                        }
+                        else {
+                            $("#PageNumber").val("NaN");
+                        }
+                    });
+                    $("#BankId").change(function (e) {
+                        var bId = $(this).val();
+                        if (bId != null) {
+                            $("#BranchId").html('<option value="0">Please Wait</option>');
+                            $.ajax({
+                                type: "GET",
+                                url: "@Url.Action("GetOptions", "Branches")",
+                                data: { "BankId": bId },
+                                success: function (data) {
+                                    var s = '';
+                                    for (var i = 0; i < data.length; i++) {
+                                        s += '<option value="' + data[i].Value + '">' + data[i].Text + '</option>';
+                                    }
+                                    $("#BranchId").html(s);
+                                },
+                                failure: function (response) {
+                                    alert(response.responseText);
+                                },
+                                error: function (response) {
+                                    alert(response.responseText);
+                                }
+                            });
+                        }
+                        else {
+                            $("#PageNumber").val("NaN");
+                        }
+                    });
+                });
+                function submitForm() {
+                    var Form = $("#UpdateForm");
+                    var formData = Form.serialize();
                     $.ajax({
+                        url: "@Url.Action("Update")",
                         type: "POST",
-                        url: "@Url.Action("GetMaxPageNumber")",
-                        data: { "CompanyId": cId },
-                        success: function (response) {
-                            if (response != null) {
-                                $("#PageNumber").val(response.MaxNumber);
+                        data: formData,
+                        dataType: "json",
+                        success: function (msg) {
+                            if (msg.RCode == 1) {
+                                $("#modal-default").modal("hide");
+                            }
+                            else {
+                                $("#ErrorDiv").html(msg.RText);
                             }
                         },
-                        failure: function (response) {
-                            alert(response.responseText);
-                        },
-                        error: function (response) {
-                            alert(response.responseText);
+                        error: function (req, status, error) {
+                            $("#ErrorDiv").html(error);
                         }
                     });
                 }
-                else {
-                    $("#PageNumber").val("NaN");
-                }
-            });
-            $("#BankId").change(function (e) {
-                var bId = $(this).val();
-                if (bId != null) {
-                    $("#BranchId").html('<option value="0">Please Wait</option>');
-                    $.ajax({
-                        type: "GET",
-                        url: "@Url.Action("GetOptions", "Branches")",
-                        data: { "BankId": bId },
-                        success: function (data) {
-                            var s = '';
-                            for (var i = 0; i < data.length; i++) {
-                                s += '<option value="' + data[i].Value + '">' + data[i].Text + '</option>';
-                            }
-                            $("#BranchId").html(s);
-                        },
-                        failure: function (response) {
-                            alert(response.responseText);
-                        },
-                        error: function (response) {
-                            alert(response.responseText);
-                        }
-                    });
-                }
-                else {
-                    $("#PageNumber").val("NaN");
-                }
-            });
-        });
-        function submitForm() {
-            var Form = $("#UpdateForm");
-            var formData = Form.serialize();
-            $.ajax({
-                url: "@Url.Action("Update")",
-                type: "POST",
-                data: formData,
-                dataType: "json",
-                success: function (msg) {
-                    if (msg.RCode == 1) {
-                        $("#modal-default").modal("hide");
-                    }
-                    else {
-                        $("#ErrorDiv").html(msg.RText);
-                    }
-                },
-                error: function (req, status, error) {
-                    $("#ErrorDiv").html(error);
-                }
-            });
-        }
-        function calculateTotal() {
-            var MonthlyPension = parseFloat($("#MonthlyPension").val());
-            var CMA = parseFloat($("#CMA").val());
-            var OrderelyAllowence = parseFloat($("#OrderelyAllowence").val());
-            var Total = MonthlyPension + CMA + OrderelyAllowence;
+                function calculateTotal() {
+                    var MonthlyPension = parseFloat($("#MonthlyPension").val());
+                    var CMA = parseFloat($("#CMA").val());
+                    var OrderelyAllowence = parseFloat($("#OrderelyAllowence").val());
+                    var Total = MonthlyPension + CMA + OrderelyAllowence;
 
-            $("#Total").val(Total);
+                    $("#Total").val(Total);
+                }
+                function FillIfExist(input) {
+                    var PPO = $(input).val();
+                    if (PPO != null && PPO != "") {
+                        $.ajax({
+                            type: "GET",
+                            url: "@Url.Action("GetPensionerByPPO")",
+                            data: { PPO: PPO },
+                            success: function (response) {
+                                if (response != null) {
+                                    $("#PPONumber").val(response.PPONumber);
+                                    $("#Name").val(response.Name);
+                                    $("#Designation").val(response.Designation);
+                                    $("#BPS").val(response.BPS);
+                                    $("#FatherName").val(response.FatherName);
+                                    $("#Mobile").val(response.Mobile);
+                                    $("#CNIC").val(response.CNIC);
+                                    $("#DOB").val((response.DOB).split('T')[0]);
+                                    $("#DateOfRetirement").val((response.DateOfRetirement).split('T')[0]);
+                                    $("#RelationId").val(response.RelationId);
+                                    $("#CompanyId").val(response.CompanyId);
+                                    $("#SanctionNumber").val(response.SanctionNumber);
+                                    $("#SanctionDate").val((response.SanctionDate).split('T')[0]);
+                                    $("#LastBasicPay").val(response.LastBasicPay);
+                                    $("#DateOfAppointment").val((response.DateOfAppointment).split('T')[0]);
+                                    $("#Commutation").val(response.Commutation);
+                                    $("#RetiringOffice").val(response.RetiringOffice);
+                                                                  $("#Address").val(response.Address);
+                                }
+                                    }
+        });
         }
+                        }
     </script>
     @section Scripts {
-    @{
+        @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
     }

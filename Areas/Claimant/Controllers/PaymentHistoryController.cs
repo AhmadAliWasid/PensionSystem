@@ -5,18 +5,11 @@ using PensionSystem.ViewModels;
 namespace PensionSystem.Areas.Claimant.Controllers
 {
     [Area("Claimant")]
-    public class PaymentHistoryController : Controller
+    public class PaymentHistoryController(IHBLPayments hBLPayments, IPensioner pensioner, IPensionPayment pensionPayment) : Controller
     {
-        private readonly IHBLPayments _hBLPayments;
-        private readonly IPensioner _pensioner;
-        private readonly IPensionPayment _pensionPayment;
-
-        public PaymentHistoryController(IHBLPayments hBLPayments, IPensioner pensioner, IPensionPayment pensionPayment)
-        {
-            _hBLPayments = hBLPayments;
-            _pensioner = pensioner;
-            _pensionPayment = pensionPayment;
-        }
+        private readonly IHBLPayments _hBLPayments = hBLPayments;
+        private readonly IPensioner _pensioner = pensioner;
+        private readonly IPensionPayment _pensionPayment = pensionPayment;
 
         public IActionResult Index()
         {
@@ -24,9 +17,9 @@ namespace PensionSystem.Areas.Claimant.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetClaimantHistory(int PPONumber, string CNIC)
+        public async Task<IActionResult> GetClaimantHistory(int PPONumber)
         {
-            var p = await _pensioner.GetByPPOAndCNIC(PPONumber, CNIC);
+            var p = await _pensioner.GetByPPO(PPONumber);
             HBLPaymentPensionerHistoryVM vm = new()
             {
             };

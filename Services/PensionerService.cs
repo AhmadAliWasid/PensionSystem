@@ -9,14 +9,9 @@ using PensionSystem.Entities.DTOs;
 
 namespace WebAPI.Services
 {
-    public class PensionerService : IPensioner
+    public class PensionerService(ApplicationDbContext applicationDbContext) : IPensioner
     {
-        private readonly ApplicationDbContext _context;
-
-        public PensionerService(ApplicationDbContext applicationDbContext)
-        {
-            _context = applicationDbContext;
-        }
+        private readonly ApplicationDbContext _context = applicationDbContext;
 
         public IQueryable<Pensioner> Table => _context.Set<Pensioner>();
 
@@ -295,6 +290,12 @@ namespace WebAPI.Services
                 .Include(c => c.Company)
                 .Include(r => r.Relation)
                 .FirstOrDefaultAsync(x => x.Id == (int)id);
+        }
+
+        public async Task<Pensioner?> GetByPPO(int PPONumber)
+        {
+            return await _context.Pensioner
+              .FirstOrDefaultAsync(x => x.PPOSystem == PPONumber);
         }
 
         public async Task<Pensioner?> GetByPPOAndCNIC(int PPONumber, string CNIC)

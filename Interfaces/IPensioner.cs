@@ -81,7 +81,7 @@ namespace PensionSystem.Interfaces
         /// <param name="PPONumber"></param>
         /// <param name="CNIC"></param>
         /// <returns></returns>
-        public Task<Pensioner?> GetByPPOAndCNIC(int PPONumber, string CNIC);
+        public Task<Pensioner?> GetByPPO(int PPONumber);
 
         /// <summary>
         /// Restore evertything by pensioner id
