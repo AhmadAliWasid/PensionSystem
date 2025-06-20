@@ -27,7 +27,7 @@ namespace PensionSystem.Services
         public async Task<string> GenerateDemandList(List<Pensioner> pensioners, int demandId, DateTime demandDate, int companyId)
         {
             var lastDemandDate = demandDate.AddMonths(-1);
-            var listLastDemand = await GetByMonth(lastDemandDate);
+            var listLastDemand = await GetByMonth(lastDemandDate, true);
             if (listLastDemand == null)
                 return "Last Demand Records not found";
             bool certificateStatus = false;
@@ -207,13 +207,16 @@ namespace PensionSystem.Services
             return vm.OrderBy(x => x.Month).ToList();
         }
 
-        public async Task<List<PensionerPayment>?> GetByMonth(DateTime dateTime)
+        public async Task<List<PensionerPayment>?> GetByMonth(DateTime dateTime, bool isVerified)
         {
             var CContext = _context.PensionerPayments;
             if (CContext == null)
                 return null;
-            return await CContext.Include(c => c.Pensioner).Include(p => p.Pensioner.Company)
-                .Where(x => x.Month.Month == dateTime.Month && x.Month.Year == dateTime.Year).ToListAsync();
+            return await CContext
+                .Include(c => c.Pensioner)
+                .Include(p => p.Pensioner.Company)
+                .Where(x => x.Month.Month == dateTime.Month && x.Month.Year == dateTime.Year
+                && x.CertificateVerified == true && x.PhysicallyVerified == true).ToListAsync();
         }
 
         public async Task<bool> VerifyPhysically(int id)

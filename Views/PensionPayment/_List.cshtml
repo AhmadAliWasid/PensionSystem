@@ -1,15 +1,14 @@
 ﻿@using Pension.Entities.Helpers
 @using WebAPI.Helpers
 @model PensionSystem.ViewModels.PensionerPaymentViewModel
-@if (Model != null && Model.PayablesThisMonth != null && Model.LastMonthList != null)
+
+@if (Model?.PayablesThisMonth != null && Model?.LastMonthList != null)
 {
-    decimal TotalAmount = Model.AmountVerified;
-    string relation = "";
-    int relationId = 0;
-    decimal difference = 0;
-    decimal TotalDifference = 0;
-    decimal netPayable = 0;
-    int serial = 1;
+    var totalAmount = Model.AmountVerified;
+    var serial = 1;
+    var netPayable = 0m;
+    var totalDifference = 0m;
+
     <div class="card">
         <div class="card-header">
             <div class="card-title">
@@ -29,8 +28,8 @@
                     <tbody>
                         @if (Model.BankDemandVMs != null)
                         {
-                            decimal tTotal = 0;
-                            int iCount = 0;
+                            var tTotal = 0m;
+                            var iCount = 0;
                             foreach (var item in Model.BankDemandVMs)
                             {
                                 tTotal += item.Amount;
@@ -42,9 +41,9 @@
                                 </tr>
                             }
                             <tr>
-                                <td>Total</td>
-                                <td>@UserFormat.GetAmount(tTotal)</td>
-                                <td>@iCount</td>
+                                <td><strong>Total</strong></td>
+                                <td><strong>@UserFormat.GetAmount(tTotal)</strong></td>
+                                <td><strong>@iCount</strong></td>
                             </tr>
                         }
                     </tbody>
@@ -54,7 +53,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Verified : @Model.Verified  & Amount: @UserFormat.GetAmount(Model.AmountVerified) </th>
+                            <th>Verified: @Model.Verified & Amount: @UserFormat.GetAmount(Model.AmountVerified)</th>
                         </tr>
                     </thead>
                 </table>
@@ -65,7 +64,7 @@
                             <div class="row">
                                 <div class="col-12">
                                     <h4 class="text-center">@Model.Session.DMStamp @Model.Session.BaseStamp</h4>
-                                    <h5 class="text-center">List Of Pensioner for the Month of @UserFormat.GetMonthYear(Model.Month) </h5>
+                                    <h5 class="text-center">List Of Pensioner for the Month of @UserFormat.GetMonthYear(Model.Month)</h5>
                                 </div>
                             </div>
                         }
@@ -81,36 +80,38 @@
                             <th>PPO#</th>
                             <th>Claimant</th>
                             <th>Rel</th>
-                            <th>Name.</th>
+                            <th>Name</th>
                             <th>Bank</th>
                             <th>MP</th>
                             <th>CMA</th>
                             <th>Orderly</th>
                             <th>Recovery</th>
                             <th>Total</th>
+                            <th>L.Month</th>
                             <th>Payable</th>
                             <th>Remarks</th>
-
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model.PayablesThisMonth)
                         {
-                            var lastMonthPensioner = Model.LastMonthList.Where(x => x.PensionerId == item.PensionerId).FirstOrDefault();
-                            if (lastMonthPensioner != null)
-                                difference = item.NetPension - lastMonthPensioner.NetPension;
-                            else
-                                difference = item.NetPension;
-
-                            TotalDifference += (difference);
-                            relation = item.Pensioner.Relation.Short;
-                            relationId = item.Pensioner.RelationId;
-                            <tr style='color: @((item.CertificateVerified || item.NetPension == 0)? "green": "red")'>
-                                <td><button class="btn btn-sm btn-warning" onclick="getUpdate(@item.Id)"><i class="fa fa-edit"></i> Edit</button></td>
+                            var lastMonthPensioner = Model.LastMonthList.FirstOrDefault(x => x.PensionerId == item.PensionerId);
+                            var Tempdifference = lastMonthPensioner != null ? item.NetPension - lastMonthPensioner.NetPension : item.NetPension;
+                            totalDifference += Tempdifference;
+                            var relationId = item.Pensioner.RelationId;
+                            var rowColor = (item.CertificateVerified || item.NetPension == 0) ? "green" : "red";
+                            <tr style="color: @rowColor">
+                                <td>
+                                    <button class="btn btn-sm btn-warning" onclick="getUpdate(@item.Id)">
+                                        <i class="fa fa-edit"></i> Edit
+                                    </button>
+                                </td>
                                 <td>
                                     @if (!item.CertificateVerified)
                                     {
-                                        <button type="button" class="btn bg-gradient-primary btn-sm" onclick="VerifyCertificate(@item.Id,this)"><i class="fas fa-check-square"></i> Verify</button>
+                                        <button type="button" class="btn bg-gradient-primary btn-sm" onclick="verify('Certificate', @item.Id, this)">
+                                            <i class="fas fa-check-square"></i> Verify
+                                        </button>
                                     }
                                     else
                                     {
@@ -124,7 +125,9 @@
                                     }
                                     else
                                     {
-                                        <button type="button" class="btn bg-gradient-warning btn-sm" onclick="VerifyPhysically(@item.Id,this)"><i class="fas fa-check-circle"></i> Verify</button>
+                                        <button type="button" class="btn bg-gradient-warning btn-sm" onclick="verify('Physically', @item.Id, this)">
+                                            <i class="fas fa-check-circle"></i> Verify
+                                        </button>
                                     }
                                 </td>
                                 <td>@serial</td>
@@ -132,14 +135,13 @@
                                 <td>
                                     @if (relationId == 1)
                                     {
-                                        <span>@item.Pensioner.Claimant - Ex. @item.Pensioner.Designation </span>
+                                        <span>@item.Pensioner.Claimant - Ex. @item.Pensioner.Designation</span>
                                     }
                                     else
                                     {
                                         <span>@item.Pensioner.Claimant</span>
                                     }
                                 </td>
-
                                 <td>@item.Pensioner.Relation.Short</td>
                                 <td>
                                     @if (relationId == 1)
@@ -157,6 +159,16 @@
                                 <td>@UserFormat.GetAmount(item.OrderelyAllowence)</td>
                                 <td>@UserFormat.GetAmount(item.Deduction)</td>
                                 <td>@UserFormat.GetAmount(item.NetPension)</td>
+                                <td>
+                                    @if (lastMonthPensioner != null)
+                                    {
+                                        @UserFormat.GetAmount(lastMonthPensioner.NetPension)
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
                                 @if (item.CertificateVerified && item.PhysicallyVerified)
                                 {
                                     netPayable += item.NetPension;
@@ -166,45 +178,39 @@
                                 {
                                     <td>-</td>
                                 }
-                                @* remarks column *@
                                 <td>
-                                    @if (difference > 0)
+                                    @if (Tempdifference > 0)
                                     {
                                         <i>+</i>
                                     }
-                                    else if (difference < 0)
+                                    else if (Tempdifference < 0)
                                     {
                                         <i>-</i>
                                     }
-                                    @UserFormat.GetAmount(difference)
+                                    @UserFormat.GetAmount(Tempdifference)
                                 </td>
-
                             </tr>
                             serial++;
-                            difference = 0;
                         }
-
                     </tbody>
-
                 </table>
                 <div id="table-footer">
                     <table class="table table-bordered">
                         <thead>
                             @{
-                                decimal Total = Model.PayablesThisMonth.Where(n => n.CertificateVerified == true && n.PhysicallyVerified == true).Sum(x => x.NetPension);
-                                decimal Difference = Total - Model.LastMonthList.Sum(x => x.NetPension);
-                                <tr>
-                                    <th>MP : @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.MonthlyPension))</th>
-                                    <th>CMA : @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.CMA))</th>
-                                    <th>Orderly : @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.OrderelyAllowence))</th>
-                                    <th>Deduction : @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.Deduction))</th>
-                                    <th>Total : @UserFormat.GetAmount(netPayable)</th>
-
-                                </tr>
-                                <tr>
-                                    <th colspan="7">Rupees : @Calculation.ConvertAmount((double)netPayable)</th>
-                                </tr>
+                                var total = Model.PayablesThisMonth.Where(n => n.CertificateVerified && n.PhysicallyVerified).Sum(x => x.NetPension);
+                                var difference = total - Model.LastMonthList.Sum(x => x.NetPension);
                             }
+                            <tr>
+                                <th>MP: @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.MonthlyPension))</th>
+                                <th>CMA: @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.CMA))</th>
+                                <th>Orderly: @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.OrderelyAllowence))</th>
+                                <th>Deduction: @UserFormat.GetAmount(Model.PayablesThisMonth.Where(n => n.NetPension > 0).Sum(x => x.Deduction))</th>
+                                <th>Total: @UserFormat.GetAmount(netPayable)</th>
+                            </tr>
+                            <tr>
+                                <th colspan="7">Rupees: @Calculation.ConvertAmount((double)netPayable)</th>
+                            </tr>
                         </thead>
                     </table>
                     <div>
@@ -231,50 +237,31 @@
         </div>
     </div>
     <script>
-        function VerifyCertificate(Id, element) {
-            if (Id != "") {
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("VerifyCertificate")",
-                    data: { Id: Id },
-                    dataType: "text",
-                    success: function (msg) {
-                        if (msg) {
-                            $(element).hide();
-                            $(element).parent().html("Verified");
-                        }
-                    },
-                    error: function (req, status, error) {
-                        alert(error);
+        function verify(type, id, element) {
+            if (!id) {
+                alert("No record selected");
+                return;
+            }
+            const url = type === "Certificate"
+                ? "@Url.Action("VerifyCertificate")"
+                : "@Url.Action("VerifyPhysically")";
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: { Id: id },
+                dataType: "text",
+                success: function (msg) {
+                    if (msg) {
+                        $(element).hide();
+                        $(element).parent().html("Verified");
                     }
-                });
-            }
-            else {
-                alert("no record selected")
-            }
+                },
+                error: function (req, status, error) {
+                    alert(error);
+                }
+            });
         }
-        function VerifyPhysically(Id, element) {
-            if (Id != "") {
-                $.ajax({
-                    type: "POST",
-                    url: "@Url.Action("VerifyPhysically")",
-                    data: { Id: Id },
-                    dataType: "text",
-                    success: function (msg) {
-                        if (msg) {
-                            $(element).hide();
-                            $(element).parent().html("Verified");
-                        }
-                    },
-                    error: function (req, status, error) {
-                        alert(error);
-                    }
-                });
-            }
-            else {
-                alert("no record selected")
-            }
-        }
+
         $(document).ready(function () {
             $('#datatable-table').DataTable({
                 dom: 'Bfrtip',
@@ -283,19 +270,17 @@
                         extend: 'print',
                         footer: true,
                         customize: function (win) {
-                            $(win.document.body).prepend($("#table-header").html()); //after the table
-                            $(win.document.body).append($("#table-footer").html()); //after the table
+                            $(win.document.body).prepend($("#table-header").html());
+                            $(win.document.body).append($("#table-footer").html());
                             $(win.document.body).find('table').addClass('compact').css('font-size', 'inherit');
-                            var last = null;
-                            var current = null;
-                            var bod = [];
-                            var css = '@@page { size: landscape; }', head = win.document.head || win.document.getElementsByTagName('head')[0], style = win.document.createElement('style');
+                            var css = '@@page { size: landscape; }',
+                                head = win.document.head || win.document.getElementsByTagName('head')[0],
+                                style = win.document.createElement('style');
                             style.type = 'text/css';
                             style.media = 'print';
                             if (style.styleSheet) {
                                 style.styleSheet.cssText = css;
-                            }
-                            else {
+                            } else {
                                 style.appendChild(win.document.createTextNode(css));
                             }
                             head.appendChild(style);
@@ -303,23 +288,19 @@
                         title: '',
                         message: '',
                         exportOptions: {
-                            columns: [ 3, 4, 5, 6, 7, 8, 9, 10, 11,12,13,14,15]
+                            columns: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,16]
                         }
                     },
-                    'excel',
-                    'copy',
-                    'csv',
-                    'pdf'
+                    'excel', 'copy', 'csv', 'pdf'
                 ],
-                "paging": true,
-                "lengthChange": true,
-                "searching": true,
-                "ordering": false,
-                "info": true,
+                paging: true,
+                lengthChange: true,
+                searching: true,
+                ordering: false,
+                info: true,
             });
         });
     </script>
-
 }
 else
 {

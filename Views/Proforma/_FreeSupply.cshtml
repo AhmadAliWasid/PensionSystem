@@ -13,61 +13,66 @@
     {
         guardianName = "Late " + Model.Name;
     }
-    <div id="printDiv" style="width: 700px;max-width: 700px;padding:5px; font-size:12px;">
-        <div class="margin:10px;">
-            <h5 class="text-center " style="text-decoration:underline;">F.E.C FORM ANNEXURE 'A'</h5>
-            <h5 class="text-center text-underline" style="text-decoration:underline;">PAKISTAN WATER AND POWER DEVELOPMENT AUTHORITY</h5>
-            <h5 class="text-center text-underline" style="text-decoration:underline;">APPLICATION ( IN QUADRUPLICATE ) FOR FREE ELECTRICITY</h5>
-            <h5 class="text-center text-underline" style="text-decoration:underline;">TO THE RETIRED WAPDA EMPLOYEE</h5>
+    <div id="printDiv" style="width: 700px;max-width: 700px; font-size:11px;">
+        <div>
+            <div style="padding:4px; text-align:center;">
+                <h5 style="text-decoration:underline; line-height:0.5em;">F.E.C FORM ANNEXURE 'A'</h5>
+                <h5 style="text-decoration:underline; line-height:0.5em;">PAKISTAN WATER AND POWER DEVELOPMENT AUTHORITY</h5>
+                <h5 style="text-decoration:underline; line-height:0.5em;">APPLICATION ( IN QUADRUPLICATE ) FOR FREE ELECTRICITY</h5>
+                <h5 style="text-decoration:underline; line-height:0.5em;">TO THE RETIRED WAPDA EMPLOYEE</h5>
+            </div>
             <ol style="line-height:2.5em;">
-                <li>NAME OF THE RETIRED EMPLOYEE . <b><u>@Model.Claimant @Model.Relation.Short @guardianName </u></b></li>
-                <li>DESIGNATION AT THE TIME OF RETIREMENT. <b><u>@Model.Designation</u></b></li>
-                <li>BPS (SUBSTANTIVE i.e PBS ADMISSIBLE BEFORE MOVEOVER). <b><u>BPS- @Model.BPS</u></b></li>
-                <li>NAME OF OFFICE FROM WHERE RETIRED. <b><u>@Model.RetiringOffice</u></b></li>
-                <li>PRESENT ADDRESS . <b><u>@Model.Address</u></b></li>
+                <li>NAME OF THE RETIRED EMPLOYEE . <b><u> @Model.Claimant @Model.Relation.Short @guardianName </u></b></li>
+                <li>DESIGNATION AT THE TIME OF RETIREMENT. <b><u> @Model.Designation</u></b></li>
+                <li>BPS (SUBSTANTIVE i.e PBS ADMISSIBLE BEFORE MOVEOVER). <b><u> BPS- @UserFormat.GetBPS(Model.BPS)</u></b></li>
+                <li>NAME OF OFFICE FROM WHERE RETIRED. <b><u> @Model.RetiringOffice</u></b></li>
+                <li>PRESENT ADDRESS . <b><u> @Model.Address</u></b></li>
                 <li>REFERENCE NO. <b><u>__________________________</u></b></li>
                 <li>ADDRESS WHERE METERS INSTALLED <b><u>__________________________</u></b></li>
                 <li>NAME AGAINST WHOME METER IS INSTALLED</li>
                 <li>
                     <ol>
-                        <li>PPO or Gratuity sanction No. & Date (photo copy attached)<b><u>@Model.PPONumber</u></b></li>
-                        <li>CNIC No. (photocopy attached)<b><u>@UserFormat.GetCNIC(Model.ClaimantCNIC)</u></b></li>
+                        <li>PPO or Gratuity sanction No. & Date (photo copy attached)<b><u> @Model.PPONumber</u></b></li>
+                        <li>CNIC No. (photocopy attached)<b><u> @UserFormat.GetCNIC(Model.ClaimantCNIC)</u></b></li>
                     </ol>
                 </li>
                 <li>NAME OF OFFICE/ORGGANIZATION <b><u>Finance Director PESCO Peshawar</u></b> <br /> WHERE PPO OR GRATUITY SANCTION WAS ISSUED </li>
                 <li>COMPLETE NAME FROM WHERE PENSION RECIEVED <b><u>DM SS&TL PESCO Mardan</u></b></li>
             </ol>
-            <div>
+            <div style="margin-top:20px;">
                 <i>Date. __________________________________ </i> <i class="text-end">Signature/Thumb: _______________________</i>
             </div>
-            <hr>
-            <h5 class="text-center text-underline" style="text-decoration:underline;">TO BE USED BY THE DRAWING AND DISBURSING OFFICER</h5>
-            <ol start="12">
-                <li>
-                    TICKET CODE No. OF GENERAL MANAGER               610 <br />
-                    FINANCE (Coord ) WAPDA HOUSE LAHORE IN     POWER WING <br />
-                    RESPECT OF PENSIN
-                </li>
-                <li>
-                    PRESCRIBED LIMIT OF FREE UNITS PER MONTH 50% OF THE SANCTION ALLOWED TO THE EMPLOYEE IN SERVICE
-                </li>
-            </ol>
-            <ol style="line-height:2.0em;">
-                <li>Certified that the particular given above against Sr No. 01 to 13 have been verified and & found correct.</li>
-                <li style="text-decoration:underline; margin-top:15px;">Certified that Mr. @Model.Claimant @Model.Relation.Short @guardianName Ex. @Model.Designation Vide PPO# @Model.PPONumber is drawn monthly pension from this division upto __________/@DateTime.Now.ToString("yyyy") .</li>
-            </ol>
-            <hr />
-            <div class="row">
-
-                <i>Endst No. ________________________________________</i> <i class="text-end">Dated: _______________________</i>
+            <div style="margin-top:20px; border-top:double; padding:5px;">
+                <h5 class="text-center text-underline" style="text-decoration:underline;">TO BE USED BY THE DRAWING AND DISBURSING OFFICER</h5>
+                <ol start="12">
+                    <li>
+                        TICKET CODE No. OF GENERAL MANAGER               610 <br />
+                        FINANCE (Coord ) WAPDA HOUSE LAHORE IN     POWER WING <br />
+                        RESPECT OF PENSIN
+                    </li>
+                    <li>
+                        PRESCRIBED LIMIT OF FREE UNITS PER MONTH 50% OF THE SANCTION ALLOWED TO THE EMPLOYEE IN SERVICE
+                    </li>
+                </ol>
+                <ol style="line-height:2.0em;">
+                    <li>Certified that the particular given above against Sr No. 01 to 13 have been verified and & found correct.</li>
+                    <li style="text-decoration:underline; margin-top:15px;">Certified that Mr. @Model.Claimant @Model.Relation.Short @guardianName Ex. @Model.Designation Vide PPO# @Model.PPONumber is drawn monthly pension from this division upto __________/@DateTime.Now.ToString("yyyy") .</li>
+                </ol>
             </div>
-            Copy to the :
-            <ol style="line-height:2.0em;">
-                <li>Last Office of the applicant</li>
-                <li>Revenue Office Concerned</li>
-                <li>Executive Engineer Concerned</li>
-                <li>Retired Employee</li>
-            </ol>
+
+            <div style="margin-top:20px; border-top:double; padding:5px;">
+                <div>
+                    <i>Endst No. ________________________________________</i> <i class="text-end">Dated: _______________________</i>
+                </div>
+                Copy to the :
+                <ol style="line-height:2.0em;">
+                    <li>Last Office of the applicant</li>
+                    <li>Revenue Office Concerned</li>
+                    <li>Executive Engineer Concerned</li>
+                    <li>Retired Employee</li>
+                </ol>
+            </div>
+
         </div>
     </div>
 }

@@ -31,7 +31,8 @@ namespace PensionSystem.Interfaces
 
         public Task<List<PensionPaymentHistoryVM>?> GetByPensionerId(int PensionerId);
 
-        public Task<List<PensionerPayment>?> GetByMonth(DateTime dateTime);
+        public Task<List<PensionerPayment>?> GetByMonth(DateTime dateTime, bool isVerified);
+
 
         /// <summary>
         /// Verify Pensioner Physically

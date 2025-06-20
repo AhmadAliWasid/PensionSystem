@@ -1,0 +1,65 @@
+﻿@using Pension.Entities.Helpers
+@using WebAPI.Helpers
+@model PensionSystem.Entities.Models.Pensioner
+
+@if (Model != null)
+{
+
+    <link href="/lib/print/print.min.css" rel="stylesheet" />
+    <div id="printDiv" style="width: 700px;max-width: 700px;padding:5px; font-size:12px;">
+        @if (Model != null)
+        {
+            <div id="page first-page">
+                <div class="row" style="margin-top:10px;">
+                    <div>
+                        <img src="~/img/letter_head.jpg" alt="header" style="width:100%">
+                    </div>
+                </div>
+                <div class="row" style="margin-top:20px;">
+                    <div class="col-md-6">
+                        <h4 class="text-start">No. ___________________/Account</h4>
+                    </div>
+                    <div class="col-md-6 ">
+                        <h4 class="text-end">Dated: __________________</h4>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:30px; text-align:center;">
+                    <h3><b><u>PENSION PAYMENT CERTIFICATE</u></b></h3>
+                </div>
+                <div style="line-height:2.0em;">
+                    <p>
+                        &emsp; &emsp; It is intimated that Mr/Mst/Miss. <b>@Model.Claimant </b> @Model.Relation.Short  Of
+                        @if (Model.Relation.Id == 1)
+                        {
+                            <b>@Model.FatherName</b>
+                        }
+                        else
+                        {
+                            <b>@Model.Name</b>
+                        }
+                        Ex. <b>@Model.Designation </b> having CNIC# <b>@Model.ClaimantCNIC</b> PPO # <b>@Model.PPONumber</b>
+                        drawing pension Rs.<b>
+                            @UserFormat.GetAmount(Model.Total) /-
+                            (@Calculation.ConvertAmount((double)Model.Total)
+                        </b>  (per Month) is a pensioner in SS&TL Division PESCO Mardan (WAPDA).
+                    </p>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                    </div>
+                    <div class="col-md-6">
+                        <div id="higher_signature_section" style="margin-top: 130px">
+                            <p style="margin-bottom: 0px;" class="text-center">  Divisional Accounts Officer  </p>
+                            <p class="text-center">SS & TL Division PESCO Mardan</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">No Pensioner Found</div>
+}

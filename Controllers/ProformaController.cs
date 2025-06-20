@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
 
-namespace PensionSystem.Controllers
+namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
     public class ProformaController(IPensioner pensioner, SessionHelper sessionHelper) : Controller
@@ -50,7 +50,11 @@ namespace PensionSystem.Controllers
         {
             return await GetPensionerPartialViewAsync(id, "_LPC");
         }
-
+        [HttpGet]
+        public async Task<IActionResult> GetPPC([FromQuery] int id)
+        {
+            return await GetPensionerPartialViewAsync(id, "_PPC");
+        }
         [HttpGet]
         public async Task<IActionResult> GetACO([FromQuery] int id)
         {

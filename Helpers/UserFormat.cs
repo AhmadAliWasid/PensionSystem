@@ -1,95 +1,60 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebAPI.Helpers
 {
     public static class UserFormat
     {
+        public static string GetBPS(int bps)
+        {
+            return bps.ToString("D2"); // Formats single digits as two-digit numbers (01-09)
+        }
         public static string GetStringFormat(string text, int requiredLength)
         {
-            if (text.Length < requiredLength)
-            {
-                int totalPadding = requiredLength - text.Length;
-                int padLeft = totalPadding / 2;
-                int padRight = totalPadding - padLeft;
-
-                text = text.PadLeft(text.Length + padLeft, '_').PadRight(requiredLength, '_');
-            }
-            return text;
-        }
-        public static string GetCNIC(string? CNIC)
-        {
-            if (CNIC == null) return "";
-            if (CNIC != null)
-            {
-                return CNIC.Length == 13 ? Regex.Replace(CNIC, @"^(.....)(.......)(.)$", "$1-$2-$3") : CNIC;
-            }
-            else
-            {
-                return "N/A";
-            }
-        }
-        public static string GetCurrentDate()
-        {
-            DateTime dateTime = DateTime.UtcNow;
-            dateTime = dateTime.AddHours(5);
-            return dateTime.ToString("yyyy-MM-dd");
-        }
-        public static string GetDate(DateTime? dateTime)
-        {
-            if (dateTime.HasValue)
-            {
-                DateTimeOffset dateTimeOffset = dateTime.Value;
-                return dateTimeOffset.ToString("dd-MM-yyyy") != "01-01-0001" ? dateTimeOffset.ToString("dd-MM-yyyy") : "";
-            }
-            else
-            {
-                return "N/A";
-            }
+            if (text.Length >= requiredLength) return text;
+            int totalPadding = requiredLength - text.Length;
+            int padLeft = totalPadding / 2;
+            int padRight = totalPadding - padLeft;
+            return text.PadLeft(text.Length + padLeft, '_').PadRight(requiredLength, '_');
         }
 
-        public static string GetDate(DateOnly dateTime) => dateTime.ToString("dd-MM-yyyy");
+        public static string GetCNIC(string? CNIC) =>
+            string.IsNullOrEmpty(CNIC) ? "" :
+            CNIC.Length == 13 ? Regex.Replace(CNIC, @"^(.....)(.......)(.)$", "$1-$2-$3") : CNIC;
 
-        public static string GetDateTime(DateTime dateTime)
-        {
-            return dateTime.ToString("dd-MM-yyyy hh:mm tt");
-        }
+        public static string GetCurrentDate() =>
+            DateTime.UtcNow.AddHours(5).ToString("yyyy-MM-dd");
 
-        public static string GetMobile(string number)
-        {
-            return number.Length == 13 ? Regex.Replace(number, @"^(...)(...)(.......)", "$1-$2-$3") : number;
-        }
+        public static string GetDate(DateTime? dateTime) =>
+            dateTime.HasValue && dateTime.Value.ToString("dd-MM-yyyy") != "01-01-0001"
+                ? dateTime.Value.ToString("dd-MM-yyyy")
+                : "N/A";
+
+        public static string GetDate(DateOnly dateTime) =>
+            dateTime.ToString("dd-MM-yyyy");
+
+        public static string GetDateTime(DateTime dateTime) =>
+            dateTime.ToString("dd-MM-yyyy hh:mm tt");
+
+        public static string GetMobile(string number) =>
+            number.Length == 13 ? Regex.Replace(number, @"^(...)(...)(.......)", "$1-$2-$3") : number;
 
         public static string GetAccount(string? number)
         {
-            if (number == null) return "";
-            if (number.Length == 16)
+            if (string.IsNullOrEmpty(number)) return "";
+            return number.Length switch
             {
-                number = number.Substring(2, 14);
-                return Regex.Replace(number, @"^(....)(........)(..)", "$1-$2-$3");
-            }
-            else if (number.Length == 19)
-            {
-                return number.Substring(3);
-            }
-            else
-            {
-                return number;
-            }
+                16 => Regex.Replace(number.Substring(2, 14), @"^(....)(........)(..)", "$1-$2-$3"),
+                19 => number.Substring(3),
+                _ => number
+            };
         }
 
         public static IEnumerable<string> Split(this string str, int n)
         {
-            if (string.IsNullOrEmpty(str) || n < 1)
-            {
-                throw new ArgumentException();
-            }
-
+            if (string.IsNullOrEmpty(str) || n < 1) throw new ArgumentException();
             for (int i = 0; i < str.Length; i += n)
-            {
                 yield return str.Substring(i, Math.Min(n, str.Length - i));
-            }
         }
 
         public static IEnumerable<string> ChunksUpto(string str, int maxChunkSize)
@@ -98,87 +63,45 @@ namespace WebAPI.Helpers
                 yield return str.Substring(i, Math.Min(maxChunkSize, str.Length - i));
         }
 
-        public static string GetAccountInFull(string number = "")
-        {
-            number = number.Replace("'", "");
-            number = number.Replace(" ", "");
-            number = number.Replace("-", "");
-            number = number.Replace(",", "");
-            int difference = 16 - number.Length;
-            string complete = number.PadLeft(number.Length + difference, '0');
-            return complete;
-        }
+        public static string GetAccountInFull(string number = "") =>
+            number.Replace("'", "").Replace(" ", "").Replace("-", "").Replace(",", "").PadLeft(16, '0');
 
         public static string GetForHBL(string number)
         {
-            string complete = number.Replace("-", "");
-            if (complete.Length == 16)
-            {
-                return complete.Substring(2, 14);
-            }
-            else
-            {
-                return complete;
-            }
+            var complete = number.Replace("-", "");
+            return complete.Length == 16 ? complete.Substring(2, 14) : complete;
         }
 
-        public static string GetAmount(decimal Amount)
-        {
-            if (Amount == 0)
-                return " - ";
-            return string.Format("{0:n0}", Amount);
-        }
+        public static string GetAmount(decimal Amount) =>
+            Amount == 0 ? " - " : $"{Amount:n0}";
 
-        public static string GetMonthYear(DateTime dateTime)
-        {
-            return dateTime.ToString("MM-yyyy");
-        }
-        public static string GetMonthYear(DateOnly dateTime)
-        {
-            return dateTime.ToString("MM-yyyy");
-        }
-        public static string GetMonthYearWWF(DateOnly dateTime)
-        {
-            if (dateTime.Day == 1 || dateTime.AddDays(1).Month != dateTime.Month)
-                return dateTime.ToString("M/yy");
-            else
-                return dateTime.ToString("d/M/yy");
-        }
+        public static string GetMonthYear(DateTime dateTime) =>
+            dateTime.ToString("MM-yyyy");
 
+        public static string GetMonthYear(DateOnly dateTime) =>
+            dateTime.ToString("MM-yyyy");
 
-        public static string GetLastDate(DateTime dateTime)
-        {
-            return dateTime.AddMonths(1).AddDays(-1).ToString("dd-MM-yyyy");
-        }
+        public static string GetMonthYearWWF(DateOnly dateTime) =>
+            dateTime.Day == 1 || dateTime.AddDays(1).Month != dateTime.Month
+                ? dateTime.ToString("M/yy")
+                : dateTime.ToString("d/M/yy");
 
-        public static DateTime GetLastMonth(DateTime dateTime)
-        {
-            return dateTime.AddMonths(-1);
-        }
+        public static string GetLastDate(DateTime dateTime) =>
+            dateTime.AddMonths(1).AddDays(-1).ToString("dd-MM-yyyy");
+
+        public static DateTime GetLastMonth(DateTime dateTime) =>
+            dateTime.AddMonths(-1);
 
         /// <summary>
-        /// Get Cheque number in formate of eight digit
+        /// Get Cheque number in format of eight digits, right-aligned in 22 spaces
         /// </summary>
-        /// <param name="chequeNumber"></param>
-        /// <returns></returns>
-        public static string GetChequeNumber(int chequeNumber)
-        {
-            return string.Format("{0,22}", chequeNumber.ToString("D8"));
-        }
+        public static string GetChequeNumber(int chequeNumber) =>
+            $"{chequeNumber:D8}".PadLeft(22);
 
-        public static string GetMobilePK(string number)
-        {
-            string mynumber = number.Replace("+92-", "0");
-            return mynumber;
-        }
+        public static string GetMobilePK(string number) =>
+            number.Replace("+92-", "0");
 
-        public static string EnsureCorrectFilename(string filename)
-        {
-            if (filename.Contains("\\"))
-                filename = filename.Substring(filename.LastIndexOf("\\") + 1);
-
-            return filename;
-        }
+        public static string EnsureCorrectFilename(string filename) =>
+            filename.Contains("\\") ? filename[(filename.LastIndexOf("\\") + 1)..] : filename;
     }
-
 }

@@ -111,7 +111,7 @@ namespace PensionSystem.Controllers
             var Month = list.First().Month;
 
             Month = Month.AddMonths(-1);
-            var lastMonthList = await _pensionPayment.GetByMonth(Month);
+            var lastMonthList = await _pensionPayment.GetByMonth(Month, true);
             var verified = list
                                         .Where(x => x.CertificateVerified == true && x.PhysicallyVerified == true);
             var notVerified = list
