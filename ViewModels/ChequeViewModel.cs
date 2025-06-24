@@ -1,6 +1,6 @@
 ﻿using PensionSystem.Entities.DTOs;
 using PensionSystem.Entities.Models;
-using PensionSystem.Helpers;
+using WebAPI.Helpers;
 
 namespace WebAPI.ViewModels
 {

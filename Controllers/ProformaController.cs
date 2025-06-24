@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PensionSystem.Helpers;
+using PensionSystem.Entities.DTOs;
+using PensionSystem.Entities.Helpers;
 using PensionSystem.Interfaces;
+using WebAPI.Helpers;
 
 namespace WebAPI.Controllers
 {
     [Authorize(Roles = "PDUUser,Administrator")]
-    public class ProformaController(IPensioner pensioner, SessionHelper sessionHelper) : Controller
+    public class ProformaController(IPensioner pensioner, SessionHelper sessionHelper, IMapper mapper) : Controller
     {
         private readonly IPensioner _pensioner = pensioner;
         private readonly SessionHelper _sessionHelper = sessionHelper;
-
+        private readonly IMapper _mapper = mapper;
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -70,17 +73,33 @@ namespace WebAPI.Controllers
         private async Task<IActionResult> GetPensionerPartialViewAsync(int id, string partialViewName)
         {
             var pensioner = await _pensioner.Get(id);
+            var r = _mapper.Map<PensionerDTO>(pensioner);
+            r.Session = new SessionVM
+            {
+                DMStamp = _sessionHelper.GetDMStamp(),
+                AMStamp = _sessionHelper.GetAMStamp(),
+                BaseStamp = _sessionHelper.GetBaseStamp()
+            };
+
             if (pensioner == null)
                 return NotFound();
-            return PartialView(partialViewName, pensioner);
+            return PartialView(partialViewName, r);
         }
 
         private async Task<IActionResult> GetPensionerViewAsync(int id, string viewName)
         {
             var pensioner = await _pensioner.Get(id);
+            var r = _mapper.Map<PensionerDTO>(pensioner);
+               ;
+            r.Session = new SessionVM
+            {
+                DMStamp = _sessionHelper.GetDMStamp(),
+                AMStamp = _sessionHelper.GetAMStamp(),
+                BaseStamp = _sessionHelper.GetBaseStamp()
+            };
             if (pensioner == null)
                 return NotFound();
-            return View(viewName, pensioner);
+            return View(viewName, r);
         }
     }
 }

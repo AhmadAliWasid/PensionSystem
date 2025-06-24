@@ -1,6 +1,6 @@
 ﻿@using Pension.Entities.Helpers
 @using WebAPI.Helpers
-@model PensionSystem.Entities.Models.Pensioner
+@model PensionSystem.Entities.DTOs.PensionerDTO
 
 @if (Model != null)
 {
@@ -77,8 +77,8 @@
                     </div>
                     <div class="col-md-6">
                         <div id="higher_signature_section" style="margin-top: 130px">
-                            <p style="margin-bottom: 0px;" class="text-center">  Divisional Accounts Officer  </p>
-                            <p class="text-center">SS & TL Division PESCO Mardan</p>
+                            <p style="margin-bottom: 0px;" class="text-center">  @Model.Session.AMStamp</p>
+                            <p class="text-center">@Model.Session.DMStamp</p>
                         </div>
                     </div>
 

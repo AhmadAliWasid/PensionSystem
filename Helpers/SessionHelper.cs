@@ -1,4 +1,4 @@
-﻿namespace PensionSystem.Helpers
+﻿namespace WebAPI.Helpers
 {
     public class SessionHelper(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
     {

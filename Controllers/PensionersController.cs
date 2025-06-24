@@ -7,7 +7,6 @@ using PensionSystem.Data;
 using PensionSystem.DTOs;
 using PensionSystem.Entities.DTOs;
 using PensionSystem.Entities.Models;
-using PensionSystem.Helpers;
 using PensionSystem.Interfaces;
 using PensionSystem.ViewModels;
 using System.Text;
@@ -100,6 +99,7 @@ namespace WebAPI.Controllers
             if (id == null || id == 0)
             {
                 await PopulateSelectListsAsync();
+
                 return PartialView("_CreateUpdate", dto);
             }
 
@@ -118,7 +118,7 @@ namespace WebAPI.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<JsonResult> Update([Bind("Id,CompanyId,PageNumber,PPONumber,PPOSystem,Name,Designation,BPS,FatherName,Mobile,CNIC,DOB,DateOfRetirement,RelationId,SanctionNumber,SanctionDate,Gender,Claimant,ClaimantCNIC,Spouse,Address,AccountNumber,MonthlyPension,CMA,OrderelyAllowence,Total,MonthlyRecovery,Remarks,IsActiveClaimant,BranchId,LastBasicPay,DateOfAppointment,AccountTitle,IsServiceActive,Commutation,RetiringOffice,IBAN")] PensionerDTO dto)
+        public async Task<JsonResult> Update(PensionerDTO dto)
         {
             var response = new JsonResponseHelper();
 

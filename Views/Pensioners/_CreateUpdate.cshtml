@@ -470,15 +470,15 @@
                                     $("#CNIC").val(response.CNIC);
                                     $("#DOB").val((response.DOB).split('T')[0]);
                                     $("#DateOfRetirement").val((response.DateOfRetirement).split('T')[0]);
-                                    $("#RelationId").val(response.RelationId);
-                                    $("#CompanyId").val(response.CompanyId);
+                                    $("#RelationId").val(response.RelationId).change();
+                                    $("#CompanyId").val(response.CompanyId).change();
                                     $("#SanctionNumber").val(response.SanctionNumber);
                                     $("#SanctionDate").val((response.SanctionDate).split('T')[0]);
                                     $("#LastBasicPay").val(response.LastBasicPay);
                                     $("#DateOfAppointment").val((response.DateOfAppointment).split('T')[0]);
                                     $("#Commutation").val(response.Commutation);
                                     $("#RetiringOffice").val(response.RetiringOffice);
-                                                                  $("#Address").val(response.Address);
+                                    $("#Address").val(response.Address);
                                 }
                                     }
         });

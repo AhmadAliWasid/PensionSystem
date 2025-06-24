@@ -7,6 +7,44 @@
 @if (Model != null)
 {
     <link href="~/css/print.css" type="text/css" rel="stylesheet" media="print" />
+    <style>
+        .btn-alive {
+            background-color: #4CAF50;
+            color: white;
+        }
+        /* Green */
+        .btn-page {
+            background-color: #2196F3;
+            color: white;
+        }
+        /* Blue */
+        .btn-aco {
+            background-color: #FF9800;
+            color: white;
+        }
+        /* Orange */
+        .btn-lpc {
+            background-color: #9C27B0;
+            color: white;
+        }
+        /* Purple */
+        .btn-ppc {
+            background-color: #f44336;
+            color: white;
+        }
+        /* Red */
+        .btn-free {
+            background-color: #607D8B;
+            color: white;
+        }
+        /* Slate */
+        .btn-slip {
+            background-color: #00BCD4;
+            color: white;
+        }
+        /* Cyan */
+
+    </style>
     <div class="card">
         <div class="card-title">
             Pensioners List Proforma
@@ -27,13 +65,14 @@
                             <td>@item.PPOSystem</td>
                             <td>@item.Claimant</td>
                             <td>
-                                <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("GetAliveCertificate")', @item.Id)">Life Certificate</button>
-                                <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("Page")', @item.Id)"><i class="fas fa-print"></i> Page</button>
-                                <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("GetACO")', @item.Id)"><i class="fas fa-print"></i> ACO</button>
-                                <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("GetLPC")', @item.Id)"><i class="fas fa-print"></i> LPC</button>
-                                <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("GetPPC")', @item.Id)"><i class="fas fa-print"></i> PPC</button>
-                                <button type="button" class="btn bg-gradient-primary btn-sm" onclick="fetchAndPrint('@Url.Action("GetFreeSupply")', @item.Id)"><i class="fas fa-print"></i> Free Supply</button>
-                                <a asp-action="PageSlip" class="btn bg-gradient-info" asp-route-id="@item.Id"><i class="fas fa-print"></i> Slip</a>
+                                <button class="btn btn-sm btn-alive" onclick="fetchAndPrint('@Url.Action("GetAliveCertificate")', @item.Id)">Life Certificate</button>
+                                <button class="btn btn-sm btn-page" onclick="fetchAndPrint('@Url.Action("Page")', @item.Id)"><i class="fas fa-print"></i> Page</button>
+                                <button class="btn btn-sm btn-aco" onclick="fetchAndPrint('@Url.Action("GetACO")', @item.Id)"><i class="fas fa-print"></i> ACO</button>
+                                <button class="btn btn-sm btn-lpc" onclick="fetchAndPrint('@Url.Action("GetLPC")', @item.Id)"><i class="fas fa-print"></i> LPC</button>
+                                <button class="btn btn-sm btn-ppc" onclick="fetchAndPrint('@Url.Action("GetPPC")', @item.Id)"><i class="fas fa-print"></i> PPC</button>
+                                <button class="btn btn-sm btn-free" onclick="fetchAndPrint('@Url.Action("GetFreeSupply")', @item.Id)"><i class="fas fa-print"></i> Free Supply</button>
+                                <a asp-action="PageSlip" class="btn btn-sm btn-slip" asp-route-id="@item.Id"><i class="fas fa-print"></i> Slip</a>
+
                             </td>
                         </tr>
                     }

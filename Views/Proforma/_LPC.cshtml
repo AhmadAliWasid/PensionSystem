@@ -1,5 +1,5 @@
 ﻿@using Pension.Entities.Helpers
-@model PensionSystem.Entities.Models.Pensioner
+@model PensionSystem.Entities.DTOs.PensionerDTO
 
 @if (Model != null)
 {
@@ -39,8 +39,22 @@
                     </tr>
             </table>
         </div>
-        <div style="margin:20px;">
-
+        <div class="row" style="margin-top: 70px">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6">
+                <div id="higher_signature_section" >
+                    <p style="margin-bottom: 0px;" class="text-center">  @Model.Session.AMStamp </p>
+                    <p class="text-center">@Model.Session.BaseStamp</p>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 20px;">
+            <p class="text-center">C/ Signed By XEN/RO.</p>
+        </div>
+        <div class="row" style="margin-top:30px;">
+            <p class="text-center" style="margin-bottom:0px;">@Model.Session.DMStamp</p>
+            <p class="text-center">@Model.Session.BaseStamp</p>
         </div>
     </div>
 }

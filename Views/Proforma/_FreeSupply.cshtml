@@ -1,6 +1,6 @@
 ﻿@using Pension.Entities.Helpers
 @using WebAPI.Helpers
-@model PensionSystem.Entities.Models.Pensioner
+@model PensionSystem.Entities.DTOs.PensionerDTO
 
 @if (Model != null)
 {
@@ -39,14 +39,14 @@
                 <li>NAME OF OFFICE/ORGGANIZATION <b><u>Finance Director PESCO Peshawar</u></b> <br /> WHERE PPO OR GRATUITY SANCTION WAS ISSUED </li>
                 <li>COMPLETE NAME FROM WHERE PENSION RECIEVED <b><u>DM SS&TL PESCO Mardan</u></b></li>
             </ol>
-            <div style="margin-top:20px;">
+            <div style="margin-top:40px;">
                 <i>Date. __________________________________ </i> <i class="text-end">Signature/Thumb: _______________________</i>
             </div>
             <div style="margin-top:20px; border-top:double; padding:5px;">
                 <h5 class="text-center text-underline" style="text-decoration:underline;">TO BE USED BY THE DRAWING AND DISBURSING OFFICER</h5>
                 <ol start="12">
                     <li>
-                        TICKET CODE No. OF GENERAL MANAGER               610 <br />
+                        TICKET CODE No. OF GENERAL MANAGER               610  &emsp; Code:(4313, ) <br />
                         FINANCE (Coord ) WAPDA HOUSE LAHORE IN     POWER WING <br />
                         RESPECT OF PENSIN
                     </li>
@@ -56,11 +56,12 @@
                 </ol>
                 <ol style="line-height:2.0em;">
                     <li>Certified that the particular given above against Sr No. 01 to 13 have been verified and & found correct.</li>
-                    <li style="text-decoration:underline; margin-top:15px;">Certified that Mr. @Model.Claimant @Model.Relation.Short @guardianName Ex. @Model.Designation Vide PPO# @Model.PPONumber is drawn monthly pension from this division upto __________/@DateTime.Now.ToString("yyyy") .</li>
+                    <li style="text-decoration:underline; margin-top:15px;">Certified that Mr. @Model.Claimant 
+                        @Model.Relation.Short @guardianName Ex. @Model.Designation Vide PPO# @Model.PPONumber has drawn monthly pension from this division upto __________/@DateTime.Now.ToString("yyyy") .</li>
                 </ol>
             </div>
 
-            <div style="margin-top:20px; border-top:double; padding:5px;">
+            <div style="margin-top:40px; border-top:double; padding:5px;">
                 <div>
                     <i>Endst No. ________________________________________</i> <i class="text-end">Dated: _______________________</i>
                 </div>

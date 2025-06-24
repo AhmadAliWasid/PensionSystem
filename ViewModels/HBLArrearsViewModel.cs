@@ -1,7 +1,7 @@
-﻿using PensionSystem.Helpers;
-using PensionSystem.Entities.Models;
+﻿using PensionSystem.Entities.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebAPI.Helpers;
 
 namespace PensionSystem.ViewModels
 {
