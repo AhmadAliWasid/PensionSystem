@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Index()
         {
             var pduId = _sessionHelper.GetUserPDUId();
-            var pensioners = await _pensioner.GetActive(pduId);
+            var pensioners = await _pensioner.GetAll(pduId);
             return View(pensioners);
         }
 
@@ -90,7 +90,7 @@ namespace WebAPI.Controllers
         {
             var pensioner = await _pensioner.Get(id);
             var r = _mapper.Map<PensionerDTO>(pensioner);
-               ;
+            ;
             r.Session = new SessionVM
             {
                 DMStamp = _sessionHelper.GetDMStamp(),

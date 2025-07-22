@@ -60,7 +60,7 @@
                                 var listOrdered = Model.PensionerPayments.OrderByDescending(x => x.Month);
                                 foreach (var item in listOrdered)
                                 {
-                                    if (item.Paid == 0 && item.Description == "Monthly")
+                                    if ((item.Paid == 0 && item.Description == "Monthly"))
                                         bgColor = "style=background-color:red;";
                                     else
                                         bgColor = "";

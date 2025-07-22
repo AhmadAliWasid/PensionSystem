@@ -162,7 +162,7 @@ namespace PensionSystem.Services
                 return null;
             var listDemands = await cContext
                 .Include(y => y.MonthlyPensionDemand)
-                .Where(c => c.PensionerId == PensionerId).ToListAsync();
+                .Where(c => c.PensionerId == PensionerId && c.CertificateVerified == true && c.PhysicallyVerified == true).ToListAsync();
             var vm = new List<PensionPaymentHistoryVM>();
             if (listDemands != null && listDemands.Count > 0)
             {
@@ -185,7 +185,7 @@ namespace PensionSystem.Services
             var aContext = _context.ArrearsPayments;
             if (aContext != null)
             {
-                var listArrears = await aContext.Include(c => c.ArrearsDemand).Where(x => x.PensionerId == PensionerId).ToListAsync();
+                var listArrears = await aContext.Include(c => c.ArrearsDemand).Where(x => x.PensionerId == PensionerId && x.NetPension > 0).ToListAsync();
                 if (listArrears != null && listArrears.Count > 0)
                 {
                     foreach (var item in listArrears)
@@ -204,7 +204,7 @@ namespace PensionSystem.Services
                     }
                 }
             }
-            return vm.OrderBy(x => x.Month).ToList();
+            return [.. vm.OrderBy(x => x.Month)];
         }
 
         public async Task<List<PensionerPayment>?> GetByMonth(DateTime dateTime, bool isVerified)

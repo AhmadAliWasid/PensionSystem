@@ -29,15 +29,15 @@
                 <li>PRESENT ADDRESS . <b><u> @Model.Address</u></b></li>
                 <li>REFERENCE NO. <b><u>__________________________</u></b></li>
                 <li>ADDRESS WHERE METERS INSTALLED <b><u>__________________________</u></b></li>
-                <li>NAME AGAINST WHOME METER IS INSTALLED</li>
+                <li>NAME AGAINST WHOME METER IS INSTALLED <b><u>______________________________________</u></b></li>
                 <li>
                     <ol>
                         <li>PPO or Gratuity sanction No. & Date (photo copy attached)<b><u> @Model.PPONumber</u></b></li>
                         <li>CNIC No. (photocopy attached)<b><u> @UserFormat.GetCNIC(Model.ClaimantCNIC)</u></b></li>
                     </ol>
                 </li>
-                <li>NAME OF OFFICE/ORGGANIZATION <b><u>Finance Director PESCO Peshawar</u></b> <br /> WHERE PPO OR GRATUITY SANCTION WAS ISSUED </li>
-                <li>COMPLETE NAME FROM WHERE PENSION RECIEVED <b><u>DM SS&TL PESCO Mardan</u></b></li>
+                <li>NAME OF OFFICE/ORGGANIZATION <b><u>Finance Director @Model.Company.ShortName </u></b> <br /> WHERE PPO OR GRATUITY SANCTION WAS ISSUED </li>
+                <li>COMPLETE NAME FROM WHERE PENSION RECIEVED <b><u>@Model.Session.DMStamp @Model.Session.BaseStamp</u></b></li>
             </ol>
             <div style="margin-top:40px;">
                 <i>Date. __________________________________ </i> <i class="text-end">Signature/Thumb: _______________________</i>
@@ -46,7 +46,7 @@
                 <h5 class="text-center text-underline" style="text-decoration:underline;">TO BE USED BY THE DRAWING AND DISBURSING OFFICER</h5>
                 <ol start="12">
                     <li>
-                        TICKET CODE No. OF GENERAL MANAGER               610  &emsp; Code:(4313, ) <br />
+                        TICKET CODE No. OF GENERAL MANAGER               610  &emsp; Code:  <br />
                         FINANCE (Coord ) WAPDA HOUSE LAHORE IN     POWER WING <br />
                         RESPECT OF PENSIN
                     </li>
@@ -56,8 +56,10 @@
                 </ol>
                 <ol style="line-height:2.0em;">
                     <li>Certified that the particular given above against Sr No. 01 to 13 have been verified and & found correct.</li>
-                    <li style="text-decoration:underline; margin-top:15px;">Certified that Mr. @Model.Claimant 
-                        @Model.Relation.Short @guardianName Ex. @Model.Designation Vide PPO# @Model.PPONumber has drawn monthly pension from this division upto __________/@DateTime.Now.ToString("yyyy") .</li>
+                    <li style="text-decoration:underline; margin-top:15px;">
+                        Certified that Mr. @Model.Claimant
+                        @Model.Relation.Short @guardianName Ex. @Model.Designation Vide PPO# @Model.PPONumber has drawn monthly pension from this division upto __________/@DateTime.Now.ToString("yyyy") .
+                    </li>
                 </ol>
             </div>
 

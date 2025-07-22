@@ -13,49 +13,56 @@
         guardianName = Model.Name;
     }
     <div id="printDiv" style="width: 700px;max-width: 700px;padding:5px; font-size:12px;">
-        <div class="margin:10px;">
-            <h3 class="text-center text-underline" style="text-decoration:underline;">LAST PAYMENT CERTIFICATE</h3>
-            <p class="text-justify" style="line-height:30px; font-size:12px;">
-                it is certified that monthly pension has been paid to  Mr/Mst/Miss. <b> <u style="">@Model.Claimant</u></b>
-                vide PPO No. <u><b>@Model.PPONumber </b></u> upto ___________________________________.
-            </p>
-        </div>
-        <div style="margin:20px;">
-            <table class="table table-bordered ">
-                <thead>
-                    <tr>
-                        <th>MP</th>
-                        <th>CMA</th>
-                        <th>Orderly Allowance</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>@Model.MonthlyPension.ToString("N0")</td>
-                        <td>@Model.CMA.ToString("N0")</td>
-                        <td>@Model.OrderelyAllowence.ToString("N0")</td>
-                        <td>@Model.Total.ToString("N0")</td>
-                    </tr>
-            </table>
-        </div>
-        <div class="row" style="margin-top: 70px">
-            <div class="col-md-6">
-            </div>
-            <div class="col-md-6">
-                <div id="higher_signature_section" >
-                    <p style="margin-bottom: 0px;" class="text-center">  @Model.Session.AMStamp </p>
+        @for (int i = 0; i < 2; i++)
+        {
+            <div class="lpc">
+                <div class="margin:100px;">
+                    <h3 class="text-center text-underline" style="text-decoration:underline;">LAST PAYMENT CERTIFICATE</h3>
+                    <p class="text-justify" style="line-height:30px; font-size:12px;">
+                        it is certified that monthly pension has been paid to  Mr/Mst/Miss. <b> <u style="">@Model.Claimant</u></b>
+                        vide PPO No. <u><b>@Model.PPONumber </b></u> upto ___________________________________.
+                    </p>
+                </div>
+                <div style="margin:20px;">
+                    <table class="table table-bordered ">
+                        <thead>
+                            <tr>
+                                <th>MP</th>
+                                <th>CMA</th>
+                                <th>Orderly Allowance</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@Model.MonthlyPension.ToString("N0")</td>
+                                <td>@Model.CMA.ToString("N0")</td>
+                                <td>@Model.OrderelyAllowence.ToString("N0")</td>
+                                <td>@Model.Total.ToString("N0")</td>
+                            </tr>
+                    </table>
+                </div>
+                <div class="row" style="margin-top: 70px">
+                    <div class="col-md-6">
+                    </div>
+                    <div class="col-md-6">
+                        <div id="higher_signature_section">
+                            <p style="margin-bottom: 0px;" class="text-center">  @Model.Session.AMStamp </p>
+                            <p class="text-center">@Model.Session.BaseStamp</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 20px;">
+                    <p class="text-center">C/ Signed By XEN/RO.</p>
+                </div>
+                <div class="row" style="margin-top:30px;">
+                    <p class="text-center" style="margin-bottom:0px;">@Model.Session.DMStamp</p>
                     <p class="text-center">@Model.Session.BaseStamp</p>
                 </div>
             </div>
-        </div>
-        <div class="row" style="margin-top: 20px;">
-            <p class="text-center">C/ Signed By XEN/RO.</p>
-        </div>
-        <div class="row" style="margin-top:30px;">
-            <p class="text-center" style="margin-bottom:0px;">@Model.Session.DMStamp</p>
-            <p class="text-center">@Model.Session.BaseStamp</p>
-        </div>
+        }
+     
+     
     </div>
 }
 else
