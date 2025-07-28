@@ -1,93 +1,38 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>@ViewData["Title"] - PensionSystem</title>
-    <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Font Awesome -->
+    <!-- External CSS Libraries -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
           integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
           crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-    <!-- Theme style -->
-    <link rel="stylesheet" href="~/dist/css/adminlte.min.css">
-    <!-- Google Font: Source Sans Pro -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
-    <script src="~/js/site.js"></script>
-    <!-- Bootstrap 4 -->
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" media="all" />
-    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-
-
-    <!-- DataTables -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 
-
-
-    <!-- AdminLTE App -->
-    <script src="~/dist/js/adminlte.min.js"></script>
-    @* <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.1/dist/js/adminlte.min.js"></script> *@
+    <!-- Local CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" media="all" />
+    <link rel="stylesheet" href="~/dist/css/adminlte.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" media="all" />
 
-</head>
-<body>
-    <div class="hold-transition sidebar-mini layout-navbar-fixed">
-        <div class="wrapper">
-            <partial name="_Navbar" />
-            <partial name="_MainSideBar" />
-            <!-- Content Wrapper. Contains page content -->
-            <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
-                <section class="content-header">
-                    <div class="container-fluid">
-                        <div class="row mb-2">
-                            <div class="col-sm-6">
-                                <h1>@ViewData["Title"]</h1>
-                            </div>
-                            <div class="col-sm-6">
-                                <ol class="breadcrumb float-sm-right">
-                                    <li class="breadcrumb-item"><a asp-controller="Home" action="index" asp-area="">Home</a></li>
-                                    <li class="breadcrumb-item">@ViewData["Title"]</li>
-                                    <li class="breadcrumb-item active">@ViewData["SubTitle"]</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div><!-- /.container-fluid -->
-                </section>
-                <!-- Main content -->
-                <section class="content">
-                    <div class="container-fluid">
-                        <div class="row">
-                            @RenderBody()
-                        </div>
-                    </div>
-                </section>
-                <!-- /.content -->
-            </div>
-            <!-- /.content-wrapper -->
-            <partial name="_Footer" />
-            <partial name="_ControlSideBar" />
-
-        </div>
-
-    </div>
-
-    <!-- AdminLTE for demo purposes -->
-	<script src="~/js/site.js"></script>
+    <!-- Scripts: jQuery, Bootstrap, AdminLTE, DataTables, Plugins -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+            integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"
+            integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY="
+            crossorigin="anonymous"></script>
+    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/dist/js/adminlte.min.js"></script>
+    <script src="~/js/site.js"></script>
     <script src="_framework/blazor.server.js"></script>
-    <!-- DataTables  & Plugins -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
@@ -98,118 +43,126 @@
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script>
-        $(document).ready(function (e) {
-            setInterval(function () {
-                $.ajax({
-                    url: '@Url.Action("DummyRequest", "Home")',
-                    type: 'POST',
-                    data: null,
-                    success: function (response) {
-                        console.log('Success!');
-                    },
-                    error: function (xhr, status, error) {
-                        console.log('Error: ' + error.message);
-                    }
-                });
-            }, 295000);
+</head>
+<body>
+    <div class="hold-transition sidebar-mini layout-navbar-fixed">
+        <div class="wrapper">
+            <partial name="_Navbar" />
+            <partial name="_MainSideBar" />
+            <div class="content-wrapper">
+                <section class="content-header">
+                    <div class="container-fluid">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                                <h1>@ViewData["Title"]</h1>
+                            </div>
+                            <div class="col-sm-6">
+                                <ol class="breadcrumb float-sm-right">
+                                    <li class="breadcrumb-item">
+                                        <a asp-page="/Index">Home</a>
+                                    </li>
+                                    @if (!string.IsNullOrEmpty(ViewData["Title"]?.ToString()))
+                                    {
+                                        <li class="breadcrumb-item">@ViewData["Title"]</li>
+                                    }
+                                    @if (!string.IsNullOrEmpty(ViewData["SubTitle"]?.ToString()))
+                                    {
+                                        <li class="breadcrumb-item active">@ViewData["SubTitle"]</li>
+                                    }
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="content">
+                    <div class="container-fluid">
+                        <div class="row">
+                            @RenderBody()
+                        </div>
+                    </div>
+                </section>
+            </div>
+            <partial name="_Footer" />
+            <partial name="_ControlSideBar" />
+        </div>
+    </div>
 
+    <script>
+        // Keep session alive
+        $(function () {
+            setInterval(function () {
+                $.post('@Url.Action("DummyRequest", "Home")')
+                    .done(() => console.log('Session kept alive.'))
+                    .fail((xhr, status, error) => console.log('Error: ' + error));
+            }, 295000);
         });
+
+        // AJAX helpers
+        function ajaxFormSubmit(formId, url, onSuccess, onError) {
+            const $form = $("#" + formId);
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: $form.serialize(),
+                dataType: "json",
+                success: onSuccess,
+                error: onError
+            });
+        }
+
         function Save() {
-            var Form = $("#CreateUpdate");
-            var formData = Form.serialize();
-            $.ajax({
-                url: "@Url.Action("Save")",
-                type: "POST",
-                data: formData,
-                dataType: "json",
-                success: function (msg) {
-                    $("#modal-default").modal("hide");
-                    LoadList();
-                },
-                error: function (req, status, error) {
-                    window.alert(error);
-                }
+            ajaxFormSubmit("CreateUpdate", "@Url.Action("Save")", function () {
+                $("#modal-default").modal("hide");
+                LoadList();
+            }, function (req, status, error) {
+                window.alert(error);
             });
         }
+
         function AddOnly() {
-            var Form = $("#Create");
-            var formData = Form.serialize();
-            $.ajax({
-                url: "@Url.Action("Add")",
-                type: "POST",
-                data: formData,
-                dataType: "json",
-                success: function (msg) {
-                    $("#modal-default").modal("hide");
-                    LoadList();
-                },
-                error: function (req, status, error) {
-                    $("#ErrorDiv").html(error);
-                }
+            ajaxFormSubmit("Create", "@Url.Action("Add")", function () {
+                $("#modal-default").modal("hide");
+                LoadList();
+            }, function (req, status, error) {
+                $("#ErrorDiv").html(error);
             });
         }
+
         function AddOrUpdate(value) {
-            $.ajax({
-                type: "GET",
-                url: "@Url.Action("Crud")",
-                data: { id: value },
-                dataType: "text",
-                success: function (msg) {
-                    $("#modal-default").modal("show");
-                    $("#modal-body").html(msg);
-                },
-                error: function (req, status, error) {
-                    alert(error);
-                }
+            $.get("@Url.Action("Crud")", { id: value }, function (msg) {
+                $("#modal-default").modal("show");
+                $("#modal-body").html(msg);
+            }).fail(function (req, status, error) {
+                alert(error);
             });
         }
+
         function Create() {
-            $.ajax({
-                type: "GET",
-                url: "@Url.Action("Create")",
-                data: null,
-                dataType: "text",
-                success: function (msg) {
-                    $("#modal-default").modal("show");
-                    $("#modal-body").html(msg);
-                },
-                error: function (req, status, error) {
-                    alert(error);
-                }
+            $.get("@Url.Action("Create")", function (msg) {
+                $("#modal-default").modal("show");
+                $("#modal-body").html(msg);
+            }).fail(function (req, status, error) {
+                alert(error);
             });
         }
+
         function LoadList() {
             awaitHtmlElement("#content");
-            $.ajax({
-                type: "GET",
-                url: "@Url.Action("Load")",
-                dataType: "text",
-                success: function (msg) {
-                    $("#content").html(msg);
-                },
-                error: function (req, status, error) {
-                   alert(error + "/n" + req + "/n" + status);
-                }
+            $.get("@Url.Action("Load")", function (msg) {
+                $("#content").html(msg);
+            }).fail(function (req, status, error) {
+                alert(`${error}\n${req}\n${status}`);
             });
         }
+
         function Delete(id) {
-            if (id != "") {
-                if (window.confirm("Are Your Sure You Want to Delete This Item")) {
-                    $.ajax({
-                        type: "POST",
-                        url: "@Url.Action("Delete")",
-                        data: { id: id },
-                        dataType: "text",
-                        success: function (msg) {
-                            $("#content").html(msg);
-                            LoadList();
-                        },
-                        error: function (req, status, error) {
-                            alert(error + "/n" + req + "/n" + status);
-                        }
-                    });
-                }
+            if (id && window.confirm("Are you sure you want to delete this item?")) {
+                $.post("@Url.Action("Delete")", { id: id }, function (msg) {
+                    $("#content").html(msg);
+                    LoadList();
+                }).fail(function (req, status, error) {
+                    alert(`${error}\n${req}\n${status}`);
+                });
             }
         }
     </script>

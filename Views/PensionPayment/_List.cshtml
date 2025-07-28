@@ -79,8 +79,6 @@
                             <th>S#</th>
                             <th>PPO#</th>
                             <th>Claimant</th>
-                            <th>Rel</th>
-                            <th>Name</th>
                             <th>Bank</th>
                             <th>MP</th>
                             <th>CMA</th>
@@ -135,22 +133,11 @@
                                 <td>
                                     @if (relationId == 1)
                                     {
-                                        <span>@item.Pensioner.Claimant - Ex. @item.Pensioner.Designation</span>
+                                        <span>@item.Pensioner.Claimant  Ex. @item.Pensioner.Designation</span>
                                     }
                                     else
                                     {
-                                        <span>@item.Pensioner.Claimant</span>
-                                    }
-                                </td>
-                                <td>@item.Pensioner.Relation.Short</td>
-                                <td>
-                                    @if (relationId == 1)
-                                    {
-                                        <span>@item.Pensioner.FatherName</span>
-                                    }
-                                    else
-                                    {
-                                        <span>@item.Pensioner.Name Ex. @item.Pensioner.Designation</span>
+                                        <span>@item.Pensioner.Claimant @item.Pensioner.Relation.Short @item.Pensioner.Name Ex. @item.Pensioner.Designation</span>
                                     }
                                 </td>
                                 <td>@item.Pensioner.Branch.Bank.ShortName @item.Pensioner.Branch.Code-@item.Pensioner.AccountNumber</td>
@@ -288,7 +275,7 @@
                         title: '',
                         message: '',
                         exportOptions: {
-                            columns: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,16]
+                            columns: [3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
                         }
                     },
                     'excel', 'copy', 'csv', 'pdf'

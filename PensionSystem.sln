@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebAPI", "WebAPI.csproj", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PensionSystem.Entities", "..\PensionSystem.Entities\PensionSystem.Entities.csproj", "{2A8D62E7-399B-4D53-AF0C-EBD33D91EC9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PensionUI", "..\PensionUI\PensionUI.csproj", "{8A7C7B92-A606-424D-A318-3F6C2E783C9B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{2A8D62E7-399B-4D53-AF0C-EBD33D91EC9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A8D62E7-399B-4D53-AF0C-EBD33D91EC9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A8D62E7-399B-4D53-AF0C-EBD33D91EC9F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8A7C7B92-A606-424D-A318-3F6C2E783C9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8A7C7B92-A606-424D-A318-3F6C2E783C9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8A7C7B92-A606-424D-A318-3F6C2E783C9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8A7C7B92-A606-424D-A318-3F6C2E783C9B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
