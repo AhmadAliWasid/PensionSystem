@@ -5,7 +5,7 @@ using PensionSystem.Entities.Models;
 using PensionSystem.ViewModels;
 using WebAPI.Helpers;
 
-namespace PensionSystem.Services
+namespace WebAPI.Services
 {
     public class HBLPaymentService(ApplicationDbContext applicationDbContext) : IHBLPayments
     {
@@ -50,6 +50,11 @@ namespace PensionSystem.Services
                         PensionerId = item.PensionerId,
                         PPOSystem = item.Pensioner.PPOSystem,
                         Claimant = lClaimant,
+                        MP = item.MonthlyPension,
+                        CMA = item.CMA,
+                        OrderlyAllowance = item.OrderlyAllowance,
+                        Deduction = item.Deduction,
+                        Total = item.Total,
                         CompanyId = item.Pensioner.CompanyId,
                         CompanyName = item.Pensioner.Company.Name,
                         CompanyNumber = item.Pensioner.Company.Order,
@@ -103,7 +108,7 @@ namespace PensionSystem.Services
                 foreach (var item in listHBLCommutations)
                 {
                     // first make sure the pensioner is not exist in list
-                    if (!(listPensioners.Exists(x => x.PensionerId == item.PensionerId)))
+                    if (!listPensioners.Exists(x => x.PensionerId == item.PensionerId))
                     {
                         listPensioners.Add(new HBLPaymentPensioner
                         {

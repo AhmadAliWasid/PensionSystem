@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-12">
                         <h4 class="text-center">@Model.Session.DMStamp @Model.Session.BaseStamp</h4>
-                        <h5 class="text-center">List Of Pensioner upto @UserFormat.GetMonthYear(Model.Months.OrderBy(x => x.Month).Last().Month)</h5>
+                        <h5 class="text-center">List Of Pensioner up to @UserFormat.GetMonthYear(Model.Months.OrderBy(x => x.Month).Last().Month)</h5>
                     </div>
                 </div>
             </div>
@@ -28,9 +28,14 @@
                     <tr>
                         <th>PPO</th>
                         <th>Claimant</th>
+                        <th>MP</th>
+                        <th>CMA</th>
+                        <th>Orderly</th>
+                        <th>Deduction</th>
+                        <th>Total</th>
                         @foreach (var month in Model.Months)
                         {
-                            <th>@month.Month.ToString("MM-yyyy")</th>
+                            <th>@UserFormat.GetMonthYear(month.Month)</th>
                         }
                         <th>G.Total</th>
                     </tr>
@@ -43,6 +48,11 @@
                         <tr>
                             <td>@pensioner.PPOSystem</td>
                             <td>@pensioner.Claimant</td>
+                            <td>@UserFormat.GetAmount(pensioner.MP)</td>
+                            <td>@UserFormat.GetAmount(pensioner.CMA)</td>
+                            <td>@UserFormat.GetAmount(pensioner.Orderly)</td>
+                            <td>@UserFormat.GetAmount(pensioner.Deduction)</td>
+                            <td>@UserFormat.GetAmount(pensioner.Total)</td>
                             @foreach (var month in Model.Months)
                             {
                                 decimal monthlyTotalAmount = 0;
@@ -101,9 +111,15 @@
                         </tr>
                     }
 
-
+                    @* footer *@
                     <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td>Total</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         @foreach (var month in Model.Months)
                         {

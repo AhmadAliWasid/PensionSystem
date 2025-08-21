@@ -7,7 +7,7 @@
 
     <link href="/lib/print/print.min.css" rel="stylesheet" />
     <style>
-        .row-hight {
+        .row-height {
             line-height: 17pt;
             font-size: 14pt;
         }
@@ -29,23 +29,20 @@
                         <h4 class="text-end">Dated: __________________</h4>
                     </div>
                 </div>
-                <div class="row" style="margin-top: 20px">
-                    To
-                </div>
-                <div class="row" style="margin-left:40px;">
+                <div class="row" >
                     <p>
-                        Branch Manager <br>
-                        <u style="margin-top:10px;">_________________________</u><br>
-                        <u style="margin-top:10px;">_________________________</u>
+                        Manager UBL <br>
+                        <u style="margin-top:20px;">_________________________</u><br>
+                        <u style="margin-top:20px;">_________________________</u>
                     </p>
                 </div>
                 <div class="row" style="margin-top:30px">
-                    <h3><b><u>SUBJECT : </u></b> &nbsp;&nbsp;&nbsp; <b><u>OPENING OF PENSION ACCOUNT</u></b></h3>
+                    <h3>SUBJECT :  &nbsp;&nbsp;&nbsp; <b><u>OPENING OF PENSION ACCOUNT</u></b></h3>
                 </div>
-                <div class="row" style="margin-top:25px; margin-left:30px;">
+                <div class="row" style="margin-top:15px; margin-left:30px;">
                     <p>
                         <ol>
-                            <li class="row-hight">
+                            <li class="row-height">
                                 It is intimated that Mr/Mst/Miss. <b>@Model.Claimant </b> @Model.Relation.Short  Of
                                 @if (Model.Relation.Id == 1)
                                 {
@@ -57,17 +54,18 @@
                                 }
                                 Ex. <b>@Model.Designation </b> having CNIC# <b>@Model.ClaimantCNIC</b> PPO # <b>@Model.PPONumber</b>  drawing pension Rs.<b>
                                     @UserFormat.GetAmount(Model.Total) /-
-                                    (@Calculation.ConvertAmount((double)Model.Total)
-                                </b>  (per Month) is a pensioner in SS&TL Division PESCO Mardan (WAPDA).He/She
+                                    (@Calculation.ConvertAmount((double)Model.Total))
+                                </b>
+                                per Month is a pensioner in SS&TL Division PESCO Mardan (WAPDA).He/She
                                 is requesting
                                 for opening of "Account" in your Branch for pension purpose.
                             </li>
-                            <li class="row-hight">
-                                Foregoing in view, it is requested that account as per the requirment of the above named indivisual may be opened in your branch for his/her convenience.
+                            <li class="row-height">
+                                Foregoing in view, it is requested that account as per the requirement of the above named individual may be opened in your branch for his/her convenience.
                                 Relevant documents are attached.
                             </li>
-                            <li class="row-hight">
-                                Your cooperation in this regard will be highley appreciated, Please.
+                            <li class="row-height">
+                                Your cooperation in this regard will be highly appreciated, Please.
                             </li>
                         </ol>
                     </p>

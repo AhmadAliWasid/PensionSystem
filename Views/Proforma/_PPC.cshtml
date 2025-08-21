@@ -15,20 +15,12 @@
                         <img src="~/img/letter_head.jpg" alt="header" style="width:100%">
                     </div>
                 </div>
-                <div class="row" style="margin-top:20px;">
-                    <div class="col-md-6">
-                        <h4 class="text-start">No. ___________________/Account</h4>
-                    </div>
-                    <div class="col-md-6 ">
-                        <h4 class="text-end">Dated: __________________</h4>
-                    </div>
-                </div>
                 <div class="row" style="margin-top:30px; text-align:center;">
                     <h3><b><u>PENSION PAYMENT CERTIFICATE</u></b></h3>
                 </div>
                 <div style="line-height:2.0em;">
                     <p>
-                        &emsp; &emsp; It is intimated that Mr/Mst/Miss. <b>@Model.Claimant </b> @Model.Relation.Short  Of
+                        &emsp; &emsp; It is certified that Mr/Mst/Miss. <b>@Model.Claimant </b> @Model.Relation.Short  Of
                         @if (Model.Relation.Id == 1)
                         {
                             <b>@Model.FatherName</b>
@@ -38,10 +30,12 @@
                             <b>@Model.Name</b>
                         }
                         Ex. <b>@Model.Designation </b> having CNIC# <b>@Model.ClaimantCNIC</b> PPO # <b>@Model.PPONumber</b>
+                        has commutation/gratuity  Rs. <b>@UserFormat.GetAmount(Model.Commutation) /- @Calculation.ConvertAmount((double)Model.Commutation)</b>
+                        and  currently
                         drawing pension Rs.<b>
                             @UserFormat.GetAmount(Model.Total) /-
                             (@Calculation.ConvertAmount((double)Model.Total)
-                        </b>  (per Month) is a pensioner in SS&TL Division PESCO Mardan (WAPDA).
+                        </b>  (per Month) is a pensioner in SS&TL Division PESCO  Mardan .
                     </p>
                 </div>
                 <div class="row">

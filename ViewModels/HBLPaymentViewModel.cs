@@ -36,7 +36,10 @@ namespace PensionSystem.ViewModels
         public decimal MP { get; set; }
         public decimal CMA { get; set; }
         public decimal Orderly { get; set; }
+        public decimal OrderlyAllowance { get; internal set; }
+        public decimal Deduction { get; set; }
         public decimal Total { get; set; }
+     
     }
 
     public class HBLPaymentPensionerHistoryVM
